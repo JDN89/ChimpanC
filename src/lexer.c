@@ -2,6 +2,10 @@
 #include <stdbool.h>
 #include <string.h>
 
+// BUG: globally inialized lexer resets the lexer I use in tests. Remove global
+// lexer and pass pointer to lexer in all the functions. This was also a point
+// in crafting interpreters. He used a global variation to safe space. You can
+// only put so many characters on a page, but this is not a book...
 Lexer lexer;
 
 Lexer *init_lexer(char *source, Lexer *lexer) {
@@ -32,8 +36,8 @@ static Token makeErrorToken(const char *message) {
   return token;
 }
 
-Token nextToken() {
-  lexer.current = lexer.start;
+Token nextToken(Lexer *lexer) {
+  lexer->current = lexer->start;
   if (isAtEnd())
     return makeToken(EOF);
 
