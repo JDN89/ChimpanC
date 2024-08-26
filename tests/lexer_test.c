@@ -12,14 +12,26 @@ void test_init_lexer() {
 }
 
 void test_nextToken() {
-  char source[] = "=/0";
+  char source[] = "=+(){},";
   Lexer lexer;
   init_lexer(source, &lexer);
 
-  Token token = nextToken(&lexer);
-  assert(token.type == ASSIGN);
-  assert(*token.literal == '=');
-  assert(token.length == 1); // Assuming 'x' is a single character
+  // Expected token types and literals
+  TokenType expected_types[] = {ASSIGN, PLUS,   LPAREN, RPAREN,
+                                LBRACE, RBRACE, COMMA};
+  const char *expected_literals[] = {"=", "+", "(", ")", "{", "}", ","};
+  int num_tokens = sizeof(expected_types) / sizeof(TokenType);
+
+  for (int i = 0; i < num_tokens; i++) {
+
+    Token token = nextToken(&lexer);
+    assert(token.type == expected_types[i]);
+    assert(*token.literal == *expected_literals[i]);
+    printf("literal: %c \n", *token.literal);
+    assert(token.length == 1); // Assuming 'x' is a single character
+    lexer.start++;
+  }
+  printf("test_nextToken passed");
 }
 
 int main() {

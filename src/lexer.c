@@ -39,6 +39,20 @@ Token nextToken(Lexer *lexer) {
   switch (c) {
   case '=':
     return makeToken(ASSIGN, lexer);
+  case ';':
+    return makeToken(SEMICOLON, lexer);
+  case '(':
+    return makeToken(LPAREN, lexer);
+  case ')':
+    return makeToken(RPAREN, lexer);
+  case ',':
+    return makeToken(COMMA, lexer);
+  case '+':
+    return makeToken(PLUS, lexer);
+  case '{':
+    return makeToken(LBRACE, lexer);
+  case '}':
+    return makeToken(RBRACE, lexer);
   }
   return makeErrorToken("Illegal string in source");
 }
