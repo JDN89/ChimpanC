@@ -1,6 +1,7 @@
 #include "lexer.h"
 #include <stdbool.h>
 #include <string.h>
+#include<stdio.h>
 
 Lexer *init_lexer(char *source, Lexer *lexer) {
   lexer->start = source;
@@ -15,10 +16,19 @@ static char advance(Lexer *lexer) {
   return lexer->current[-1];
 }
 
+static bool isChar(char c) {
+  return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
+}
+
+static char peek(Lexer *lexer) { return lexer->current[0]; }
+
 static Token makeToken(TokenType type, Lexer *lexer) {
   Token token;
   token.type = type;
   token.length = lexer->current - lexer->start;
+
+  printf("%d",token.length);
+
   token.literal = lexer->start;
   return token;
 }
@@ -53,6 +63,15 @@ Token nextToken(Lexer *lexer) {
     return makeToken(LBRACE, lexer);
   case '}':
     return makeToken(RBRACE, lexer);
+  default:
+    if (isChar(c)) {
+      // how to stop
+      while (isChar(advance(lexer))) {
+        if (!isChar(peek(lexer)))
+          return makeToken(IDENT, lexer);
+      }
+    }
   }
+
   return makeErrorToken("Illegal string in source");
 }
