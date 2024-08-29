@@ -31,7 +31,8 @@ typedef enum {
 // superseeds the Token lifetime.
 typedef struct {
   TokenType type;
-  const char  *literal; // pointer to the literal value. Better to pass pointer to the
+  const char
+      *literal; // pointer to the literal value. Better to pass pointer to the
   int length;
 } Token;
 
