@@ -1,7 +1,7 @@
 #include "lexer.h"
 #include <stdbool.h>
+#include <stdio.h>
 #include <string.h>
-#include<stdio.h>
 
 Lexer *init_lexer(char *source, Lexer *lexer) {
   lexer->start = source;
@@ -27,11 +27,37 @@ static Token makeToken(TokenType type, Lexer *lexer) {
   token.type = type;
   token.length = lexer->current - lexer->start;
 
-  printf("%d",token.length);
-
   token.literal = lexer->start;
   return token;
 }
+
+static void skipWhitespace(Lexer *lexer) {
+  for (;;) {
+    char c = peek(lexer);
+    switch (c) {
+    case ' ':
+    case '\r':
+    case '\t':
+      advance(lexer);
+      break;
+    default:
+      return;
+    }
+  }
+}
+
+// NOTE: in case of let is lexer.start 'l' and lexer .current points now at 'e'
+static TokenType lookUpIdentifier(Lexer *lexer, char *word, int length,
+                                  TokenType type) {
+  if (lexer->current - lexer->start == length + 1) {
+    bool isKeyWord = memcmp(word, lexer->start, length) == 0;
+    if (isKeyWord) {
+      return type;
+    }
+  }
+  return IDENTIFIER;
+}
+
 static Token makeErrorToken(const char *message) {
   Token token;
   token.type = TOKEN_ILLEGAL;
@@ -41,11 +67,15 @@ static Token makeErrorToken(const char *message) {
 }
 
 Token nextToken(Lexer *lexer) {
-  lexer->current = lexer->start;
+  skipWhitespace(lexer);
+
+  lexer->start = lexer->current;
+
   if (isAtEnd(lexer))
     return makeToken(EOF, lexer);
 
   char c = advance(lexer);
+
   switch (c) {
   case '=':
     return makeToken(ASSIGN, lexer);
@@ -63,12 +93,23 @@ Token nextToken(Lexer *lexer) {
     return makeToken(LBRACE, lexer);
   case '}':
     return makeToken(RBRACE, lexer);
+
+    // Scan Identifiers and Keywords
   default:
     if (isChar(c)) {
       // how to stop
+
       while (isChar(advance(lexer))) {
+
         if (!isChar(peek(lexer)))
-          return makeToken(IDENT, lexer);
+          switch (lexer->start[0]) {
+          case 'l':
+            return makeToken(lookUpIdentifier(lexer, "et", 2, LET), lexer);
+          case 'f':
+            return makeToken(lookUpIdentifier(lexer, "un", 2, FUNCTION), lexer);
+          default:
+            return makeToken(IDENTIFIER, lexer);
+          }
       }
     }
   }

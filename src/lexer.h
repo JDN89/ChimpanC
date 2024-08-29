@@ -5,7 +5,7 @@ typedef enum {
   TOKEN_ILLEGAL,
   EOF,
   // identifiers and literals
-  IDENT,
+  IDENTIFIER,
   INT,
   // Operators
   ASSIGN,
