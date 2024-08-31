@@ -1,0 +1,8 @@
+Already logging to gdb.txt.
+Starting program: /home/jdn/Repos/ChimpanC/test_lexer 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Program received signal SIGSEGV, Segmentation fault.
+0x000055555555561e in test_identifier () at tests/test_lexer.c:91
+Undefined command: ".".  Try "help".

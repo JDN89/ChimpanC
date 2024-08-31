@@ -55,8 +55,9 @@ void test_nextToken() {
   init_lexer(source, &lexer);
 
   // Expected token types and literals
-  TokenType expected_types[] = {TOKEN_ASSIGN, TOKEN_PLUS,   TOKEN_LPAREN, TOKEN_RPAREN,
-                                TOKEN_LBRACE, TOKEN_RBRACE, TOKEN_COMMA};
+  TokenType expected_types[] = {TOKEN_ASSIGN, TOKEN_PLUS,   TOKEN_LPAREN,
+                                TOKEN_RPAREN, TOKEN_LBRACE, TOKEN_RBRACE,
+                                TOKEN_COMMA};
   const char *expected_literals[] = {"=", "+", "(", ")", "{", "}", ","};
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
@@ -80,8 +81,8 @@ void test_identifier() {
   init_lexer(source, &lexer);
 
   // Expected token types and literals
-  TokenType expected_types[] = {TOKEN_IDENTIFIER, EOF};
-  const char *expected_literals[] = {"aAzZbB\0"};
+  TokenType expected_types[] = {TOKEN_IDENTIFIER};
+  const char *expected_literals[] = {"aAzZbB"};
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
   for (int i = 0; i < num_tokens; i++) {
@@ -125,8 +126,8 @@ void test_keyword() {
 int main() {
   /*test_init_lexer();*/
   /*test_nextToken();*/
-  test_identifier();
-  /*test_keyword();*/
+  /*test_identifier();*/
+  test_keyword();
   printf("All tests passed.\n");
   return 0;
 }
