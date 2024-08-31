@@ -1,6 +1,7 @@
 #include "../src/lexer.h"
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 // HELPER METHOD for printing enum values of TokenType
 const char *TokenTypeToString(TokenType type) {
@@ -38,6 +39,14 @@ const char *TokenTypeToString(TokenType type) {
   }
 }
 
+// Helper function to check token equality
+void check_token(Token token, TokenType expected_type,
+                 const char *expected_literal, int expected_length) {
+  assert(token.type == expected_type);
+  assert(strncmp(token.literal, expected_literal, expected_length) == 0);
+  assert(token.length == expected_length);
+}
+
 void test_init_lexer() {
   char source[] = "=/0";
   Lexer lexer;
@@ -48,80 +57,58 @@ void test_init_lexer() {
   printf("test_lexer: test_init_lexer passed \n");
 }
 
-//------------------------------------------------
 void test_single_char_tokens() {
-  char source[] = "=+(){},";
-  Lexer lexer;
-  init_lexer(source, &lexer);
+    char source[] = "=+(){},";
+    Lexer lexer;
+    init_lexer(source, &lexer);
 
-  // Expected token types and literals
-  TokenType expected_types[] = {TOKEN_ASSIGN, TOKEN_PLUS,   TOKEN_LPAREN,
-                                TOKEN_RPAREN, TOKEN_LBRACE, TOKEN_RBRACE,
-                                TOKEN_COMMA};
-  const char *expected_literals[] = {"=", "+", "(", ")", "{", "}", ","};
-  int num_tokens = sizeof(expected_types) / sizeof(TokenType);
+    TokenType expected_types[] = {TOKEN_ASSIGN, TOKEN_PLUS, TOKEN_LPAREN, TOKEN_RPAREN, TOKEN_LBRACE, TOKEN_RBRACE, TOKEN_COMMA};
+    const char *expected_literals[] = {"=", "+", "(", ")", "{", "}", ","};
+    int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
-  for (int i = 0; i < num_tokens; i++) {
+    for (int i = 0; i < num_tokens; i++) {
+        Token token = nextToken(&lexer);
+        check_token(token, expected_types[i], expected_literals[i], 1);
+        lexer.start = lexer.current;
+    }
 
-    Token token = nextToken(&lexer);
-    assert(token.type == expected_types[i]);
-    assert(*token.literal == *expected_literals[i]);
-    assert(token.length == 1); // Assuming 'x' is a single character
-    lexer.start++;
-  }
-  printf("test_lexer: single char tokens passed \n");
+    printf("test_single_char_tokens passed \n");
 }
 
-// ====================================
-// scan IDENTIFIERS test
-// ====================================
 void test_identifier() {
-  char source[] = "aAzZbB, qwerty";
-  Lexer lexer;
-  init_lexer(source, &lexer);
+    char source[] = "aAzZbB, qwerty";
+    Lexer lexer;
+    init_lexer(source, &lexer);
 
-  // Expected token types and literals
-  TokenType expected_types[] = {TOKEN_IDENTIFIER, TOKEN_COMMA,
-                                TOKEN_IDENTIFIER};
-  int num_tokens = sizeof(expected_types) / sizeof(TokenType);
+    TokenType expected_types[] = {TOKEN_IDENTIFIER, TOKEN_COMMA, TOKEN_IDENTIFIER};
+    const char *expected_literals[] = {"aAzZbB", ",", "qwerty"};
+    int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
-  for (int i = 0; i < num_tokens; i++) {
+    for (int i = 0; i < num_tokens; i++) {
+        Token token = nextToken(&lexer);
+        check_token(token, expected_types[i], expected_literals[i], strlen(expected_literals[i]));
+        lexer.start = lexer.current;
+    }
 
-    Token token = nextToken(&lexer);
-    assert(token.type == expected_types[i]);
-    // NOTE: check if they point to the same address, becasue we pass pointers
-    // to the string and we don't copy the actual value
-    assert(token.literal == lexer.start);
-    lexer.start = lexer.current;
-  }
-  printf("test_isChar passed \n");
+    printf("test_identifier passed \n");
 }
 
-//=======================================
-// KEYWORD test
-// ======================================
 void test_keyword() {
-  char source[] = "fun let";
-  Lexer lexer;
-  init_lexer(source, &lexer);
+    char source[] = "fun let";
+    Lexer lexer;
+    init_lexer(source, &lexer);
 
-  // Expected token types and literals
-  TokenType expected_types[] = {TOKEN_FUNCTION, TOKEN_LET};
-  int num_tokens = sizeof(expected_types) / sizeof(TokenType);
+    TokenType expected_types[] = {TOKEN_FUNCTION, TOKEN_LET};
+    const char *expected_literals[] = {"fun", "let"};
+    int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
-  for (int i = 0; i < num_tokens; i++) {
+    for (int i = 0; i < num_tokens; i++) {
+        Token token = nextToken(&lexer);
+        check_token(token, expected_types[i], expected_literals[i], strlen(expected_literals[i]));
+        lexer.start = lexer.current;
+    }
 
-    Token token = nextToken(&lexer);
-    printf("type: %s \n",
-           TokenTypeToString(
-               token.type)); // Print string representation of token type
-    assert(token.type == expected_types[i]);
-    // NOTE: check if they point to the same address, becasue we pass pointers
-    // to the string and we don't copy the actual value
-    assert(token.literal == lexer.start);
-    lexer.start = lexer.current;
-  }
-  printf("test_keyword passed \n");
+    printf("test_keyword passed \n");
 }
 
 int main() {
