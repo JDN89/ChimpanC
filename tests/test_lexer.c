@@ -7,34 +7,34 @@ const char *TokenTypeToString(TokenType type) {
   switch (type) {
   case TOKEN_ILLEGAL:
     return "TOKEN_ILLEGAL";
-  case EOF:
-    return "EOF";
-  case IDENTIFIER:
-    return "IDENTIFIER";
-  case INT:
-    return "INT";
-  case ASSIGN:
-    return "ASSIGN";
-  case PLUS:
-    return "PLUS";
-  case COMMA:
-    return "COMMA";
-  case SEMICOLON:
-    return "SEMICOLON";
-  case LPAREN:
-    return "LPAREN";
-  case RPAREN:
-    return "RPAREN";
-  case LBRACE:
-    return "LBRACE";
-  case RBRACE:
-    return "RBRACE";
-  case FUNCTION:
-    return "FUNCTION";
-  case LET:
-    return "LET";
+  case TOKEN_EOF:
+    return "TOKEN_EOF";
+  case TOKEN_IDENTIFIER:
+    return "TOKEN_IDENTIFIER";
+  case TOKEN_INT:
+    return "TOKEN_INT";
+  case TOKEN_ASSIGN:
+    return "TOKEN_ASSIGN";
+  case TOKEN_PLUS:
+    return "TOKEN_PLUS";
+  case TOKEN_COMMA:
+    return "TOKEN_COMMA";
+  case TOKEN_SEMICOLON:
+    return "TOKEN_SEMICOLON";
+  case TOKEN_LPAREN:
+    return "TOKEN_LPAREN";
+  case TOKEN_RPAREN:
+    return "TOKEN_RPAREN";
+  case TOKEN_LBRACE:
+    return "TOKEN_LBRACE";
+  case TOKEN_RBRACE:
+    return "TOKEN_RBRACE";
+  case TOKEN_FUNCTION:
+    return "TOKEN_FUNCTION";
+  case TOKEN_LET:
+    return "TOKEN_LET";
   default:
-    return "UNKNOWN";
+    return "TOKEN_UNKNOWN";
   }
 }
 
@@ -55,8 +55,8 @@ void test_nextToken() {
   init_lexer(source, &lexer);
 
   // Expected token types and literals
-  TokenType expected_types[] = {ASSIGN, PLUS,   LPAREN, RPAREN,
-                                LBRACE, RBRACE, COMMA};
+  TokenType expected_types[] = {TOKEN_ASSIGN, TOKEN_PLUS,   TOKEN_LPAREN, TOKEN_RPAREN,
+                                TOKEN_LBRACE, TOKEN_RBRACE, TOKEN_COMMA};
   const char *expected_literals[] = {"=", "+", "(", ")", "{", "}", ","};
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
@@ -71,15 +71,17 @@ void test_nextToken() {
   printf("test_nextToken passed \n");
 }
 
+// ====================================
 // NOTE: scan IDENTIFIERS test
+// ====================================
 void test_identifier() {
   char source[] = "aAzZbB";
   Lexer lexer;
   init_lexer(source, &lexer);
 
   // Expected token types and literals
-  TokenType expected_types[] = {IDENTIFIER, COMMA, EOF};
-  const char *expected_literals[] = {"aAzZbB"};
+  TokenType expected_types[] = {TOKEN_IDENTIFIER, EOF};
+  const char *expected_literals[] = {"aAzZbB\0"};
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
   for (int i = 0; i < num_tokens; i++) {
@@ -95,13 +97,14 @@ void test_identifier() {
 
 //=======================================
 // NOTE: KEYWORD test
+// ======================================
 void test_keyword() {
   char source[] = "fun";
   Lexer lexer;
   init_lexer(source, &lexer);
 
   // Expected token types and literals
-  TokenType expected_types[] = {FUNCTION};
+  TokenType expected_types[] = {TOKEN_FUNCTION};
   const char *expected_literals[] = {"fun"};
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 

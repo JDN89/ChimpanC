@@ -55,7 +55,7 @@ static TokenType lookUpIdentifier(Lexer *lexer, char *word, int length,
       return type;
     }
   }
-  return IDENTIFIER;
+  return TOKEN_IDENTIFIER;
 }
 
 static Token makeErrorToken(const char *message) {
@@ -78,21 +78,21 @@ Token nextToken(Lexer *lexer) {
 
   switch (c) {
   case '=':
-    return makeToken(ASSIGN, lexer);
+    return makeToken(TOKEN_ASSIGN, lexer);
   case ';':
-    return makeToken(SEMICOLON, lexer);
+    return makeToken(TOKEN_SEMICOLON, lexer);
   case '(':
-    return makeToken(LPAREN, lexer);
+    return makeToken(TOKEN_LPAREN, lexer);
   case ')':
-    return makeToken(RPAREN, lexer);
+    return makeToken(TOKEN_RPAREN, lexer);
   case ',':
-    return makeToken(COMMA, lexer);
+    return makeToken(TOKEN_COMMA, lexer);
   case '+':
-    return makeToken(PLUS, lexer);
+    return makeToken(TOKEN_PLUS, lexer);
   case '{':
-    return makeToken(LBRACE, lexer);
+    return makeToken(TOKEN_LBRACE, lexer);
   case '}':
-    return makeToken(RBRACE, lexer);
+    return makeToken(TOKEN_RBRACE, lexer);
 
     // Scan Identifiers and Keywords
   default:
@@ -104,11 +104,11 @@ Token nextToken(Lexer *lexer) {
         if (!isChar(peek(lexer)))
           switch (lexer->start[0]) {
           case 'l':
-            return makeToken(lookUpIdentifier(lexer, "et", 2, LET), lexer);
+            return makeToken(lookUpIdentifier(lexer, "et", 2, TOKEN_LET), lexer);
           case 'f':
-            return makeToken(lookUpIdentifier(lexer, "un", 2, FUNCTION), lexer);
+            return makeToken(lookUpIdentifier(lexer, "un", 2, TOKEN_FUNCTION), lexer);
           default:
-            return makeToken(IDENTIFIER, lexer);
+            return makeToken(TOKEN_IDENTIFIER, lexer);
           }
       }
     }
