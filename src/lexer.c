@@ -49,7 +49,7 @@ static void skipWhitespace(Lexer *lexer) {
 // NOTE: in case of let is lexer.start 'l' and lexer .current points now at 'e'
 static TokenType lookUpIdentifier(Lexer *lexer, char *word, int length,
                                   TokenType type) {
-  if (lexer->current - lexer->start == length + 1) {
+  if (lexer->current - lexer->start == length ) {
     bool isKeyWord = memcmp(word, lexer->start, length) == 0;
     if (isKeyWord) {
       return type;
@@ -104,9 +104,9 @@ Token nextToken(Lexer *lexer) {
         if (!isChar(peek(lexer)))
           switch (lexer->start[0]) {
           case 'l':
-            return makeToken(lookUpIdentifier(lexer, "et", 2, TOKEN_LET), lexer);
+            return makeToken(lookUpIdentifier(lexer, "let", 3, TOKEN_LET), lexer);
           case 'f':
-            return makeToken(lookUpIdentifier(lexer, "un", 2, TOKEN_FUNCTION), lexer);
+            return makeToken(lookUpIdentifier(lexer, "fun", 3, TOKEN_FUNCTION), lexer);
           default:
             return makeToken(TOKEN_IDENTIFIER, lexer);
           }
