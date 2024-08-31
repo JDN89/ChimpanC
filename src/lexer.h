@@ -1,7 +1,9 @@
 #ifndef lexer_h
 #define lexer_h
 
-//NOTE: Clang drops enum value names in the top namespace. TokenType EOF would conflict with EOF defined in <stdio.h>. That's why we have to prepend them with Token_
+// NOTE: Clang drops enum value names in the top namespace. TokenType EOF would
+// conflict with EOF defined in <stdio.h>. That's why we have to prepend them
+// with Token_
 typedef enum {
   TOKEN_ILLEGAL,
   TOKEN_EOF,
