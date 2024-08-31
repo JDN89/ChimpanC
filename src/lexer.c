@@ -121,10 +121,9 @@ Token nextToken(Lexer *lexer) {
           return makeToken(TOKEN_INT, lexer);
         }
       }
+    } else {
+      return makeToken(TOKEN_ILLEGAL, lexer);
     }
-    else {
-        return makeToken(TOKEN_ILLEGAL,lexer);
-      }
   }
 
   return makeErrorToken("Illegal string in source");
