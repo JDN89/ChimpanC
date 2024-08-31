@@ -20,6 +20,8 @@ static bool isChar(char c) {
   return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
 }
 
+static bool isDigit(char c) { return ('1' <= c && c <= '9'); }
+
 static char peek(Lexer *lexer) { return lexer->current[0]; }
 
 static Token makeToken(TokenType type, Lexer *lexer) {
@@ -113,7 +115,16 @@ Token nextToken(Lexer *lexer) {
             return makeToken(TOKEN_IDENTIFIER, lexer);
           }
       }
+    } else if (isDigit(c)) {
+      while (isDigit(advance(lexer))) {
+        if (!isDigit(peek(lexer))) {
+          return makeToken(TOKEN_INT, lexer);
+        }
+      }
     }
+    else {
+        return makeToken(TOKEN_ILLEGAL,lexer);
+      }
   }
 
   return makeErrorToken("Illegal string in source");
