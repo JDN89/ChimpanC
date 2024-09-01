@@ -13,6 +13,12 @@ typedef enum {
   // Operators
   TOKEN_ASSIGN,
   TOKEN_PLUS,
+  TOKEN_MINUS,
+  TOKEN_BANG,
+  TOKEN_ASTERISK,
+  TOKEN_SLASH,
+  TOKEN_LT,
+  TOKEN_GT,
   // Delimiters
   TOKEN_COMMA,
   TOKEN_SEMICOLON,

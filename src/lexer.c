@@ -84,16 +84,28 @@ Token nextToken(Lexer *lexer) {
   switch (c) {
   case '=':
     return makeToken(TOKEN_ASSIGN, lexer);
+  case '+':
+    return makeToken(TOKEN_PLUS, lexer);
+  case '-':
+    return makeToken(TOKEN_MINUS, lexer);
+  case '!':
+    return makeToken(TOKEN_BANG, lexer);
+  case '/':
+    return makeToken(TOKEN_SLASH, lexer);
+  case '*':
+    return makeToken(TOKEN_ASTERISK, lexer);
+  case '<':
+    return makeToken(TOKEN_LT, lexer);
+  case '>':
+    return makeToken(TOKEN_GT, lexer);
   case ';':
     return makeToken(TOKEN_SEMICOLON, lexer);
+  case ',':
+    return makeToken(TOKEN_COMMA, lexer);
   case '(':
     return makeToken(TOKEN_LPAREN, lexer);
   case ')':
     return makeToken(TOKEN_RPAREN, lexer);
-  case ',':
-    return makeToken(TOKEN_COMMA, lexer);
-  case '+':
-    return makeToken(TOKEN_PLUS, lexer);
   case '{':
     return makeToken(TOKEN_LBRACE, lexer);
   case '}':

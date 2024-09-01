@@ -34,6 +34,18 @@ const char *TokenTypeToString(TokenType type) {
     return "TOKEN_FUNCTION";
   case TOKEN_LET:
     return "TOKEN_LET";
+  case TOKEN_GT:
+    return ">";
+  case TOKEN_LT:
+    return "<";
+  case TOKEN_ASTERISK:
+    return "*";
+  case TOKEN_SLASH:
+    return "/";
+  case TOKEN_MINUS:
+    return "-";
+  case TOKEN_BANG:
+    return "!";
   default:
     return "TOKEN_UNKNOWN";
   }
@@ -42,11 +54,13 @@ const char *TokenTypeToString(TokenType type) {
 // ==========================
 // HELPER FUNCITONS
 // Helper function to check token equality with error reporting
-void check_token(Token token, TokenType expected_type,
+void check_token(int position, Token token, TokenType expected_type,
                  const char *expected_literal, int expected_length) {
   if (token.type != expected_type) {
-    fprintf(stderr, "Error: Expected token type %s, but got %s\n",
-            TokenTypeToString(expected_type), TokenTypeToString(token.type));
+    fprintf(stderr,
+            "Error at token position %d: Expected token type %s, but got %s\n",
+            position, TokenTypeToString(expected_type),
+            TokenTypeToString(token.type));
     assert(token.type == expected_type);
   }
 
@@ -89,7 +103,7 @@ void test_single_char_tokens() {
 
   for (int i = 0; i < num_tokens; i++) {
     Token token = nextToken(&lexer);
-    check_token(token, expected_types[i], expected_literals[i], 1);
+    check_token(i, token, expected_types[i], expected_literals[i], 1);
     lexer.start = lexer.current;
   }
 
@@ -108,7 +122,7 @@ void test_identifier() {
 
   for (int i = 0; i < num_tokens; i++) {
     Token token = nextToken(&lexer);
-    check_token(token, expected_types[i], expected_literals[i],
+    check_token(i, token, expected_types[i], expected_literals[i],
                 strlen(expected_literals[i]));
     lexer.start = lexer.current;
   }
@@ -127,7 +141,7 @@ void test_keyword() {
 
   for (int i = 0; i < num_tokens; i++) {
     Token token = nextToken(&lexer);
-    check_token(token, expected_types[i], expected_literals[i],
+    check_token(i, token, expected_types[i], expected_literals[i],
                 strlen(expected_literals[i]));
     lexer.start = lexer.current;
   }
@@ -142,7 +156,9 @@ void test_monkey_source() {
                   "let add = fn(x, y) {\n"
                   "    x + y;\n"
                   "};\n"
-                  "let result = add(five, ten);\0";
+                  "let result = add(five, ten); \n"
+                  "!-/*5;\n"
+                  "5 < 10 > 5;\0";
 
   init_lexer(source, &lexer);
 
@@ -156,19 +172,22 @@ void test_monkey_source() {
       TOKEN_RBRACE,     TOKEN_SEMICOLON,  TOKEN_LET,        TOKEN_IDENTIFIER,
       TOKEN_ASSIGN,     TOKEN_IDENTIFIER, TOKEN_LPAREN,     TOKEN_IDENTIFIER,
       TOKEN_COMMA,      TOKEN_IDENTIFIER, TOKEN_RPAREN,     TOKEN_SEMICOLON,
+      TOKEN_BANG,       TOKEN_MINUS,      TOKEN_SLASH,      TOKEN_ASTERISK,
+      TOKEN_INT,        TOKEN_SEMICOLON,  TOKEN_INT,        TOKEN_LT,
+      TOKEN_INT,        TOKEN_GT,         TOKEN_INT,        TOKEN_SEMICOLON,
       TOKEN_EOF};
   const char *expected_literals[] = {
-      "let", "five", "=", "5",   ";", "let", "ten", "=",      "10", ";",
-      "let", "add",  "=", "fn",  "(", "x",   ",",   "y",      ")",  "{",
-      "x",   "+",    "y", ";",   "}", ";",   "let", "result", "=",  "add",
-      "(",   "five", ",", "ten", ")", ";",   "\0"};
+      "let", "five", "=", "5",   ";",  "let", "ten", "=",      "10", ";",
+      "let", "add",  "=", "fn",  "(",  "x",   ",",   "y",      ")",  "{",
+      "x",   "+",    "y", ";",   "}",  ";",   "let", "result", "=",  "add",
+      "(",   "five", ",", "ten", ")",  ";",   "!",   "-",      "/",  "*",
+      "5",   ";",    "5", "<",   "10", ">",   "5",   ";",      "\0"};
 
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
   for (int i = 0; i < num_tokens; i++) {
     Token token = nextToken(&lexer);
-    printf("%d - TOKEN: %s \n", i, TokenTypeToString(token.type));
-    check_token(token, expected_types[i], expected_literals[i],
+    check_token(i, token, expected_types[i], expected_literals[i],
                 strlen(expected_literals[i]));
     lexer.start = lexer.current;
   }
