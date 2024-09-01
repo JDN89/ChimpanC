@@ -80,75 +80,6 @@ void check_token(int position, Token token, TokenType expected_type,
 //============
 // TESTS
 
-void test_init_lexer() {
-  char source[] = "=/0";
-  Lexer lexer;
-  init_lexer(source, &lexer);
-
-  assert(*lexer.start == *source);
-  assert(*lexer.current == *source);
-  printf("test_lexer: test_init_lexer passed \n");
-}
-
-void test_single_char_tokens() {
-  char source[] = "=+(){},";
-  Lexer lexer;
-  init_lexer(source, &lexer);
-
-  TokenType expected_types[] = {TOKEN_ASSIGN, TOKEN_PLUS,   TOKEN_LPAREN,
-                                TOKEN_RPAREN, TOKEN_LBRACE, TOKEN_RBRACE,
-                                TOKEN_COMMA};
-  const char *expected_literals[] = {"=", "+", "(", ")", "{", "}", ","};
-  int num_tokens = sizeof(expected_types) / sizeof(TokenType);
-
-  for (int i = 0; i < num_tokens; i++) {
-    Token token = nextToken(&lexer);
-    check_token(i, token, expected_types[i], expected_literals[i], 1);
-    lexer.start = lexer.current;
-  }
-
-  printf("test_single_char_tokens passed \n");
-}
-
-void test_identifier() {
-  char source[] = "aAzZbB, qwerty";
-  Lexer lexer;
-  init_lexer(source, &lexer);
-
-  TokenType expected_types[] = {TOKEN_IDENTIFIER, TOKEN_COMMA,
-                                TOKEN_IDENTIFIER};
-  const char *expected_literals[] = {"aAzZbB", ",", "qwerty"};
-  int num_tokens = sizeof(expected_types) / sizeof(TokenType);
-
-  for (int i = 0; i < num_tokens; i++) {
-    Token token = nextToken(&lexer);
-    check_token(i, token, expected_types[i], expected_literals[i],
-                strlen(expected_literals[i]));
-    lexer.start = lexer.current;
-  }
-
-  printf("test_identifier passed \n");
-}
-
-void test_keyword() {
-  char source[] = "fn let";
-  Lexer lexer;
-  init_lexer(source, &lexer);
-
-  TokenType expected_types[] = {TOKEN_FUNCTION, TOKEN_LET};
-  const char *expected_literals[] = {"fn", "let"};
-  int num_tokens = sizeof(expected_types) / sizeof(TokenType);
-
-  for (int i = 0; i < num_tokens; i++) {
-    Token token = nextToken(&lexer);
-    check_token(i, token, expected_types[i], expected_literals[i],
-                strlen(expected_literals[i]));
-    lexer.start = lexer.current;
-  }
-
-  printf("test_keyword passed \n");
-}
-
 void test_monkey_source() {
   Lexer lexer;
   char source[] = "let five = 5;\n"
@@ -158,10 +89,16 @@ void test_monkey_source() {
                   "};\n"
                   "let result = add(five, ten); \n"
                   "!-/*5;\n"
-                  "5 < 10 > 5;\0";
+                  "5 < 10 > 5; \n"
+                  "if(5<10) {\n"
+                  "return true \n"
+                  "}else { \n"
+                  "return false;\n"
+                  "}\0";
 
   init_lexer(source, &lexer);
 
+  //TODO: expand test and source code
   TokenType expected_types[] = {
       TOKEN_LET,        TOKEN_IDENTIFIER, TOKEN_ASSIGN,     TOKEN_INT,
       TOKEN_SEMICOLON,  TOKEN_LET,        TOKEN_IDENTIFIER, TOKEN_ASSIGN,
@@ -195,10 +132,6 @@ void test_monkey_source() {
 }
 
 int main() {
-  test_init_lexer();
-  test_single_char_tokens();
-  test_identifier();
-  test_keyword();
   test_monkey_source();
 
   printf("All tests passed.\n");

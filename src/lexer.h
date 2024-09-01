@@ -30,7 +30,12 @@ typedef enum {
 
   // keywords
   TOKEN_FUNCTION,
-  TOKEN_LET
+  TOKEN_LET,
+  TOKEN_TRUE,
+  TOKEN_FALSE,
+  TOKEN_IF,
+  TOKEN_ELSE,
+  TOKEN_RETURN
 } TokenType;
 
 // NOTE: We dont's store the literal of the LEXEME in the Token, instead we

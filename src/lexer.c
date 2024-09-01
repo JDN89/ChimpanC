@@ -123,9 +123,20 @@ Token nextToken(Lexer *lexer) {
       switch (lexer->start[0]) {
       case 'l':
         return makeToken(lookUpIdentifier(lexer, "let", 3, TOKEN_LET), lexer);
+        // TODO: expand with false
       case 'f':
         return makeToken(lookUpIdentifier(lexer, "fn", 2, TOKEN_FUNCTION),
                          lexer);
+      case 't':
+        return makeToken(lookUpIdentifier(lexer, "true", 4, TOKEN_TRUE), lexer);
+      case 'e':
+        return makeToken(lookUpIdentifier(lexer, "else", 4, TOKEN_ELSE), lexer);
+      case 'i':
+        return makeToken(lookUpIdentifier(lexer, "if", 2, TOKEN_IF), lexer);
+      case 'r':
+        return makeToken(lookUpIdentifier(lexer, "return", 6, TOKEN_RETURN),
+                         lexer);
+
       default:
         return makeToken(TOKEN_IDENTIFIER, lexer);
       }
