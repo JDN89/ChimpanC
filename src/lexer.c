@@ -77,7 +77,7 @@ Token nextToken(Lexer *lexer) {
   lexer->start = lexer->current;
 
   if (isAtEnd(lexer))
-    return makeToken(EOF, lexer);
+    return makeToken(TOKEN_EOF, lexer);
 
   char c = advance(lexer);
 

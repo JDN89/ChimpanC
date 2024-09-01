@@ -142,7 +142,7 @@ void test_monkey_source() {
                   "let add = fn(x, y) {\n"
                   "    x + y;\n"
                   "};\n"
-                  "let result = add(five, ten);\n";
+                  "let result = add(five, ten);\0";
 
   init_lexer(source, &lexer);
 
@@ -152,16 +152,16 @@ void test_monkey_source() {
       TOKEN_INT,        TOKEN_SEMICOLON,  TOKEN_LET,        TOKEN_IDENTIFIER,
       TOKEN_ASSIGN,     TOKEN_FUNCTION,   TOKEN_LPAREN,     TOKEN_IDENTIFIER,
       TOKEN_COMMA,      TOKEN_IDENTIFIER, TOKEN_RPAREN,     TOKEN_LBRACE,
-      TOKEN_IDENTIFIER, TOKEN_PLUS,       TOKEN_IDENTIFIER, TOKEN_PLUS,
-      TOKEN_IDENTIFIER, TOKEN_SEMICOLON,  TOKEN_RBRACE,     TOKEN_SEMICOLON,
-      TOKEN_LET,        TOKEN_IDENTIFIER, TOKEN_ASSIGN,     TOKEN_IDENTIFIER,
-      TOKEN_LPAREN,     TOKEN_IDENTIFIER, TOKEN_COMMA,      TOKEN_IDENTIFIER,
-      TOKEN_RPAREN,     TOKEN_SEMICOLON,  TOKEN_EOF};
+      TOKEN_IDENTIFIER, TOKEN_PLUS,       TOKEN_IDENTIFIER, TOKEN_SEMICOLON,
+      TOKEN_RBRACE,     TOKEN_SEMICOLON,  TOKEN_LET,        TOKEN_IDENTIFIER,
+      TOKEN_ASSIGN,     TOKEN_IDENTIFIER, TOKEN_LPAREN,     TOKEN_IDENTIFIER,
+      TOKEN_COMMA,      TOKEN_IDENTIFIER, TOKEN_RPAREN,     TOKEN_SEMICOLON,
+      TOKEN_EOF};
   const char *expected_literals[] = {
-      "let", "five", "=",   "5",    ";",  "let", "ten", "=",   "10",
-      ";",   "let",  "add", "=",    "fn", "(",   "x",   "y",   ")",
-      "{",   "x",    "+",   "y",    ";",  "}",   ";",   "let", "result",
-      "=",   "add",  "(",   "five", ",",  "ten", ")",   ";"};
+      "let", "five", "=", "5",   ";", "let", "ten", "=",      "10", ";",
+      "let", "add",  "=", "fn",  "(", "x",   ",",   "y",      ")",  "{",
+      "x",   "+",    "y", ";",   "}", ";",   "let", "result", "=",  "add",
+      "(",   "five", ",", "ten", ")", ";",   "\0"};
 
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
