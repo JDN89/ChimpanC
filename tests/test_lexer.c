@@ -39,13 +39,32 @@ const char *TokenTypeToString(TokenType type) {
   }
 }
 
-// Helper function to check token equality
+// ==========================
+// HELPER FUNCITONS
+// Helper function to check token equality with error reporting
 void check_token(Token token, TokenType expected_type,
                  const char *expected_literal, int expected_length) {
-  assert(token.type == expected_type);
-  assert(strncmp(token.literal, expected_literal, expected_length) == 0);
-  assert(token.length == expected_length);
+  if (token.type != expected_type) {
+    fprintf(stderr, "Error: Expected token type %s, but got %s\n",
+            TokenTypeToString(expected_type), TokenTypeToString(token.type));
+    assert(token.type == expected_type);
+  }
+
+  if (strncmp(token.literal, expected_literal, expected_length) != 0) {
+    fprintf(stderr, "Error: Expected token literal '%s', but got '%.*s'\n",
+            expected_literal, token.length, token.literal);
+    assert(strncmp(token.literal, expected_literal, expected_length) == 0);
+  }
+
+  if (token.length != expected_length) {
+    fprintf(stderr, "Error: Expected token length %d, but got %d\n",
+            expected_length, token.length);
+    assert(token.length == expected_length);
+  }
 }
+
+//============
+// TESTS
 
 void test_init_lexer() {
   char source[] = "=/0";
@@ -98,12 +117,12 @@ void test_identifier() {
 }
 
 void test_keyword() {
-  char source[] = "fun let";
+  char source[] = "fn let";
   Lexer lexer;
   init_lexer(source, &lexer);
 
   TokenType expected_types[] = {TOKEN_FUNCTION, TOKEN_LET};
-  const char *expected_literals[] = {"fun", "let"};
+  const char *expected_literals[] = {"fn", "let"};
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
   for (int i = 0; i < num_tokens; i++) {
@@ -116,7 +135,7 @@ void test_keyword() {
   printf("test_keyword passed \n");
 }
 
-void test_monkey_test() {
+void test_monkey_source() {
   Lexer lexer;
   char source[] = "let five = 5;\n"
                   "let ten = 10;\n"
@@ -139,16 +158,16 @@ void test_monkey_test() {
       TOKEN_LPAREN,     TOKEN_IDENTIFIER, TOKEN_COMMA,      TOKEN_IDENTIFIER,
       TOKEN_RPAREN,     TOKEN_SEMICOLON,  TOKEN_EOF};
   const char *expected_literals[] = {
-      "let", "five", "=",  "5",   "let", "ten", "=",      "10", "let",
-      "add", "=",    "fn", "(",   "x",   "y",   ")",      "{",  "x",
-      "+",   "y",    ";",  "}",   ";",   "let", "result", "=",  "add",
-      "(",   "five", ",",  "ten", ")",   ";"};
+      "let", "five", "=",   "5",    ";",  "let", "ten", "=",   "10",
+      ";",   "let",  "add", "=",    "fn", "(",   "x",   "y",   ")",
+      "{",   "x",    "+",   "y",    ";",  "}",   ";",   "let", "result",
+      "=",   "add",  "(",   "five", ",",  "ten", ")",   ";"};
 
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
   for (int i = 0; i < num_tokens; i++) {
     Token token = nextToken(&lexer);
-    printf("TOKEN: %s \n", TokenTypeToString(token.type));
+    printf("%d - TOKEN: %s \n", i, TokenTypeToString(token.type));
     check_token(token, expected_types[i], expected_literals[i],
                 strlen(expected_literals[i]));
     lexer.start = lexer.current;
@@ -161,7 +180,7 @@ int main() {
   test_single_char_tokens();
   test_identifier();
   test_keyword();
-  test_monkey_test();
+  test_monkey_source();
 
   printf("All tests passed.\n");
   return 0;

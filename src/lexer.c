@@ -20,7 +20,8 @@ static bool isChar(char c) {
   return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
 }
 
-static bool isDigit(char c) { return ('1' <= c && c <= '9'); }
+// TODO: add fractional support
+static bool isDigit(char c) { return ('0' <= c && c <= '9'); }
 
 static char peek(Lexer *lexer) { return lexer->current[0]; }
 
@@ -40,6 +41,7 @@ static void skipWhitespace(Lexer *lexer) {
     case ' ':
     case '\r':
     case '\t':
+    case '\n':
       advance(lexer);
       break;
     default:
@@ -49,6 +51,7 @@ static void skipWhitespace(Lexer *lexer) {
 }
 
 // NOTE: in case of let is lexer.start 'l' and lexer .current points now at 'e'
+// TODO: add support for nmbers in identifiers??
 static TokenType lookUpIdentifier(Lexer *lexer, char *word, int length,
                                   TokenType type) {
   if (lexer->current - lexer->start == length) {
@@ -101,27 +104,27 @@ Token nextToken(Lexer *lexer) {
     if (isChar(c)) {
       // how to stop
 
-      while (isChar(advance(lexer))) {
+      while (isChar(peek(lexer))) {
+        advance(lexer);
+      }
 
-        if (!isChar(peek(lexer)))
-          switch (lexer->start[0]) {
-          case 'l':
-            return makeToken(lookUpIdentifier(lexer, "let", 3, TOKEN_LET),
-                             lexer);
-          case 'f':
-            return makeToken(lookUpIdentifier(lexer, "fun", 3, TOKEN_FUNCTION),
-                             lexer);
-          default:
-            return makeToken(TOKEN_IDENTIFIER, lexer);
-          }
+      switch (lexer->start[0]) {
+      case 'l':
+        return makeToken(lookUpIdentifier(lexer, "let", 3, TOKEN_LET), lexer);
+      case 'f':
+        return makeToken(lookUpIdentifier(lexer, "fn", 2, TOKEN_FUNCTION),
+                         lexer);
+      default:
+        return makeToken(TOKEN_IDENTIFIER, lexer);
       }
     } else if (isDigit(c)) {
-      while (isDigit(advance(lexer))) {
-        if (!isDigit(peek(lexer))) {
-          return makeToken(TOKEN_INT, lexer);
-        }
+      while (isDigit(peek(lexer))) {
+        advance(lexer);
       }
-    } else {
+      return makeToken(TOKEN_INT, lexer);
+    }
+
+    else {
       return makeToken(TOKEN_ILLEGAL, lexer);
     }
   }
