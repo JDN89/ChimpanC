@@ -98,7 +98,7 @@ void test_monkey_source() {
 
   init_lexer(source, &lexer);
 
-  //TODO: expand test and source code
+  // TODO: expand test and source code
   TokenType expected_types[] = {
       TOKEN_LET,        TOKEN_IDENTIFIER, TOKEN_ASSIGN,     TOKEN_INT,
       TOKEN_SEMICOLON,  TOKEN_LET,        TOKEN_IDENTIFIER, TOKEN_ASSIGN,
@@ -112,13 +112,14 @@ void test_monkey_source() {
       TOKEN_BANG,       TOKEN_MINUS,      TOKEN_SLASH,      TOKEN_ASTERISK,
       TOKEN_INT,        TOKEN_SEMICOLON,  TOKEN_INT,        TOKEN_LT,
       TOKEN_INT,        TOKEN_GT,         TOKEN_INT,        TOKEN_SEMICOLON,
-      TOKEN_EOF};
+      TOKEN_IF,         TOKEN_LPAREN,     TOKEN_INT,        TOKEN_LT,
+      TOKEN_INT,        TOKEN_RPAREN,     TOKEN_EOF};
   const char *expected_literals[] = {
       "let", "five", "=", "5",   ";",  "let", "ten", "=",      "10", ";",
       "let", "add",  "=", "fn",  "(",  "x",   ",",   "y",      ")",  "{",
       "x",   "+",    "y", ";",   "}",  ";",   "let", "result", "=",  "add",
       "(",   "five", ",", "ten", ")",  ";",   "!",   "-",      "/",  "*",
-      "5",   ";",    "5", "<",   "10", ">",   "5",   ";",      "\0"};
+      "5",   ";",    "5", "<",   "10", ">",   "5",   ";","if","(","5","<","10",")",      "\0"};
 
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
