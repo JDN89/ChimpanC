@@ -52,7 +52,7 @@ static void skipWhitespace(Lexer *lexer) {
 
 // NOTE: in case of let is lexer.start 'l' and lexer .current points now at 'e'
 // TODO: add support for nmbers in identifiers??
-static TokenType lookUpIdentifier(Lexer *lexer, char *word, int length,
+static TokenType isKeyWord(Lexer *lexer, char *word, int length,
                                   TokenType type) {
   if (lexer->current - lexer->start == length) {
     bool isKeyWord = memcmp(word, lexer->start, length) == 0;
@@ -122,28 +122,28 @@ Token nextToken(Lexer *lexer) {
 
       switch (lexer->start[0]) {
       case 'l':
-        return makeToken(lookUpIdentifier(lexer, "let", 3, TOKEN_LET), lexer);
+        return makeToken(isKeyWord(lexer, "let", 3, TOKEN_LET), lexer);
         // TODO: expand with false
       case 'f':
         switch (lexer->start[1]) {
         case 'n':
-          return makeToken(lookUpIdentifier(lexer, "fn", 2, TOKEN_FUNCTION),
+          return makeToken(isKeyWord(lexer, "fn", 2, TOKEN_FUNCTION),
                            lexer);
         case 'a':
-          return makeToken(lookUpIdentifier(lexer, "false", 5, TOKEN_FALSE),
+          return makeToken(isKeyWord(lexer, "false", 5, TOKEN_FALSE),
                            lexer);
         default:
           return makeToken(TOKEN_IDENTIFIER, lexer);
         }
 
       case 't':
-        return makeToken(lookUpIdentifier(lexer, "true", 4, TOKEN_TRUE), lexer);
+        return makeToken(isKeyWord(lexer, "true", 4, TOKEN_TRUE), lexer);
       case 'e':
-        return makeToken(lookUpIdentifier(lexer, "else", 4, TOKEN_ELSE), lexer);
+        return makeToken(isKeyWord(lexer, "else", 4, TOKEN_ELSE), lexer);
       case 'i':
-        return makeToken(lookUpIdentifier(lexer, "if", 2, TOKEN_IF), lexer);
+        return makeToken(isKeyWord(lexer, "if", 2, TOKEN_IF), lexer);
       case 'r':
-        return makeToken(lookUpIdentifier(lexer, "return", 6, TOKEN_RETURN),
+        return makeToken(isKeyWord(lexer, "return", 6, TOKEN_RETURN),
                          lexer);
 
       default:
