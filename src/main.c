@@ -15,6 +15,8 @@ static void repl(Lexer *lexer) {
   }
   init_lexer(line, lexer);
   Token token = nextToken(lexer);
+  // TODO: add StringyFy library
+  // look at test for printing token type and token literal
   while (token.type != TOKEN_EOF) {
     printf("Token = %s", token.type);
   }

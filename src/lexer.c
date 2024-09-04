@@ -84,7 +84,7 @@ Token nextToken(Lexer *lexer) {
   switch (c) {
   case '=':
     if (peek(lexer) == '=') {
-advance(lexer);
+      advance(lexer);
       return makeToken(TOKEN_EQ, lexer);
     } else {
       return makeToken(TOKEN_ASSIGN, lexer);

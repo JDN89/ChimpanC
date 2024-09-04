@@ -98,7 +98,7 @@ void bang_test() {
   // TODO: expand test and source code
   TokenType expected_types[] = {TOKEN_NOT_EQ, TOKEN_SEMICOLON, TOKEN_EQ,
                                 TOKEN_EOF};
-  const char *expected_literals[] = {"!=", ";", "==",  "\0"};
+  const char *expected_literals[] = {"!=", ";", "==", "\0"};
 
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
