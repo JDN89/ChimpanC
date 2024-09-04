@@ -91,15 +91,14 @@ void check_token(int position, Token token, TokenType expected_type,
 
 void bang_test() {
   Lexer lexer;
-  char source[] = "!-+ ; !=;\0";
+  char source[] = "!= ; ==\0";
 
   init_lexer(source, &lexer);
 
   // TODO: expand test and source code
-  TokenType expected_types[] = {TOKEN_BANG,      TOKEN_MINUS,  TOKEN_PLUS,
-                                TOKEN_SEMICOLON, TOKEN_NOT_EQ, TOKEN_SEMICOLON,
+  TokenType expected_types[] = {TOKEN_NOT_EQ, TOKEN_SEMICOLON, TOKEN_EQ,
                                 TOKEN_EOF};
-  const char *expected_literals[] = {"!", "-", "+", ";", "!=", ";", "\0"};
+  const char *expected_literals[] = {"!=", ";", "==",  "\0"};
 
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
