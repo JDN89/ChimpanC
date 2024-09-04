@@ -80,14 +80,37 @@ void check_token(int position, Token token, TokenType expected_type,
   }
 
   if (token.length != expected_length) {
-    fprintf(stderr, "Error: Expected token length %d, but got %d\n",
-            expected_length, token.length);
+    fprintf(stderr, "Error at %d: Expected token length %d, but got %d\n",
+            position, expected_length, token.length);
     assert(token.length == expected_length);
   }
 }
 
 //============
 // TESTS
+
+void bang_test() {
+  Lexer lexer;
+  char source[] = "!-+ ; !=;\0";
+
+  init_lexer(source, &lexer);
+
+  // TODO: expand test and source code
+  TokenType expected_types[] = {TOKEN_BANG,      TOKEN_MINUS,  TOKEN_PLUS,
+                                TOKEN_SEMICOLON, TOKEN_NOT_EQ, TOKEN_SEMICOLON,
+                                TOKEN_EOF};
+  const char *expected_literals[] = {"!", "-", "+", ";", "!=", ";", "\0"};
+
+  int num_tokens = sizeof(expected_types) / sizeof(TokenType);
+
+  for (int i = 0; i < num_tokens; i++) {
+    Token token = nextToken(&lexer);
+    check_token(i, token, expected_types[i], expected_literals[i],
+                strlen(expected_literals[i]));
+    lexer.start = lexer.current;
+  }
+  printf("Bang my bug");
+}
 
 void test_monkey_source() {
   Lexer lexer;
@@ -103,7 +126,9 @@ void test_monkey_source() {
                   "return true \n"
                   "}else { \n"
                   "return false;\n"
-                  "}\0";
+                  "} \n"
+                  "10 ==10; \n"
+                  "10 !=9;  \0";
 
   init_lexer(source, &lexer);
 
@@ -125,16 +150,18 @@ void test_monkey_source() {
       TOKEN_INT,        TOKEN_RPAREN,     TOKEN_LBRACE,     TOKEN_RETURN,
       TOKEN_TRUE,       TOKEN_RBRACE,     TOKEN_ELSE,       TOKEN_LBRACE,
       TOKEN_RETURN,     TOKEN_FALSE,      TOKEN_SEMICOLON,  TOKEN_RBRACE,
-      TOKEN_EOF};
+      TOKEN_INT,        TOKEN_EQ,         TOKEN_INT,        TOKEN_SEMICOLON,
+      TOKEN_INT,        TOKEN_NOT_EQ,     TOKEN_INT,        TOKEN_EOF};
   const char *expected_literals[] = {
-      "let",  "five", "=",    "5",      ";",      "let",   "ten", "=",
-      "10",   ";",    "let",  "add",    "=",      "fn",    "(",   "x",
-      ",",    "y",    ")",    "{",      "x",      "+",     "y",   ";",
-      "}",    ";",    "let",  "result", "=",      "add",   "(",   "five",
-      ",",    "ten",  ")",    ";",      "!",      "-",     "/",   "*",
-      "5",    ";",    "5",    "<",      "10",     ">",     "5",   ";",
-      "if",   "(",    "5",    "<",      "10",     ")",     "{",   "return",
-      "true", "}",    "else", "{",      "return", "false",";", "}",   "\0"};
+      "let",    "five",   "=",    "5",  ";",    "let", "ten",    "=",     "10",
+      ";",      "let",    "add",  "=",  "fn",   "(",   "x",      ",",     "y",
+      ")",      "{",      "x",    "+",  "y",    ";",   "}",      ";",     "let",
+      "result", "=",      "add",  "(",  "five", ",",   "ten",    ")",     ";",
+      "!",      "-",      "/",    "*",  "5",    ";",   "5",      "<",     "10",
+      ">",      "5",      ";",    "if", "(",    "5",   "<",      "10",    ")",
+      "{",      "return", "true", "}",  "else", "{",   "return", "false", ";",
+      "}",      "10",     "==",   "10", ";",    "10",  "!=",     "9",     ";",
+      "\0"};
 
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
@@ -148,7 +175,8 @@ void test_monkey_source() {
 }
 
 int main() {
-  test_monkey_source();
+  /*test_monkey_source();*/
+  bang_test();
 
   printf("All tests passed.\n");
   return 0;

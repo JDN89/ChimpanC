@@ -11,6 +11,8 @@ typedef enum {
   TOKEN_IDENTIFIER,
   TOKEN_INT,
   // Operators
+  TOKEN_EQ,
+  TOKEN_NOT_EQ,
   TOKEN_ASSIGN,
   TOKEN_PLUS,
   TOKEN_MINUS,
@@ -19,6 +21,7 @@ typedef enum {
   TOKEN_SLASH,
   TOKEN_LT,
   TOKEN_GT,
+
   // Delimiters
   TOKEN_COMMA,
   TOKEN_SEMICOLON,

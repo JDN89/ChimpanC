@@ -53,7 +53,7 @@ static void skipWhitespace(Lexer *lexer) {
 // NOTE: in case of let is lexer.start 'l' and lexer .current points now at 'e'
 // TODO: add support for nmbers in identifiers??
 static TokenType isKeyWord(Lexer *lexer, char *word, int length,
-                                  TokenType type) {
+                           TokenType type) {
   if (lexer->current - lexer->start == length) {
     bool isKeyWord = memcmp(word, lexer->start, length) == 0;
     if (isKeyWord) {
@@ -83,13 +83,25 @@ Token nextToken(Lexer *lexer) {
 
   switch (c) {
   case '=':
-    return makeToken(TOKEN_ASSIGN, lexer);
+    if (peek(lexer) == '=') {
+
+      return makeToken(TOKEN_EQ, lexer);
+    } else {
+
+      return makeToken(TOKEN_ASSIGN, lexer);
+    }
   case '+':
     return makeToken(TOKEN_PLUS, lexer);
   case '-':
     return makeToken(TOKEN_MINUS, lexer);
   case '!':
-    return makeToken(TOKEN_BANG, lexer);
+    if (peek(lexer) == '=') {
+      advance(lexer);
+      return makeToken(TOKEN_NOT_EQ, lexer);
+    } else {
+      advance(lexer);
+      return makeToken(TOKEN_BANG, lexer);
+    }
   case '/':
     return makeToken(TOKEN_SLASH, lexer);
   case '*':
@@ -127,11 +139,9 @@ Token nextToken(Lexer *lexer) {
       case 'f':
         switch (lexer->start[1]) {
         case 'n':
-          return makeToken(isKeyWord(lexer, "fn", 2, TOKEN_FUNCTION),
-                           lexer);
+          return makeToken(isKeyWord(lexer, "fn", 2, TOKEN_FUNCTION), lexer);
         case 'a':
-          return makeToken(isKeyWord(lexer, "false", 5, TOKEN_FALSE),
-                           lexer);
+          return makeToken(isKeyWord(lexer, "false", 5, TOKEN_FALSE), lexer);
         default:
           return makeToken(TOKEN_IDENTIFIER, lexer);
         }
@@ -143,8 +153,7 @@ Token nextToken(Lexer *lexer) {
       case 'i':
         return makeToken(isKeyWord(lexer, "if", 2, TOKEN_IF), lexer);
       case 'r':
-        return makeToken(isKeyWord(lexer, "return", 6, TOKEN_RETURN),
-                         lexer);
+        return makeToken(isKeyWord(lexer, "return", 6, TOKEN_RETURN), lexer);
 
       default:
         return makeToken(TOKEN_IDENTIFIER, lexer);
