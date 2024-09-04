@@ -87,7 +87,6 @@ Token nextToken(Lexer *lexer) {
 
       return makeToken(TOKEN_EQ, lexer);
     } else {
-
       return makeToken(TOKEN_ASSIGN, lexer);
     }
   case '+':
@@ -99,7 +98,6 @@ Token nextToken(Lexer *lexer) {
       advance(lexer);
       return makeToken(TOKEN_NOT_EQ, lexer);
     } else {
-      advance(lexer);
       return makeToken(TOKEN_BANG, lexer);
     }
   case '/':
