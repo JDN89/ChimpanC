@@ -46,6 +46,14 @@ const char *TokenTypeToString(TokenType type) {
     return "-";
   case TOKEN_BANG:
     return "!";
+  case TOKEN_FALSE:
+    return "false";
+  case TOKEN_IF:
+    return "if";
+  case TOKEN_ELSE:
+    return "else";
+  case TOKEN_TRUE:
+    return "true";
   default:
     return "TOKEN_UNKNOWN";
   }
@@ -65,8 +73,9 @@ void check_token(int position, Token token, TokenType expected_type,
   }
 
   if (strncmp(token.literal, expected_literal, expected_length) != 0) {
-    fprintf(stderr, "Error: Expected token literal '%s', but got '%.*s'\n",
-            expected_literal, token.length, token.literal);
+    fprintf(stderr,
+            "Error at %d: Expected token literal '%s', but got '%.*s'\n",
+            position, expected_literal, token.length, token.literal);
     assert(strncmp(token.literal, expected_literal, expected_length) == 0);
   }
 
@@ -113,13 +122,19 @@ void test_monkey_source() {
       TOKEN_INT,        TOKEN_SEMICOLON,  TOKEN_INT,        TOKEN_LT,
       TOKEN_INT,        TOKEN_GT,         TOKEN_INT,        TOKEN_SEMICOLON,
       TOKEN_IF,         TOKEN_LPAREN,     TOKEN_INT,        TOKEN_LT,
-      TOKEN_INT,        TOKEN_RPAREN,     TOKEN_EOF};
+      TOKEN_INT,        TOKEN_RPAREN,     TOKEN_LBRACE,     TOKEN_RETURN,
+      TOKEN_TRUE,       TOKEN_RBRACE,     TOKEN_ELSE,       TOKEN_LBRACE,
+      TOKEN_RETURN,     TOKEN_FALSE,      TOKEN_SEMICOLON,  TOKEN_RBRACE,
+      TOKEN_EOF};
   const char *expected_literals[] = {
-      "let", "five", "=", "5",   ";",  "let", "ten", "=",      "10", ";",
-      "let", "add",  "=", "fn",  "(",  "x",   ",",   "y",      ")",  "{",
-      "x",   "+",    "y", ";",   "}",  ";",   "let", "result", "=",  "add",
-      "(",   "five", ",", "ten", ")",  ";",   "!",   "-",      "/",  "*",
-      "5",   ";",    "5", "<",   "10", ">",   "5",   ";","if","(","5","<","10",")",      "\0"};
+      "let",  "five", "=",    "5",      ";",      "let",   "ten", "=",
+      "10",   ";",    "let",  "add",    "=",      "fn",    "(",   "x",
+      ",",    "y",    ")",    "{",      "x",      "+",     "y",   ";",
+      "}",    ";",    "let",  "result", "=",      "add",   "(",   "five",
+      ",",    "ten",  ")",    ";",      "!",      "-",     "/",   "*",
+      "5",    ";",    "5",    "<",      "10",     ">",     "5",   ";",
+      "if",   "(",    "5",    "<",      "10",     ")",     "{",   "return",
+      "true", "}",    "else", "{",      "return", "false",";", "}",   "\0"};
 
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
