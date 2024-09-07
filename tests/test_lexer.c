@@ -150,7 +150,8 @@ void test_monkey_source() {
       TOKEN_TRUE,       TOKEN_RBRACE,     TOKEN_ELSE,       TOKEN_LBRACE,
       TOKEN_RETURN,     TOKEN_FALSE,      TOKEN_SEMICOLON,  TOKEN_RBRACE,
       TOKEN_INT,        TOKEN_EQ,         TOKEN_INT,        TOKEN_SEMICOLON,
-      TOKEN_INT,        TOKEN_NOT_EQ,     TOKEN_INT,        TOKEN_EOF};
+      TOKEN_INT,        TOKEN_NOT_EQ,     TOKEN_INT,        TOKEN_SEMICOLON,
+      TOKEN_EOF};
   const char *expected_literals[] = {
       "let",    "five",   "=",    "5",  ";",    "let", "ten",    "=",     "10",
       ";",      "let",    "add",  "=",  "fn",   "(",   "x",      ",",     "y",
@@ -170,12 +171,11 @@ void test_monkey_source() {
                 strlen(expected_literals[i]));
     lexer.start = lexer.current;
   }
-  printf("Return to monk source test passed.");
+  printf("Return to monk source test passed. \n");
 }
 
 int main() {
-  /*test_monkey_source();*/
-  bang_test();
+  test_monkey_source();
 
   printf("All tests passed.\n");
   return 0;
