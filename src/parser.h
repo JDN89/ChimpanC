@@ -1,4 +1,4 @@
-#ifndef PARSER_H 
+#ifndef PARSER_H
 
 #define PARSER_H
 
@@ -28,5 +28,6 @@ typedef struct {
 Parser *newParser(Parser *p, Lexer *l);
 
 Program *parseProgram();
+void getToken(Parser *p);
 
 #endif

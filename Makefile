@@ -12,7 +12,7 @@ OBJECTS = $(SOURCES:.c=.o)
 EXECUTABLE = chimp
 
 # Test source files for lexer tests
-TEST_LEXER_SOURCES = tests/test_lexer.c src/lexer.c
+TEST_LEXER_SOURCES = tests/test_lexer.c tests/test_helper_functions.c src/lexer.c
 
 # Object files for lexer tests
 TEST_LEXER_OBJECTS = $(TEST_LEXER_SOURCES:.c=.o)
@@ -21,7 +21,7 @@ TEST_LEXER_OBJECTS = $(TEST_LEXER_SOURCES:.c=.o)
 TEST_LEXER_EXECUTABLE = test_lexer
 
 # Test source files for parser tests
-TEST_PARSER_SOURCES = tests/test_parser.c src/lexer.c src/parser.c
+TEST_PARSER_SOURCES = tests/test_parser.c tests/test_helper_functions.c src/lexer.c src/parser.c
 
 # Object files for parser tests
 TEST_PARSER_OBJECTS = $(TEST_PARSER_SOURCES:.c=.o)

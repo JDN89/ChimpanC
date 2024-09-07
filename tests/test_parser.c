@@ -1,8 +1,24 @@
+#include "../src/lexer.h"
+#include "../src/parser.h"
+#include "test_helper_functions.h"
 #include <stdio.h>
 
+void test_parse_let_statement() {
 
-int main() {
+  Parser parser;
+  Lexer lexer;
 
-printf("Init test parser");
+  char source[] = " let x = 5;\n"
+                  " let y = 10;\n"
+                  "let foobar = 838383 \n";
+  init_lexer(source, &lexer);
+  newParser(&parser, &lexer);
+
+  while (parser.peekToken.type != TOKEN_EOF) {
+    fprintf(stdout, "%s  \n", TokenTypeToString(parser.curToken.type));
+    getToken(&parser);
+  }
+  fprintf(stdout, "%s  \n", TokenTypeToString(parser.curToken.type));
 }
 
+int main() { test_parse_let_statement(); }

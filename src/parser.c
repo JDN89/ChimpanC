@@ -1,7 +1,7 @@
 #include "parser.h"
 #include "lexer.h"
 
-static void getToken(Parser *p) {
+void getToken(Parser *p) {
   p->curToken = p->peekToken;
   p->peekToken = nextToken(p->l);
 }
