@@ -6,14 +6,12 @@ void getToken(Parser *p) {
   p->peekToken = nextToken(p->l);
 }
 
-Parser p;
-Parser *newParser(Parser *p, Lexer *l) {
-  p->l = l;
+Parser newParser(Lexer *l) {
+  Parser p;
+  p.l = l;
 
   // NOTE:Read two tokens, so curToken and peekToken are both set
-  getToken(p);
-  getToken(p);
+  getToken(&p);
+  getToken(&p);
   return p;
 }
-
-

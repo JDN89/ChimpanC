@@ -5,15 +5,11 @@
 
 void test_parse_let_statement() {
 
-  Parser parser;
-  Lexer lexer;
-
   char source[] = " let x = 5;\n"
                   " let y = 10;\n"
                   "let foobar = 838383 \n";
-  init_lexer(source, &lexer);
-  newParser(&parser, &lexer);
-
+  Lexer l = init_lexer(source);
+  Parser parser = newParser(&l);
   while (parser.peekToken.type != TOKEN_EOF) {
     fprintf(stdout, "%s  \n", TokenTypeToString(parser.curToken.type));
     getToken(&parser);

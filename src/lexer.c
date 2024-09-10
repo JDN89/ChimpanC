@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 
-Lexer *init_lexer(char *source, Lexer *lexer) {
-  lexer->start = source;
-  lexer->current = source;
-  return lexer;
+Lexer init_lexer(char *source) {
+  Lexer l;
+  l.start = source;
+  l.current = source;
+  return l;
 };
 
 static bool isAtEnd(Lexer *lexer) { return *lexer->current == '\0'; }
@@ -52,7 +53,7 @@ static void skipWhitespace(Lexer *lexer) {
 
 // NOTE: in case of let is lexer.start 'l' and lexer .current points now at 'e'
 static TokenType matchKeywordOrIdentifier(Lexer *lexer, char *word, int length,
-                           TokenType type) {
+                                          TokenType type) {
   if (lexer->current - lexer->start == length) {
     bool isKeyWord = memcmp(word, lexer->start, length) == 0;
     if (isKeyWord) {
@@ -131,26 +132,33 @@ Token nextToken(Lexer *lexer) {
 
       switch (lexer->start[0]) {
       case 'l':
-        return makeToken(matchKeywordOrIdentifier(lexer, "let", 3, TOKEN_LET), lexer);
+        return makeToken(matchKeywordOrIdentifier(lexer, "let", 3, TOKEN_LET),
+                         lexer);
         // TODO: expand with false
       case 'f':
         switch (lexer->start[1]) {
         case 'n':
-          return makeToken(matchKeywordOrIdentifier(lexer, "fn", 2, TOKEN_FUNCTION), lexer);
+          return makeToken(
+              matchKeywordOrIdentifier(lexer, "fn", 2, TOKEN_FUNCTION), lexer);
         case 'a':
-          return makeToken(matchKeywordOrIdentifier(lexer, "false", 5, TOKEN_FALSE), lexer);
+          return makeToken(
+              matchKeywordOrIdentifier(lexer, "false", 5, TOKEN_FALSE), lexer);
         default:
           return makeToken(TOKEN_IDENTIFIER, lexer);
         }
 
       case 't':
-        return makeToken(matchKeywordOrIdentifier(lexer, "true", 4, TOKEN_TRUE), lexer);
+        return makeToken(matchKeywordOrIdentifier(lexer, "true", 4, TOKEN_TRUE),
+                         lexer);
       case 'e':
-        return makeToken(matchKeywordOrIdentifier(lexer, "else", 4, TOKEN_ELSE), lexer);
+        return makeToken(matchKeywordOrIdentifier(lexer, "else", 4, TOKEN_ELSE),
+                         lexer);
       case 'i':
-        return makeToken(matchKeywordOrIdentifier(lexer, "if", 2, TOKEN_IF), lexer);
+        return makeToken(matchKeywordOrIdentifier(lexer, "if", 2, TOKEN_IF),
+                         lexer);
       case 'r':
-        return makeToken(matchKeywordOrIdentifier(lexer, "return", 6, TOKEN_RETURN), lexer);
+        return makeToken(
+            matchKeywordOrIdentifier(lexer, "return", 6, TOKEN_RETURN), lexer);
 
       default:
         return makeToken(TOKEN_IDENTIFIER, lexer);

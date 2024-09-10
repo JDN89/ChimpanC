@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 // ==========================
 // HELPER FUNCITONS
 
@@ -12,10 +11,9 @@
 // TESTS
 
 void bang_test() {
-  Lexer lexer;
   char source[] = "!= ; ==\0";
 
-  init_lexer(source, &lexer);
+  Lexer lexer = init_lexer(source);
 
   // TODO: expand test and source code
   TokenType expected_types[] = {TOKEN_NOT_EQ, TOKEN_SEMICOLON, TOKEN_EQ,
@@ -34,7 +32,6 @@ void bang_test() {
 }
 
 void test_monkey_source() {
-  Lexer lexer;
   char source[] = "let five = 5;\n"
                   "let ten = 10;\n"
                   "let add = fn(x, y) {\n"
@@ -51,7 +48,7 @@ void test_monkey_source() {
                   "10 ==10; \n"
                   "10 !=9;  \0";
 
-  init_lexer(source, &lexer);
+  Lexer lexer = init_lexer(source);
 
   // TODO: expand test and source code
   TokenType expected_types[] = {

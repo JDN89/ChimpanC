@@ -5,7 +5,6 @@
 
 static void repl() {
   char line[1024];
-  Lexer lexer;
 
   // Infinit loop for reading and precessing input
   for (;;) {
@@ -14,14 +13,13 @@ static void repl() {
       printf("\n");
       break;
     }
-    init_lexer(line, &lexer);
-    Token token = nextToken(&lexer);
+    Lexer l = init_lexer(line);
+    Token token = nextToken(&l);
 
     // Process and print each token until EOF
     while (token.type != TOKEN_EOF) {
-      printf("Token: Type = %s\n", tokenTypeToString(token.type)
-             );
-      token = nextToken(&lexer); // Get the next token
+      printf("Token: Type = %s\n", tokenTypeToString(token.type));
+      token = nextToken(&l); // Get the next token
     }
   }
 }
