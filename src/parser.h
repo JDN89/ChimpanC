@@ -15,19 +15,9 @@ typedef struct {
   char *value;
 } Identifier;
 
-typedef struct {
-  Token token;
-  Identifier *name;
-
-} Statement;
-
-typedef struct {
-  Statement *statement;
-} Program;
 
 Parser newParser(Lexer *l);
 
-Program *parseProgram();
 void getToken(Parser *p);
 
 #endif
