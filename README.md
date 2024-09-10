@@ -1,6 +1,16 @@
 # ChimpanC
 C Implementation of 'Writing an interpreter in GO - Thorsten Ball'
 
+## TODO
+
+source :: let 2 = 4; 
+parser :: 
+Token: Type = TOKEN_LET
+Token: Type = TOKEN_INT
+Token: Type = TOKEN_ASSIGN
+Token: Type = TOKEN_INT
+Correct that 2 is parsed as an INT when it is in the spot of an IDENTIEFER?
+
 ## Notes
 
 ### Lexer
@@ -13,10 +23,3 @@ The way we look for Keywords is different from the go version. In go we use a ma
 
 ### Parser
 
-source :: let 2 = 4; 
-parser :: 
-Token: Type = TOKEN_LET
-Token: Type = TOKEN_INT
-Token: Type = TOKEN_ASSIGN
-Token: Type = TOKEN_INT
-Correct that 2 is parsed as an INT when it is in the spot of an IDENTIEFER?
