@@ -3,6 +3,20 @@ C Implementation of 'Writing an interpreter in GO - Thorsten Ball'
 
 ## TODO
 
+parse identifier -> let statement -> sla identifier op in OBJ_VAL(copyString(token->start,token ->lenght)).lees chpater 17 en 18 van crafting interpreters en lees ook over type punning in c
+https://en.wikipedia.org/wiki/Type_punning
+https://www.youtube.com/watch?v=TsUOhPsZk6k
+
+1) read about type pruning:
+2) do like c and create a Value struct 
+3) create also an Obj struct
+4) 
+
+Store identifiers and strings in Obj 
+see how to do typreuning
+also the numbers and operators we'll store here
+
+
 source :: let 2 = 4; 
 parser :: 
 Token: Type = TOKEN_LET
