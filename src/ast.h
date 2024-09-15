@@ -1,10 +1,9 @@
 
-#include "src/lexer.h"
-#include "src/parser.h"
+#include "lexer.h"
+#include "parser.h"
 #include <stdio.h>
-#include "value.h"
 
-//NOTE: bothe epxression and STmt have to return the literal value of the token
+// NOTE: bothe epxression and STmt have to return the literal value of the token
 
 typedef struct LetStmt LetStmt;
 typedef struct Expr Expr;
@@ -30,17 +29,10 @@ typedef struct {
   size_t length;
 } Program;
 
-typedef struct String {
-  Token token;
-  Obj value;
-} Id;
-
-
 
 struct LetStmt {
-  Token token;
-  char *identifier; // TODO: wrap in value like in clox (int, string,...)
-                    // String object?
+  // Token token; Do we need pointer to OG token?
+  String *identifier; // TODO: wrap in value like in clox (int, string,...)
 };
 
 // TODO: define Expr like this and expr types
