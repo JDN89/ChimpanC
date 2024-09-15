@@ -2,6 +2,7 @@
 #include "src/lexer.h"
 #include "src/parser.h"
 #include <stdio.h>
+#include "value.h"
 
 //NOTE: bothe epxression and STmt have to return the literal value of the token
 
@@ -43,4 +44,5 @@ struct LetStmt {
 };
 
 // TODO: define Expr like this and expr types
+// TODO: cast like you did for the objstring to the correct type!!
 // TOOD:place methos for adding pushing and popping the list values

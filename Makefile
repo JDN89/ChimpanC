@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -g -Isrc
 
 # Source files for the main program
-SOURCES = src/main.c src/lexer.c src/debugger.c src/parser.c
+SOURCES = src/main.c src/lexer.c src/debugger.c src/parser.c src/ast.c
 
 # Object files for the main program
 OBJECTS = $(SOURCES:.c=.o)
@@ -12,7 +12,7 @@ OBJECTS = $(SOURCES:.c=.o)
 EXECUTABLE = chimp
 
 # Test source files for lexer tests
-TEST_LEXER_SOURCES = tests/test_lexer.c tests/test_helper_functions.c src/lexer.c
+TEST_LEXER_SOURCES = tests/test_lexer.c tests/test_helper_functions.c src/lexer.c src/ast.c
 
 # Object files for lexer tests
 TEST_LEXER_OBJECTS = $(TEST_LEXER_SOURCES:.c=.o)
