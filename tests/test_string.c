@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+//TODO: debug this test fails. Why is length nog == 4?
 void test_make_string() {
   char source[] = "let foobar";
   char target[] = "let";
