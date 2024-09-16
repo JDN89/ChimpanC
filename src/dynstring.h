@@ -6,7 +6,7 @@ typedef struct {
   char *chars;
 } String;
 
-String *makeString(char *source, int length);
+String *makeString(const char *source, int length);
  
 void freeString( String * sting);
 

@@ -1,5 +1,7 @@
 #include "parser.h"
 #include "lexer.h"
+#include "dynstring.h"
+#include "ast.h"
 
 void getToken(Parser *p) {
   p->curToken = p->peekToken;
@@ -15,3 +17,4 @@ Parser newParser(Lexer *l) {
   getToken(&p);
   return p;
 }
+

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-String *makeString(char *source, int length) {
+String * makeString(const char *source, int length) {
 
   String *string = malloc(sizeof(String));
   if (string == NULL) {
@@ -28,8 +28,8 @@ String *makeString(char *source, int length) {
 }
 
 void freeString(String *string) {
-  if (string !=NULL) {
-  free(string->chars);
-  free(string);
+  if (string != NULL) {
+    free(string->chars);
+    free(string);
   }
 }
