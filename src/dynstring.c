@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-String * makeString(const char *source, int length) {
+String *makeString(const char *source, int length) {
 
   String *string = malloc(sizeof(String));
   if (string == NULL) {

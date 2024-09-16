@@ -3,6 +3,7 @@
 #define PARSER_H
 
 #include "lexer.h"
+#include "ast.h"
 
 typedef struct {
   Lexer *l;
@@ -15,8 +16,9 @@ typedef struct {
   char *value;
 } Identifier;
 
-
 Parser newParser(Lexer *l);
+
+Program *parseProgram(Parser *p);
 
 void getToken(Parser *p);
 

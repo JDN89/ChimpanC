@@ -7,7 +7,7 @@ typedef struct {
 } String;
 
 String *makeString(const char *source, int length);
- 
-void freeString( String * sting);
+
+void freeString(String *sting);
 
 #endif

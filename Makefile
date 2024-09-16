@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -g -Isrc
 
 # Source files for the main program
-SOURCES = src/main.c src/lexer.c src/debugger.c src/parser.c src/dynstring.c
+SOURCES = src/main.c src/lexer.c src/debugger.c src/parser.c src/dynstring.c ast.c
 
 # Object files for the main program
 OBJECTS = $(SOURCES:.c=.o)

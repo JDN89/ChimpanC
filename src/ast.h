@@ -1,7 +1,6 @@
 
 #include "dynstring.h"
 #include "lexer.h"
-#include "parser.h"
 #include <stdio.h>
 
 // NOTE: bothe epxression and STmt have to return the literal value of the token
