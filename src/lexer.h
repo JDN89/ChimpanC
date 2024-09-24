@@ -48,6 +48,12 @@ typedef enum {
 // superseeds the Token lifetime.
 typedef struct {
   TokenType type;
+  //TODO: Do i need pointer to literal value for all the tokentypes? in case of let + ,... can't I just keep passing the token type?
+  // a pointer literal is standard 8 bytes.... 
+  // Can't I just pass the start of point and calculate where the next token starts? and parse the literal like that instead of moving here pointers around
+  // reference speech of andrew kelly when you reformat
+  // how can I meassure the performance and document it
+  // ALSO the way this sturct is ordered is allready not optimal 4 bytes, 8 byrtes , 4 bytes -> 24 bytes so 4 bytes wasted per token!!
   const char
       *literal; // pointer to the literal value. Better to pass pointer to the
   int length;

@@ -9,7 +9,8 @@ LetStmt createLetStmt(Token t) {
   return letStmt;
 }
 
-Program createProgram() {
+// can't we turn this into an array?
+Program  createProgram() {
   Program program;
   program.length = 0;
   program.head = NULL;

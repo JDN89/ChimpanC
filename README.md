@@ -3,27 +3,15 @@ C Implementation of 'Writing an interpreter in GO - Thorsten Ball'
 
 ## TODO
 
-parse identifier -> let statement -> sla identifier op in OBJ_VAL(copyString(token->start,token ->lenght)).lees chpater 17 en 18 van crafting interpreters en lees ook over type punning in c
-https://en.wikipedia.org/wiki/Type_punning
-https://www.youtube.com/watch?v=TsUOhPsZk6k
-
-1) read about type pruning:
-2) do like c and create a Value struct 
-3) create also an Obj struct
-4) 
-
-Store identifiers and strings in Obj 
-see how to do typreuning
-also the numbers and operators we'll store here
+- parseLetStatment
+- write test
+- simplify code and improve memeory usage:
+    - Do I need to create a literal for all the tokenTypes? -> LET will always be let?
+    - Do I even need to store a pointer? can't I just store the starting position of the thing in the source code and then callculate the offset of the start of the identifier, literal, number and the start of the next token?
+        - int instead of pointer allready saves 4 bytes!
 
 
-source :: let 2 = 4; 
-parser :: 
-Token: Type = TOKEN_LET
-Token: Type = TOKEN_INT
-Token: Type = TOKEN_ASSIGN
-Token: Type = TOKEN_INT
-Correct that 2 is parsed as an INT when it is in the spot of an IDENTIEFER?
+
 
 ## Notes
 

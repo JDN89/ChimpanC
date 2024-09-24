@@ -18,7 +18,7 @@ typedef struct {
 
 Parser newParser(Lexer *l);
 
-Program *parseProgram(Parser *p);
+Program parseProgram(Parser *p);
 
 void getToken(Parser *p);
 
