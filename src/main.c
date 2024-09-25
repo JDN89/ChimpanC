@@ -1,5 +1,7 @@
+#include "ast.h"
 #include "debugger.h"
 #include "lexer.h"
+#include "parser.h"
 #include <pwd.h>
 #include <stdio.h>
 
@@ -14,13 +16,20 @@ static void repl() {
       break;
     }
     Lexer l = init_lexer(line);
-    Token token = nextToken(&l);
+    Parser p = newParser(&l);
+    Program program = parseProgram(&p);
+    size_t i = 0;
+    Stmt *currentStmt = program.head;
+    while (i < program.length && currentStmt != NULL) {
+      if (IS_LET_STMT(currentStmt)) {
 
-    // Process and print each token until EOF
-    while (token.type != TOKEN_EOF) {
-      printf("Token: Type = %s\n", tokenTypeToString(token.type));
-      token = nextToken(&l); // Get the next token
+        printf("%s \n",
+               AS_LET_STMT(*currentStmt)
+                   ->identifier->chars); // Assuming identifier is a String type
+      }
     }
+    freeProgram(&program);
+    break;
   }
 }
 

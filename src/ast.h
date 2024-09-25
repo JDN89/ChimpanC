@@ -45,5 +45,5 @@ LetStmt createLetStmt(Token token);
 Program createProgram();
 void pushtStmt(Program *program, Stmt *stmt);
 Stmt *popStmt(Program *program);
-
+void freeProgram(Program *prog) ;
 #endif

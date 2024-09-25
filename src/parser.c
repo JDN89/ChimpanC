@@ -23,7 +23,7 @@ Parser newParser(Lexer *l) {
   return p;
 };
 
-LetStmt * parseLetStatement(Parser *p) {
+LetStmt *parseLetStatement(Parser *p) {
   LetStmt *stmt = malloc(sizeof(LetStmt));
   if (p->peekToken.type == TOKEN_IDENTIFIER) {
 
@@ -38,52 +38,42 @@ LetStmt * parseLetStatement(Parser *p) {
   return stmt;
 }
 
-
 Stmt *parseStatement(Parser *p) {
-    // Dynamically allocate memory for Stmt
-    Stmt *stmt = malloc(sizeof(Stmt));
-    if (stmt == NULL) {
-        fprintf(stderr, "Memory allocation failed for Stmt\n");
-        exit(EXIT_FAILURE);
-    }
+  // Dynamically allocate memory for Stmt
+  Stmt *stmt = malloc(sizeof(Stmt));
+  if (stmt == NULL) {
+    fprintf(stderr, "Memory allocation failed for Stmt\n");
+    exit(EXIT_FAILURE);
+  }
 
-    switch (p->curToken.type) {
-    case TOKEN_LET: {
-        LetStmt *letStmt = parseLetStatement(p);
-        if (letStmt != NULL) {
-            stmt->type = LET_STATEMENT;  // Set the type of the statement
-            stmt->as.letStmt = letStmt;   // Assign the parsed let statement
-        } else {
-            free(stmt);  // Free the statement if parsing failed
-            return NULL; // Return NULL if parsing failed
-        }
-        break;
+  switch (p->peekToken.type) {
+  case TOKEN_LET: {
+    LetStmt *letStmt = parseLetStatement(p);
+    if (letStmt != NULL) {
+      stmt->type = LET_STATEMENT; // Set the type of the statement
+      stmt->as.letStmt = letStmt; // Assign the parsed let statement
+    } else {
+      free(stmt);  // Free the statement if parsing failed
+      return NULL; // Return NULL if parsing failed
     }
-    default:
-        printf("Unexpected token: %d\n", p->curToken.type);
-        free(stmt);  // Free memory if the statement could not be parsed
-        return NULL; // Return NULL for unexpected token
-    }
+    break;
+  }
+  default:
+    printf("Unexpected token: %d\n", p->curToken.type);
+    free(stmt);  // Free memory if the statement could not be parsed
+    return NULL; // Return NULL for unexpected token
+  }
 
-    return stmt; // Return the dynamically allocated statement
+  return stmt; // Return the dynamically allocated statement
 }
 
 Program parseProgram(Parser *p) {
   Program prog = createProgram();
-  while (p->curToken.type != TOKEN_EOF) {
+  // NOTE: we stop looping in parseLetStmt and probably everywhere when curToken
+  // = ';'
+  while (p->peekToken.type != TOKEN_EOF) {
     Stmt *stmt = parseStatement(p);
     pushtStmt(&prog, stmt);
-  }
-
-  size_t i = 0;
-  Stmt *currentStmt = prog.head;
-  while (i < prog.length && currentStmt != NULL) {
-    if (IS_LET_STMT(currentStmt)) {
-
-      printf("%s \n",
-             AS_LET_STMT(*currentStmt)
-                 ->identifier->chars); // Assuming identifier is a String type
-    }
   }
 
   return prog;

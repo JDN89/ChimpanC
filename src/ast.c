@@ -20,7 +20,6 @@ Program createProgram() {
 }
 
 
-
 void pushtStmt(Program *program, Stmt *stmt) {
   if (program->head == NULL) {
     program->head = stmt;
@@ -33,4 +32,32 @@ void pushtStmt(Program *program, Stmt *stmt) {
     program->tail->next = NULL;
   }
   program->length++;
+}
+
+void freeLetStmt(LetStmt *stmt) {
+  if (stmt != NULL) {
+    free(stmt);
+  }
+}
+
+void freeStmt(Stmt *stmt) {
+  if (stmt != NULL) {
+    if (IS_LET_STMT(stmt)) {
+      freeLetStmt(stmt->as.letStmt);
+    }
+  }
+  free(stmt);
+}
+
+void freeProgram(Program *prog) {
+    Stmt *current = prog->head;
+    while (current != NULL) {
+        Stmt *next = current->next;
+        freeStmt(current);  // Free the current statement
+        current = next;     // Move to the next statement
+    }
+    prog->head = NULL;
+    prog->tail = NULL;
+    prog->length = 0;
+  printf("Program freed!! \n");
 }
