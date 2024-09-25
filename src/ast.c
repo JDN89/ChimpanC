@@ -1,6 +1,7 @@
 #include "ast.h"
 #include "dynstring.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 LetStmt createLetStmt(Token t) {
   LetStmt letStmt;
@@ -10,7 +11,7 @@ LetStmt createLetStmt(Token t) {
 }
 
 // can't we turn this into an array?
-Program  createProgram() {
+Program createProgram() {
   Program program;
   program.length = 0;
   program.head = NULL;
@@ -18,28 +19,13 @@ Program  createProgram() {
   return program;
 }
 
-Stmt *createStmt(StatementType type, void *specificStatement) {
-  Stmt *stmt;
-  stmt->type = type;
-  switch (type) {
 
-  case LET_STATEMENT:
-
-    stmt->as.letStmt = (LetStmt *)specificStatement, stmt->next = NULL;
-
-  default:
-    fprintf(stderr, "statment not supported!");
-  }
-
-  return stmt;
-}
 
 void pushtStmt(Program *program, Stmt *stmt) {
   if (program->head == NULL) {
     program->head = stmt;
     program->tail = stmt;
   } else {
-    Stmt *tmp;
     // NOTE: the current tail should point to stmt
     program->tail->next = stmt;
     // NOTE: set tail to stmt

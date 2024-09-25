@@ -1,3 +1,5 @@
+#ifndef AST_H
+#define AST_H
 
 #include "dynstring.h"
 #include "lexer.h"
@@ -8,8 +10,8 @@
 typedef struct LetStmt LetStmt;
 typedef struct Expr Expr;
 
-#define IS_LET_STMT(stmt) ((stmt)type == LET_STATEMENT);
-#define AS_LET_STMT(stmt) ((stmt).as.letStmt);
+#define IS_LET_STMT(stmt) ((stmt)->type == LET_STATEMENT)
+#define AS_LET_STMT(stmt) ((stmt).as.letStmt)
 #define CREATE_STMT_LET(stmt) ((Stmt){LET_STATEMENT, as.letStmt = &stmt})
 
 typedef enum {
@@ -40,7 +42,8 @@ struct LetStmt {
 };
 
 LetStmt createLetStmt(Token token);
-Stmt *createStmt(StatementType type, void *specificStatement);
 Program createProgram();
 void pushtStmt(Program *program, Stmt *stmt);
 Stmt *popStmt(Program *program);
+
+#endif
