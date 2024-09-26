@@ -24,10 +24,9 @@ Parser newParser(Lexer *l) {
 };
 
 LetStmt *parseLetStatement(Parser *p) {
-  LetStmt *stmt = malloc(sizeof(LetStmt));
+  LetStmt *letStmt = malloc(sizeof(LetStmt));
   if (p->peekToken.type == TOKEN_IDENTIFIER) {
-
-    createLetStmt(p->peekToken);
+    letStmt->identifier = makeString(p->peekToken.literal, p->peekToken.length);
   } else {
     printf("Expected LET token but got: %d", p->curToken.type);
   }
@@ -35,7 +34,7 @@ LetStmt *parseLetStatement(Parser *p) {
   while (p->curToken.type != TOKEN_SEMICOLON) {
     getToken(p);
   }
-  return stmt;
+  return letStmt;
 }
 
 Stmt *parseStatement(Parser *p) {
@@ -46,7 +45,7 @@ Stmt *parseStatement(Parser *p) {
     exit(EXIT_FAILURE);
   }
 
-  switch (p->peekToken.type) {
+  switch (p->curToken.type) {
   case TOKEN_LET: {
     LetStmt *letStmt = parseLetStatement(p);
     if (letStmt != NULL) {
@@ -59,7 +58,7 @@ Stmt *parseStatement(Parser *p) {
     break;
   }
   default:
-    printf("Unexpected token: %d\n", p->curToken.type);
+    printf("Unexpected token: %s\n", p->curToken.literal);
     free(stmt);  // Free memory if the statement could not be parsed
     return NULL; // Return NULL for unexpected token
   }

@@ -1,16 +1,8 @@
 #include "ast.h"
-#include "dynstring.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-LetStmt createLetStmt(Token t) {
-  LetStmt letStmt;
-
-  letStmt.identifier = makeString(t.literal, t.length);
-  return letStmt;
-}
-
-// can't we turn this into an array?
+// TODO: turn into dynamic array and see if this goes Vrooom
 Program createProgram() {
   Program program;
   program.length = 0;
@@ -18,7 +10,6 @@ Program createProgram() {
   program.tail = NULL;
   return program;
 }
-
 
 void pushtStmt(Program *program, Stmt *stmt) {
   if (program->head == NULL) {
@@ -50,14 +41,14 @@ void freeStmt(Stmt *stmt) {
 }
 
 void freeProgram(Program *prog) {
-    Stmt *current = prog->head;
-    while (current != NULL) {
-        Stmt *next = current->next;
-        freeStmt(current);  // Free the current statement
-        current = next;     // Move to the next statement
-    }
-    prog->head = NULL;
-    prog->tail = NULL;
-    prog->length = 0;
+  Stmt *current = prog->head;
+  while (current != NULL) {
+    Stmt *next = current->next;
+    freeStmt(current); // Free the current statement
+    current = next;    // Move to the next statement
+  }
+  prog->head = NULL;
+  prog->tail = NULL;
+  prog->length = 0;
   printf("Program freed!! \n");
 }

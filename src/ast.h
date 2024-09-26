@@ -41,7 +41,7 @@ struct LetStmt {
   String *identifier; // TODO: wrap in value like in clox (int, string,...)
 };
 
-LetStmt createLetStmt(Token token);
+LetStmt *createLetStmt(Token token);
 Program createProgram();
 void pushtStmt(Program *program, Stmt *stmt);
 Stmt *popStmt(Program *program);

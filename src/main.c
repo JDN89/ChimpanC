@@ -21,11 +21,12 @@ static void repl() {
     size_t i = 0;
     Stmt *currentStmt = program.head;
     while (i < program.length && currentStmt != NULL) {
-      if (IS_LET_STMT(currentStmt)) {
-
-        printf("%s \n",
-               AS_LET_STMT(*currentStmt)
-                   ->identifier->chars); // Assuming identifier is a String type
+      char *write = currentStmt->as.letStmt->identifier->chars;
+      printf("%s \n", write);
+      if (program.head->next != NULL && IS_LET_STMT(currentStmt)) {
+        currentStmt = program.head->next;
+      } else {
+        break;
       }
     }
     freeProgram(&program);
