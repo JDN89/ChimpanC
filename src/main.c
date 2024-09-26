@@ -18,17 +18,15 @@ static void repl() {
     Lexer l = init_lexer(line);
     Parser p = newParser(&l);
     Program program = parseProgram(&p);
-    size_t i = 0;
-    Stmt *currentStmt = program.head;
-    while (i < program.length && currentStmt != NULL) {
-      char *write = currentStmt->as.letStmt->identifier->chars;
-      printf("%s \n", write);
-      if (program.head->next != NULL && IS_LET_STMT(currentStmt)) {
-        currentStmt = program.head->next;
-      } else {
-        break;
+
+    for (Stmt *currentStmt = program.head; currentStmt != NULL;
+         currentStmt = program.head->next) {
+      if (IS_LET_STMT(currentStmt)) {
+        char *write = currentStmt->as.letStmt->identifier->chars;
+        printf("%s\n", write);
       }
     }
+
     freeProgram(&program);
     break;
   }
