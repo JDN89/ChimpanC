@@ -51,31 +51,34 @@ LetStmt *parseLetStatement(Parser *p) {
 }
 
 Stmt *parseStatement(Parser *p) {
-  // Dynamically allocate memory for Stmt
+
   Stmt *stmt = malloc(sizeof(Stmt));
+
   if (stmt == NULL) {
     fprintf(stderr, "Memory allocation failed for Stmt\n");
     exit(EXIT_FAILURE);
   }
+
   switch (p->curToken.type) {
+
   case TOKEN_LET: {
     LetStmt *letStmt = parseLetStatement(p);
     if (letStmt != NULL) {
-      stmt->type = LET_STATEMENT; // Set the type of the statement
-      stmt->as.letStmt = letStmt; // Assign the parsed let statement
+      stmt->type = LET_STATEMENT;
+      stmt->as.letStmt = letStmt;
     } else {
-      free(stmt);  // Free the statement if parsing failed
-      return NULL; // Return NULL if parsing failed
+      free(stmt);
+      return NULL;
     }
     break;
   }
   default:
     printf("Unexpected token: %s\n", p->curToken.literal);
-    free(stmt);  // Free memory if the statement could not be parsed
-    return NULL; // Return NULL for unexpected token
+    free(stmt);
+    return NULL;
   }
 
-  return stmt; // Return the dynamically allocated statement
+  return stmt;
 }
 
 Program parseProgram(Parser *p) {
