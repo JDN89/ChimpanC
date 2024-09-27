@@ -1,13 +1,11 @@
 #include "parser.h"
 #include "ast.h"
 #include "lexer.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 // TODO: convert program to a dynamic array of AST nodes
-// simplify the code a lot!! espicialy the creation of statments seems
-// convoluted
-
 void getToken(Parser *p) {
   p->curToken = p->peekToken;
   p->peekToken = nextToken(p->l);
@@ -23,12 +21,27 @@ Parser newParser(Lexer *l) {
   return p;
 };
 
+bool expectPeekToken(Parser *p, TokenType token) {
+  if (p->peekToken.type == token) {
+    getToken(p);
+    return true;
+  } else
+    return false;
+}
+
 LetStmt *parseLetStatement(Parser *p) {
   LetStmt *letStmt = malloc(sizeof(LetStmt));
-  if (p->peekToken.type == TOKEN_IDENTIFIER) {
-    letStmt->identifier = makeString(p->peekToken.literal, p->peekToken.length);
-  } else {
-    printf("Expected LET token but got: %d", p->curToken.type);
+
+  if (!expectPeekToken(p, TOKEN_IDENTIFIER)) {
+    fprintf(stderr, "Expected TOKEN_IDENTIFIER \n");
+    exit(EXIT_FAILURE);
+  }
+
+  letStmt->identifier = makeString(p->peekToken.literal, p->peekToken.length);
+
+  if (!expectPeekToken(p, TOKEN_ASSIGN)) {
+    fprintf(stderr, "Expected TOKEN_ASSIGN \n");
+    exit(EXIT_FAILURE);
   }
 
   while (p->curToken.type != TOKEN_SEMICOLON) {
@@ -44,7 +57,6 @@ Stmt *parseStatement(Parser *p) {
     fprintf(stderr, "Memory allocation failed for Stmt\n");
     exit(EXIT_FAILURE);
   }
-
   switch (p->curToken.type) {
   case TOKEN_LET: {
     LetStmt *letStmt = parseLetStatement(p);
