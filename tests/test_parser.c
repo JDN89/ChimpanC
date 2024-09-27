@@ -11,10 +11,10 @@ void test_parse_let_statement() {
   Lexer l = init_lexer(source);
   Parser parser = newParser(&l);
   while (parser.peekToken.type != TOKEN_EOF) {
-    fprintf(stdout, "%s  \n", TokenTypeToString(parser.curToken.type));
+    fprintf(stdout, "%s  \n", tokenTypeToString(parser.curToken.type));
     getToken(&parser);
   }
-  fprintf(stdout, "%s  \n", TokenTypeToString(parser.curToken.type));
+  fprintf(stdout, "%s  \n", tokenTypeToString(parser.curToken.type));
 }
 
 int main() { test_parse_let_statement(); }

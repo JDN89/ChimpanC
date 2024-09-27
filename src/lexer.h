@@ -4,6 +4,7 @@
 // NOTE: Clang drops enum value names in the top namespace. TokenType EOF would
 // conflict with EOF defined in <stdio.h>. That's why we have to prepend them
 // with Token_
+
 typedef enum {
   TOKEN_ILLEGAL,
   TOKEN_EOF,
@@ -67,5 +68,6 @@ typedef struct {
 Lexer init_lexer(char *source);
 Token nextToken(Lexer *lexer);
 
+char *tokenTypeToString(TokenType type);
 
 #endif

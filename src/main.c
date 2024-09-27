@@ -1,9 +1,9 @@
 #include "ast.h"
-#include "debugger.h"
 #include "lexer.h"
 #include "parser.h"
 #include <pwd.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 static void repl() {
   char line[1024];
@@ -28,6 +28,9 @@ static void repl() {
     }
 
     freeProgram(&program);
+
+    // free the errors
+    free(p.errors);
     break;
   }
 }

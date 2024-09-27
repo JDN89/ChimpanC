@@ -18,21 +18,39 @@ Parser newParser(Lexer *l) {
   // NOTE:Read two tokens, so curToken and peekToken are both set
   getToken(&p);
   getToken(&p);
+  p.errors = NULL;
+  p.errorCount = 0;
+
   return p;
 };
 
-bool expectPeekToken(Parser *p, TokenType token) {
-  if (p->peekToken.type == token) {
+
+// TODO: createUnwindErrors
+
+void peekError(Parser *p, char *expected, char *got) {
+  char *msg = malloc(256 * sizeof(char));
+  snprintf(msg, 256, "Expected token %s, but got %s \n", expected, got);
+  p->errorCount++;
+  p->errors = realloc(p->errors, p->errorCount * sizeof(char));
+  p->errors[p->errorCount - 1] = *msg;
+}
+
+bool expectPeekToken(Parser *p, TokenType ttype) {
+  if (p->peekToken.type == ttype) {
     getToken(p);
     return true;
   } else
-    return false;
+
+    peekError(p, tokenTypeToString(ttype),
+              tokenTypeToString(p->peekToken.type));
+  return false;
 }
 
 LetStmt *parseLetStatement(Parser *p) {
   LetStmt *letStmt = malloc(sizeof(LetStmt));
 
   if (!expectPeekToken(p, TOKEN_IDENTIFIER)) {
+
     fprintf(stderr, "Expected TOKEN_IDENTIFIER \n");
     exit(EXIT_FAILURE);
   }
@@ -73,9 +91,9 @@ Stmt *parseStatement(Parser *p) {
     break;
   }
   default:
-    printf("Unexpected token: %s\n", p->curToken.literal);
+    printf("Unexpected token: %s\n", tokenTypeToString(p->curToken.type));
     free(stmt);
-    return NULL;
+    exit(EXIT_FAILURE);
   }
 
   return stmt;

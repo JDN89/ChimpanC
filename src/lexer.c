@@ -1,7 +1,62 @@
 #include "lexer.h"
 #include <stdbool.h>
-#include <stdio.h>
 #include <string.h>
+
+// HELPER METHOD for printing enum values of TokenType
+char *tokenTypeToString(TokenType type) {
+  switch (type) {
+  case TOKEN_ILLEGAL:
+    return "TOKEN_ILLEGAL";
+  case TOKEN_EOF:
+    return "TOKEN_EOF";
+  case TOKEN_IDENTIFIER:
+    return "TOKEN_IDENTIFIER";
+  case TOKEN_INT:
+    return "TOKEN_INT";
+  case TOKEN_ASSIGN:
+    return "TOKEN_ASSIGN";
+  case TOKEN_PLUS:
+    return "TOKEN_PLUS";
+  case TOKEN_COMMA:
+    return "TOKEN_COMMA";
+  case TOKEN_SEMICOLON:
+    return "TOKEN_SEMICOLON";
+  case TOKEN_LPAREN:
+    return "TOKEN_LPAREN";
+  case TOKEN_RPAREN:
+    return "TOKEN_RPAREN";
+  case TOKEN_LBRACE:
+    return "TOKEN_LBRACE";
+  case TOKEN_RBRACE:
+    return "TOKEN_RBRACE";
+  case TOKEN_FUNCTION:
+    return "TOKEN_FUNCTION";
+  case TOKEN_LET:
+    return "TOKEN_LET";
+  case TOKEN_GT:
+    return ">";
+  case TOKEN_LT:
+    return "<";
+  case TOKEN_ASTERISK:
+    return "*";
+  case TOKEN_SLASH:
+    return "/";
+  case TOKEN_MINUS:
+    return "-";
+  case TOKEN_BANG:
+    return "!";
+  case TOKEN_FALSE:
+    return "false";
+  case TOKEN_IF:
+    return "if";
+  case TOKEN_ELSE:
+    return "else";
+  case TOKEN_TRUE:
+    return "true";
+  default:
+    return "TOKEN_UNKNOWN";
+  }
+}
 
 Lexer init_lexer(char *source) {
   Lexer l;

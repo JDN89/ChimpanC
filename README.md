@@ -3,7 +3,8 @@ C Implementation of 'Writing an interpreter in GO - Thorsten Ball'
 
 ## TODO
 
-- parseLetStatment
+- unwind the errors in case of errors before exiting
+- parse return statment
 - write test
 - simplify code and improve memeory usage:
     - Do I need to create a literal for all the tokenTypes? -> LET will always be let?

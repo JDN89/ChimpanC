@@ -2,13 +2,15 @@
 
 #define PARSER_H
 
-#include "lexer.h"
 #include "ast.h"
+#include "lexer.h"
 
 typedef struct {
   Lexer *l;
   Token curToken;
   Token peekToken;
+  char *errors;
+  int errorCount;
 } Parser;
 
 typedef struct {
@@ -21,5 +23,6 @@ Parser newParser(Lexer *l);
 Program parseProgram(Parser *p);
 
 void getToken(Parser *p);
+
 
 #endif

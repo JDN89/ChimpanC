@@ -11,6 +11,9 @@ Program createProgram() {
   return program;
 }
 
+//TODO: place creation of letstatemets etc in ast file...
+//
+
 void pushtStmt(Program *program, Stmt *stmt) {
   if (program->head == NULL) {
     program->head = stmt;
