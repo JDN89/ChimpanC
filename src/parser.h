@@ -9,8 +9,8 @@
 
 typedef struct {
   Lexer *l;
-  Token curToken;
-  Token peekToken;
+  Token ct;
+  Token pt;
   char *errors[ERROR_SIZE];
   int errorCount;
 } Parser;

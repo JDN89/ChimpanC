@@ -53,6 +53,8 @@ char *tokenTypeToString(TokenType type) {
     return "else";
   case TOKEN_TRUE:
     return "true";
+    case TOKEN_RETURN:
+    return "TOKEN_RETURN";
   default:
     return "TOKEN_UNKNOWN";
   }

@@ -7,8 +7,8 @@
 
 // TODO: convert program to a dynamic array of AST nodes
 void getToken(Parser *p) {
-  p->curToken = p->peekToken;
-  p->peekToken = nextToken(p->l);
+  p->ct = p->pt;
+  p->pt = nextToken(p->l);
 }
 
 Parser newParser(Lexer *l) {
@@ -42,12 +42,12 @@ void freeParserErrors(Parser *p) {
 }
 
 bool expectPeekToken(Parser *p, TokenType ttype) {
-  if (p->peekToken.type == ttype) {
+  if (p->pt.type == ttype) {
     getToken(p);
     return true;
   } else
     peekError(p, tokenTypeToString(ttype),
-              tokenTypeToString(p->peekToken.type));
+              tokenTypeToString(p->pt.type));
   return false;
 }
 
@@ -59,31 +59,28 @@ LetStmt *parseLetStatement(Parser *p) {
     exit(EXIT_FAILURE);
   }
 
-  letStmt->identifier = makeString(p->peekToken.literal, p->peekToken.length);
+  letStmt->identifier = makeString(p->pt.literal, p->pt.length);
 
   if (!expectPeekToken(p, TOKEN_ASSIGN)) {
     freeParserErrors(p);
     exit(EXIT_FAILURE);
   }
 
-  while (p->curToken.type != TOKEN_SEMICOLON) {
+  while (p->ct.type != TOKEN_SEMICOLON) {
     getToken(p);
   }
   return letStmt;
 }
 
-RtSt *parseReturnStatement(Parser *p) {
-  RtSt *returnStatement = malloc(sizeof(RtSt));
+ReturnStatement *parseReturnStatement(Parser *p) {
+  ReturnStatement *returnStatement = malloc(sizeof(ReturnStatement));
   if (returnStatement == NULL) {
 
     fprintf(stderr, "Memory allocation failed for ReturnStatement\n");
   }
-  if (!expectPeekToken(p, TOKEN_RETURN)) {
-    freeParserErrors(p);
-    exit(EXIT_FAILURE);
-  }
+  getToken(p);
   returnStatement->type = TOKEN_RETURN;
-  while (p->curToken.type != TOKEN_SEMICOLON) {
+  while (p->ct.type != TOKEN_SEMICOLON) {
     getToken(p);
   }
   return returnStatement;
@@ -98,7 +95,7 @@ Stmt *parseStatement(Parser *p) {
     exit(EXIT_FAILURE);
   }
 
-  switch (p->curToken.type) {
+  switch (p->ct.type) {
 
   case TOKEN_LET: {
     LetStmt *letStmt = parseLetStatement(p);
@@ -112,9 +109,19 @@ Stmt *parseStatement(Parser *p) {
     break;
   }
   case TOKEN_RETURN: {
+    ReturnStatement *returnStatement = parseReturnStatement(p);
+    if (returnStatement != NULL) {
+      stmt->type = RETURN_STATEMENT;
+      stmt->as.returnStmt = returnStatement;
+    } else {
+      free(stmt);
+      return NULL;
+    }
+    break;
   }
   default:
-    printf("Unexpected token: %s in: %s\n", tokenTypeToString(p->curToken.type),p->curToken.literal);
+    printf("Unexpected token: %s in: %s\n", tokenTypeToString(p->ct.type),
+           p->ct.literal);
     free(stmt);
     exit(EXIT_FAILURE);
   }
@@ -126,7 +133,7 @@ Program parseProgram(Parser *p) {
   Program prog = createProgram();
   // NOTE: we stop looping in parseLetStmt and probably everywhere when curToken
   // = ';'
-  while (p->peekToken.type != TOKEN_EOF) {
+  while (p->pt.type != TOKEN_EOF) {
     Stmt *stmt = parseStatement(p);
     pushtStmt(&prog, stmt);
   }

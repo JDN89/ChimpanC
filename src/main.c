@@ -21,9 +21,17 @@ static void repl() {
 
     for (Stmt *currentStmt = program.head; currentStmt != NULL;
          currentStmt = program.head->next) {
-      if (IS_LET_STMT(currentStmt)) {
-        char *write = currentStmt->as.letStmt->identifier->chars;
+      switch (currentStmt->type) {
+
+      case LET_STATEMENT: {
+        char *write = (char* )currentStmt->as.letStmt->identifier->chars;
         printf("%s\n", write);
+          break;
+      }
+      case RETURN_STATEMENT:
+        printf("Return statement %s \n",
+               tokenTypeToString(currentStmt->as.returnStmt->type));
+        break;
       }
     }
 

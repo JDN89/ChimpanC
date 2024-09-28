@@ -25,13 +25,14 @@ typedef struct {
 
 typedef struct {
   TokenType type;
-} RtSt;
+} ReturnStatement;
 
 // NOTE: wrapper for type and pointer to impl of specific statment
 typedef struct Stmt {
   StatementType type;
   union {
     LetStmt *letStmt;
+    ReturnStatement *returnStmt;
   } as;
   struct Stmt *next;
 } Stmt;
