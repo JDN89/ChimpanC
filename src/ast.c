@@ -11,7 +11,7 @@ Program createProgram() {
   return program;
 }
 
-//TODO: place creation of letstatemets etc in ast file...
+// TODO: place creation of letstatemets etc in ast file...
 //
 
 void pushtStmt(Program *program, Stmt *stmt) {
@@ -28,8 +28,15 @@ void pushtStmt(Program *program, Stmt *stmt) {
   program->length++;
 }
 
+void freeIdentifier(Identifier *identifier) {
+  if (identifier != NULL) {
+    free(identifier->value);
+    free(identifier);
+  }
+}
 void freeLetStmt(LetStmt *stmt) {
   if (stmt != NULL) {
+    freeIdentifier(stmt->identifier);
     free(stmt);
   }
 }

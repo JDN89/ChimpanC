@@ -1,7 +1,6 @@
 #ifndef AST_H
 #define AST_H
 
-#include "dynstring.h"
 #include "lexer.h"
 #include <stdio.h>
 
@@ -16,11 +15,16 @@ typedef enum {
   RETURN_STATEMENT,
 } StatementType;
 
-typedef enum { Ident = 0, Operator } ExprType;
+// TODO: Do we need the token type here? we can infer it wil be identifer... and
+// do we need to knop the length here?
+typedef struct {
+  TokenType ttype;
+  int length;
+  char *value;
+} Identifier;
 
 typedef struct {
-  // Token token; Do we need pointer to OG token?
-  String *identifier; // TODO: wrap in value like in clox (int, string,...)
+  Identifier *identifier;
 } LetStmt;
 
 typedef struct {
@@ -48,4 +52,6 @@ Program createProgram();
 void pushtStmt(Program *program, Stmt *stmt);
 Stmt *popStmt(Program *program);
 void freeProgram(Program *prog);
+void freeIdentifier(Identifier *identifier);
+
 #endif

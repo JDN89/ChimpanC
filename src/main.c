@@ -24,7 +24,7 @@ static void repl() {
       switch (currentStmt->type) {
 
       case LET_STATEMENT: {
-        char *write = (char* )currentStmt->as.letStmt->identifier->chars;
+        char *write = (char* )currentStmt->as.letStmt->identifier->value;
         printf("%s\n", write);
           break;
       }

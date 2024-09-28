@@ -15,11 +15,6 @@ typedef struct {
   int errorCount;
 } Parser;
 
-typedef struct {
-  Token token;
-  char *value;
-} Identifier;
-
 Parser newParser(Lexer *l);
 
 Program parseProgram(Parser *p);
@@ -27,6 +22,5 @@ Program parseProgram(Parser *p);
 void getToken(Parser *p);
 
 void freeParserErrors(Parser *p);
-
 
 #endif

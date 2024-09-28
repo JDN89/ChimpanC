@@ -4,6 +4,17 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+  LOWEST,
+  EQUALS,
+  LESSGREATER,
+  SUM,
+  PRODUCT,
+  PREFIC,
+  CALL
+} Precedece;
 
 // TODO: convert program to a dynamic array of AST nodes
 void getToken(Parser *p) {
@@ -46,10 +57,32 @@ bool expectPeekToken(Parser *p, TokenType ttype) {
     getToken(p);
     return true;
   } else
-    peekError(p, tokenTypeToString(ttype),
-              tokenTypeToString(p->pt.type));
+    peekError(p, tokenTypeToString(ttype), tokenTypeToString(p->pt.type));
   return false;
 }
+
+Identifier *parserIdentifier(const char *source, int length) {
+  Identifier *identifier = malloc(sizeof(Identifier));
+  if (identifier == NULL) {
+    fprintf(stderr, "Failed to allocate memory for Identifier struct. \n");
+    exit(EXIT_FAILURE);
+  }
+  char *heapchars = malloc(length + 1);
+
+  if (heapchars == NULL) {
+    fprintf(stderr, "Failed to allocate memory heapchars. \n");
+    exit(EXIT_FAILURE);
+  }
+  memcpy(heapchars, source, length);
+  heapchars[length] = '\0';
+
+  identifier->length = length;
+  identifier->ttype = TOKEN_IDENTIFIER;
+  identifier->value = heapchars;
+
+  return identifier;
+}
+
 
 LetStmt *parseLetStatement(Parser *p) {
   LetStmt *letStmt = malloc(sizeof(LetStmt));
@@ -59,7 +92,7 @@ LetStmt *parseLetStatement(Parser *p) {
     exit(EXIT_FAILURE);
   }
 
-  letStmt->identifier = makeString(p->pt.literal, p->pt.length);
+  letStmt->identifier = parserIdentifier(p->pt.literal, p->pt.length);
 
   if (!expectPeekToken(p, TOKEN_ASSIGN)) {
     freeParserErrors(p);
@@ -120,6 +153,7 @@ Stmt *parseStatement(Parser *p) {
     break;
   }
   default:
+
     printf("Unexpected token: %s in: %s\n", tokenTypeToString(p->ct.type),
            p->ct.literal);
     free(stmt);
