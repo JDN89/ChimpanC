@@ -17,6 +17,8 @@ typedef enum {
 } Precedece;
 
 // NOTE: function pointer, that returns void * (Identifier,...)
+// TODO:generalize return void * parseIdentifier,.. so we can reuse parseFn for
+// the other parsing functions
 typedef Identifier *(*ParserFn)(Parser *);
 typedef Parser p;
 
