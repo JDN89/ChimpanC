@@ -16,6 +16,16 @@ typedef enum {
   CALL
 } Precedece;
 
+// NOTE: function pointer, that returns void * (Identifier,...)
+typedef Identifier *(*ParserFn)(Parser *);
+typedef Parser p;
+
+typedef struct {
+  ParserFn prefix;
+  Precedece precedence;
+
+} PrefixRules;
+
 // TODO: convert program to a dynamic array of AST nodes
 void getToken(Parser *p) {
   p->ct = p->pt;
@@ -32,8 +42,6 @@ Parser newParser(Lexer *l) {
   p.errorCount = 0;
   return p;
 };
-
-// TODO: createUnwindErrors
 
 void peekError(Parser *p, char *expected, char *got) {
   char *msg = malloc(256 * sizeof(char));
@@ -61,8 +69,10 @@ bool expectPeekToken(Parser *p, TokenType ttype) {
   return false;
 }
 
-Identifier *parserIdentifier(const char *source, int length) {
+Identifier *parseIdentifier(Parser *p) {
   Identifier *identifier = malloc(sizeof(Identifier));
+  int length = p->pt.length;
+  const char *source = p->pt.literal;
   if (identifier == NULL) {
     fprintf(stderr, "Failed to allocate memory for Identifier struct. \n");
     exit(EXIT_FAILURE);
@@ -83,7 +93,6 @@ Identifier *parserIdentifier(const char *source, int length) {
   return identifier;
 }
 
-
 LetStmt *parseLetStatement(Parser *p) {
   LetStmt *letStmt = malloc(sizeof(LetStmt));
 
@@ -92,7 +101,7 @@ LetStmt *parseLetStatement(Parser *p) {
     exit(EXIT_FAILURE);
   }
 
-  letStmt->identifier = parserIdentifier(p->pt.literal, p->pt.length);
+  letStmt->identifier = parseIdentifier(p);
 
   if (!expectPeekToken(p, TOKEN_ASSIGN)) {
     freeParserErrors(p);
@@ -118,6 +127,8 @@ ReturnStatement *parseReturnStatement(Parser *p) {
   }
   return returnStatement;
 }
+
+PrefixRules pr[] = {[TOKEN_IDENTIFIER] = {parseIdentifier, LOWEST}};
 
 Stmt *parseStatement(Parser *p) {
 

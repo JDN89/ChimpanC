@@ -7,6 +7,7 @@
 
 #define ERROR_SIZE 10
 
+
 typedef struct {
   Lexer *l;
   Token ct;
