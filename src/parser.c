@@ -72,6 +72,23 @@ LetStmt *parseLetStatement(Parser *p) {
   return letStmt;
 }
 
+RtSt *parseReturnStatement(Parser *p) {
+  RtSt *returnStatement = malloc(sizeof(RtSt));
+  if (returnStatement == NULL) {
+
+    fprintf(stderr, "Memory allocation failed for ReturnStatement\n");
+  }
+  if (!expectPeekToken(p, TOKEN_RETURN)) {
+    freeParserErrors(p);
+    exit(EXIT_FAILURE);
+  }
+  returnStatement->type = TOKEN_RETURN;
+  while (p->curToken.type != TOKEN_SEMICOLON) {
+    getToken(p);
+  }
+  return returnStatement;
+}
+
 Stmt *parseStatement(Parser *p) {
 
   Stmt *stmt = malloc(sizeof(Stmt));
@@ -94,8 +111,10 @@ Stmt *parseStatement(Parser *p) {
     }
     break;
   }
+  case TOKEN_RETURN: {
+  }
   default:
-    printf("Unexpected token: %s\n", tokenTypeToString(p->curToken.type));
+    printf("Unexpected token: %s in: %s\n", tokenTypeToString(p->curToken.type),p->curToken.literal);
     free(stmt);
     exit(EXIT_FAILURE);
   }

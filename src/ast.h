@@ -7,21 +7,27 @@
 
 // NOTE: bothe epxression and STmt have to return the literal value of the token
 
-typedef struct LetStmt LetStmt;
-typedef struct Expr Expr;
-
 #define IS_LET_STMT(stmt) ((stmt)->type == LET_STATEMENT)
 #define AS_LET_STMT(stmt) ((stmt).as.letStmt)
 #define CREATE_STMT_LET(stmt) ((Stmt){LET_STATEMENT, as.letStmt = &stmt})
 
 typedef enum {
   LET_STATEMENT = 0,
+  RETURN_STATEMENT,
 } StatementType;
 
 typedef enum { Ident = 0, Operator } ExprType;
 
-// NOTE: wrapper for type and pointer to impl of specific statment
+typedef struct {
+  // Token token; Do we need pointer to OG token?
+  String *identifier; // TODO: wrap in value like in clox (int, string,...)
+} LetStmt;
 
+typedef struct {
+  TokenType type;
+} RtSt;
+
+// NOTE: wrapper for type and pointer to impl of specific statment
 typedef struct Stmt {
   StatementType type;
   union {
@@ -35,11 +41,6 @@ typedef struct {
   Stmt *tail;
   size_t length;
 } Program;
-
-struct LetStmt {
-  // Token token; Do we need pointer to OG token?
-  String *identifier; // TODO: wrap in value like in clox (int, string,...)
-};
 
 LetStmt *createLetStmt(Token token);
 Program createProgram();
