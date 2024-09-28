@@ -18,12 +18,9 @@ Parser newParser(Lexer *l) {
   // NOTE:Read two tokens, so curToken and peekToken are both set
   getToken(&p);
   getToken(&p);
-  p.errors = NULL;
   p.errorCount = 0;
-
   return p;
 };
-
 
 // TODO: createUnwindErrors
 
@@ -31,8 +28,17 @@ void peekError(Parser *p, char *expected, char *got) {
   char *msg = malloc(256 * sizeof(char));
   snprintf(msg, 256, "Expected token %s, but got %s \n", expected, got);
   p->errorCount++;
-  p->errors = realloc(p->errors, p->errorCount * sizeof(char));
-  p->errors[p->errorCount - 1] = *msg;
+  p->errors[p->errorCount - 1] = msg;
+}
+
+// TODO: Now we immediatley exit after calling this function -> better way to do
+// this? Can't we just repost and keep parsing?
+void freeParserErrors(Parser *p) {
+  for (int i = 0; i < +p->errorCount; i++) {
+    printf("%s", p->errors[i]);
+    free(p->errors[i]);
+    p->errors[i] = NULL;
+  }
 }
 
 bool expectPeekToken(Parser *p, TokenType ttype) {
@@ -40,7 +46,6 @@ bool expectPeekToken(Parser *p, TokenType ttype) {
     getToken(p);
     return true;
   } else
-
     peekError(p, tokenTypeToString(ttype),
               tokenTypeToString(p->peekToken.type));
   return false;
@@ -50,15 +55,14 @@ LetStmt *parseLetStatement(Parser *p) {
   LetStmt *letStmt = malloc(sizeof(LetStmt));
 
   if (!expectPeekToken(p, TOKEN_IDENTIFIER)) {
-
-    fprintf(stderr, "Expected TOKEN_IDENTIFIER \n");
+    freeParserErrors(p);
     exit(EXIT_FAILURE);
   }
 
   letStmt->identifier = makeString(p->peekToken.literal, p->peekToken.length);
 
   if (!expectPeekToken(p, TOKEN_ASSIGN)) {
-    fprintf(stderr, "Expected TOKEN_ASSIGN \n");
+    freeParserErrors(p);
     exit(EXIT_FAILURE);
   }
 

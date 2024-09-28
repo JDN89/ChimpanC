@@ -29,8 +29,6 @@ static void repl() {
 
     freeProgram(&program);
 
-    // free the errors
-    free(p.errors);
     break;
   }
 }
