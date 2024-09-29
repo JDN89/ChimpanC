@@ -6,6 +6,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define HANDLE_ALLOC_FAILURE(ptr, msg)                                         \
+  if ((ptr) == NULL) {                                                         \
+    fprintf(stderr, "%s\n", msg);                                              \
+    return NULL;                                                               \
+  }
+
 typedef enum {
   LOWEST,
   EQUALS,
@@ -145,20 +151,29 @@ PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parseIdentifier, LOWEST}};
 static ParseFn *getPrefixRule(TokenType ttype) { return &pr[ttype].prefix; }
 
 ExprStatement *parseExpressionStatement(Parser *p) {
-  ExprStatement *expr = malloc(sizeof(ExprStatement));
+  ExprStatement *stmt = malloc(sizeof(ExprStatement));
+  stmt->expr = malloc(sizeof(Expr));
+  if (stmt->expr == NULL) {
+    HANDLE_ALLOC_FAILURE(stmt, "Failed to alocate memory for ExprStatement")
+  }
 
   // TODO: we probably have to switch on ct.type in next steps
   ParseFn prefixRule = *getPrefixRule(p->ct.type);
 
   Identifier *identifier = prefixRule(p);
+
   if (identifier == NULL) {
+    // TODO: free statement and free epxr!!
     fprintf(stderr, "Failed to parse an identifier.\n");
-    exit(EXIT_FAILURE);
+    return NULL;
   }
   if (identifier->ttype == TOKEN_IDENTIFIER) {
-    expr->expr->as.identifier = identifier;
+    stmt->expr->as.identifier = identifier;
   }
-  return expr;
+  while (p->ct.type != TOKEN_SEMICOLON) {
+    advance(p);
+  }
+  return stmt;
 }
 
 Stmt *parseStatement(Parser *p) {
