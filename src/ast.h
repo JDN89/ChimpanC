@@ -13,6 +13,7 @@
 typedef enum {
   LET_STATEMENT = 0,
   RETURN_STATEMENT,
+  EXPR_STATEMENT,
 } StatementType;
 
 // TODO: Do we need the token type here? we can infer it wil be identifer... and
@@ -35,7 +36,7 @@ typedef struct {
 // expr -> union infix, prefix,...
 typedef struct {
   union {
-    Identifier identifier;
+    Identifier *identifier;
   } as;
 } Expr;
 

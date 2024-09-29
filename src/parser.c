@@ -19,7 +19,7 @@ typedef enum {
 // NOTE: function pointer, that returns void * (Identifier,...)
 // TODO:generalize return void * parseIdentifier,.. so we can reuse parseFn for
 // the other parsing functions
-typedef void* (*ParseFn)(Parser *p);
+typedef void *(*ParseFn)(Parser *p);
 typedef Parser p;
 
 typedef struct {
@@ -28,7 +28,7 @@ typedef struct {
 } PrefixRule;
 
 // TODO: convert program to a dynamic array of AST nodes
-void getToken(Parser *p) {
+void advance(Parser *p) {
   p->ct = p->pt;
   p->pt = nextToken(p->l);
 }
@@ -38,8 +38,8 @@ Parser newParser(Lexer *l) {
   p.l = l;
 
   // NOTE:Read two tokens, so curToken and peekToken are both set
-  getToken(&p);
-  getToken(&p);
+  advance(&p);
+  advance(&p);
   p.errorCount = 0;
   return p;
 };
@@ -63,18 +63,28 @@ void freeParserErrors(Parser *p) {
 
 bool expectPeekToken(Parser *p, TokenType ttype) {
   if (p->pt.type == ttype) {
-    getToken(p);
+    advance(p);
     return true;
   } else
     peekError(p, tokenTypeToString(ttype), tokenTypeToString(p->pt.type));
   return false;
 }
 
-//TODO: change identifier to look at current token and create expect current token function
+bool expectCurrentToken(Parser *p, TokenType ttype) {
+  if (p->pt.type == ttype) {
+    advance(p);
+    return true;
+  } else
+    peekError(p, tokenTypeToString(ttype), tokenTypeToString(p->pt.type));
+  return false;
+}
+
+// TODO: change identifier to look at current token and create expect current
+// token function
 void *parseIdentifier(Parser *p) {
   Identifier *identifier = malloc(sizeof(Identifier));
-  int length = p->pt.length;
-  const char *source = p->pt.literal;
+  int length = p->ct.length;
+  const char *source = p->ct.literal;
   if (identifier == NULL) {
     fprintf(stderr, "Failed to allocate memory for Identifier struct. \n");
     exit(EXIT_FAILURE);
@@ -97,7 +107,7 @@ void *parseIdentifier(Parser *p) {
 
 LetStmt *parseLetStatement(Parser *p) {
   LetStmt *letStmt = malloc(sizeof(LetStmt));
-
+  // NOTE: check pt and consume ct
   if (!expectPeekToken(p, TOKEN_IDENTIFIER)) {
     freeParserErrors(p);
     exit(EXIT_FAILURE);
@@ -111,7 +121,7 @@ LetStmt *parseLetStatement(Parser *p) {
   }
 
   while (p->ct.type != TOKEN_SEMICOLON) {
-    getToken(p);
+    advance(p);
   }
   return letStmt;
 }
@@ -122,10 +132,10 @@ ReturnStatement *parseReturnStatement(Parser *p) {
 
     fprintf(stderr, "Memory allocation failed for ReturnStatement\n");
   }
-  getToken(p);
+  advance(p);
   returnStatement->type = TOKEN_RETURN;
   while (p->ct.type != TOKEN_SEMICOLON) {
-    getToken(p);
+    advance(p);
   }
   return returnStatement;
 }
@@ -137,10 +147,17 @@ static ParseFn *getPrefixRule(TokenType ttype) { return &pr[ttype].prefix; }
 ExprStatement *parseExpressionStatement(Parser *p) {
   ExprStatement *expr = malloc(sizeof(ExprStatement));
 
-  ParseFn prefixRule =*getPrefixRule(p->ct.type);
+  // TODO: we probably have to switch on ct.type in next steps
+  ParseFn prefixRule = *getPrefixRule(p->ct.type);
 
-  expr->expr = prefixRule(p); 
-
+  Identifier *identifier = prefixRule(p);
+  if (identifier == NULL) {
+    fprintf(stderr, "Failed to parse an identifier.\n");
+    exit(EXIT_FAILURE);
+  }
+  if (identifier->ttype == TOKEN_IDENTIFIER) {
+    expr->expr->as.identifier = identifier;
+  }
   return expr;
 }
 
@@ -178,11 +195,15 @@ Stmt *parseStatement(Parser *p) {
     break;
   }
   default:
-
-    printf("Unexpected token: %s in: %s\n", tokenTypeToString(p->ct.type),
-           p->ct.literal);
-    free(stmt);
-    exit(EXIT_FAILURE);
+    ExprStatement *exprStmt = parseExpressionStatement(p);
+    if (stmt != NULL) {
+      stmt->type = EXPR_STATEMENT;
+      stmt->as.exprStmt = exprStmt;
+    } else {
+      free(stmt);
+      return NULL;
+    }
+    break;
   }
 
   return stmt;
@@ -190,8 +211,7 @@ Stmt *parseStatement(Parser *p) {
 
 Program parseProgram(Parser *p) {
   Program prog = createProgram();
-  // NOTE: we stop looping in parseLetStmt and probably everywhere when curToken
-  // = ';'
+  // NOTE:  Stop looping when ct points to;
   while (p->pt.type != TOKEN_EOF) {
     Stmt *stmt = parseStatement(p);
     pushtStmt(&prog, stmt);

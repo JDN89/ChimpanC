@@ -1,5 +1,5 @@
 # Compiler settings
-CC = gcc
+CC = gcc -std=c2x
 CFLAGS = -Wall -Wextra -g -Isrc
 
 # Source files for the main program

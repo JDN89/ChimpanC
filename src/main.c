@@ -24,13 +24,19 @@ static void repl() {
       switch (currentStmt->type) {
 
       case LET_STATEMENT: {
-        char *write = (char* )currentStmt->as.letStmt->identifier->value;
+        char *write = (char *)currentStmt->as.letStmt->identifier->value;
         printf("%s\n", write);
-          break;
+        break;
       }
       case RETURN_STATEMENT:
         printf("Return statement %s \n",
                tokenTypeToString(currentStmt->as.returnStmt->type));
+        break;
+      case EXPR_STATEMENT:
+        char *write =
+            (char *)currentStmt->as.exprStmt->expr->as.identifier->value;
+        printf("%s\n", write);
+
         break;
       }
     }
