@@ -39,12 +39,17 @@ typedef struct {
   } as;
 } Expr;
 
+typedef struct {
+  Expr *expr;
+} ExprStatement;
+
 // NOTE: wrapper for type and pointer to impl of specific statment
 typedef struct Stmt {
   StatementType type;
   union {
     LetStmt *letStmt;
     ReturnStatement *returnStmt;
+    ExprStatement *exprStmt;
   } as;
   struct Stmt *next;
 } Stmt;
