@@ -31,6 +31,14 @@ typedef struct {
   TokenType type;
 } ReturnStatement;
 
+// TODO: I'll probably have to split this up later
+// expr -> union infix, prefix,...
+typedef struct {
+  union {
+    Identifier identifier;
+  } as;
+} Expr;
+
 // NOTE: wrapper for type and pointer to impl of specific statment
 typedef struct Stmt {
   StatementType type;

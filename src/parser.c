@@ -19,13 +19,12 @@ typedef enum {
 // NOTE: function pointer, that returns void * (Identifier,...)
 // TODO:generalize return void * parseIdentifier,.. so we can reuse parseFn for
 // the other parsing functions
-typedef Identifier *(*ParserFn)(Parser *);
+typedef void *(*ParseFn)(Parser *p);
 typedef Parser p;
 
 typedef struct {
-  ParserFn prefix;
+  ParseFn prefix;
   Precedece precedence;
-
 } PrefixRules;
 
 // TODO: convert program to a dynamic array of AST nodes
@@ -71,7 +70,7 @@ bool expectPeekToken(Parser *p, TokenType ttype) {
   return false;
 }
 
-Identifier *parseIdentifier(Parser *p) {
+void *parseIdentifier(Parser *p) {
   Identifier *identifier = malloc(sizeof(Identifier));
   int length = p->pt.length;
   const char *source = p->pt.literal;
@@ -92,7 +91,7 @@ Identifier *parseIdentifier(Parser *p) {
   identifier->ttype = TOKEN_IDENTIFIER;
   identifier->value = heapchars;
 
-  return identifier;
+  return (void *)identifier;
 }
 
 LetStmt *parseLetStatement(Parser *p) {
@@ -131,6 +130,8 @@ ReturnStatement *parseReturnStatement(Parser *p) {
 }
 
 PrefixRules pr[] = {[TOKEN_IDENTIFIER] = {parseIdentifier, LOWEST}};
+
+/*static ParseFn *getPrefixRule(TokenType ttype) { return &pr[ttype].prefix; }*/
 
 Stmt *parseStatement(Parser *p) {
 
