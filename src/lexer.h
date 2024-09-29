@@ -55,7 +55,7 @@ typedef struct {
   // reference speech of andrew kelly when you reformat
   // how can I meassure the performance and document it
   // ALSO the way this sturct is ordered is allready not optimal 4 bytes, 8 byrtes , 4 bytes -> 24 bytes so 4 bytes wasted per token!!
-  char
+  const char
       *literal; // pointer to the literal value. Better to pass pointer to the
   int length;
 } Token;
