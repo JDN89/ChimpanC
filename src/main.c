@@ -31,12 +31,13 @@ static void repl() {
         printf("Return statement %s \n",
                tokenTypeToString(currentStmt->as.returnStmt->type));
         break;
-      case EXPR_STATEMENT: 
+      case EXPR_STATEMENT: {
         char *write =
             (char *)currentStmt->as.exprStmt->expr->as.identifier->value;
         printf("%s\n", write);
 
         break;
+      }
       }
     }
 
