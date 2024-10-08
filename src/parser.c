@@ -33,7 +33,6 @@ typedef struct {
   Precedece precedence;
 } PrefixRule;
 
-// TODO: convert program to a dynamic array of AST nodes
 void advance(Parser *p) {
   p->ct = p->pt;
   p->pt = nextToken(p->l);
@@ -224,10 +223,13 @@ Stmt *parseStatement(Parser *p) {
   return stmt;
 }
 
+// TODO: convert program to a dynamic array of AST nodes
 Program parseProgram(Parser *p) {
   Program prog = createProgram();
   // NOTE:  Stop looping when ct points to;
   while (p->pt.type != TOKEN_EOF) {
+    printf("type = %s\n", tokenTypeToString(p->pt.type));
+    printf("literal = %s\n", p->pt.literal);
     Stmt *stmt = parseStatement(p);
     pushtStmt(&prog, stmt);
   }

@@ -21,7 +21,7 @@ TEST_LEXER_OBJECTS = $(TEST_LEXER_SOURCES:.c=.o)
 TEST_LEXER_EXECUTABLE = test_lexer
 
 # Test source files for parser tests
-TEST_PARSER_SOURCES = tests/test_parser.c tests/test_helper_functions.c src/lexer.c src/parser.c
+TEST_PARSER_SOURCES = tests/test_parser.c tests/test_helper_functions.c src/lexer.c src/parser.c src/ast.c
 
 # Object files for parser tests
 TEST_PARSER_OBJECTS = $(TEST_PARSER_SOURCES:.c=.o)

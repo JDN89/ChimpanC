@@ -20,7 +20,7 @@ Parser newParser(Lexer *l);
 
 Program parseProgram(Parser *p);
 
-void getToken(Parser *p);
+void advance(Parser *p);
 
 void freeParserErrors(Parser *p);
 
