@@ -7,7 +7,7 @@ void test_parse_let_statement() {
 
   char source[] = " let x = 5;\n"
                   " let y = 10;\n"
-                  "let foobar = 838383 \n";
+                  "let foobar = 838383; \n";
   Lexer l = init_lexer(source);
   Parser parser = newParser(&l);
   Program program = parseProgram(&parser);

@@ -127,6 +127,7 @@ LetStmt *parseLetStatement(Parser *p) {
   while (p->ct.type != TOKEN_SEMICOLON) {
     advance(p);
   }
+
   return letStmt;
 }
 
