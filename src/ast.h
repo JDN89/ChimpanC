@@ -4,7 +4,7 @@
 #include "lexer.h"
 #include <stdio.h>
 
-// NOTE: bothe epxression and STmt have to return the literal value of the token
+// NOTE: both epxression and STmt have to return the literal value of the token
 
 #define IS_LET_STMT(stmt) ((stmt)->type == LET_STATEMENT)
 #define AS_LET_STMT(stmt) ((stmt).as.letStmt)

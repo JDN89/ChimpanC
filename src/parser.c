@@ -90,7 +90,6 @@ bool expectCurrentToken(Parser *p, TokenType ttype) {
 void *parseIdentifier(Parser *p) {
   Identifier *identifier = malloc(sizeof(Identifier));
   int length = p->ct.length;
-  const char *source = p->ct.literal;
   if (identifier == NULL) {
     fprintf(stderr, "Failed to allocate memory for Identifier struct. \n");
     exit(EXIT_FAILURE);
@@ -101,7 +100,7 @@ void *parseIdentifier(Parser *p) {
     fprintf(stderr, "Failed to allocate memory heapchars. \n");
     exit(EXIT_FAILURE);
   }
-  memcpy(heapchars, source, length);
+  memcpy(heapchars, p->ct.literal, length);
   heapchars[length] = '\0';
 
   identifier->length = length;
@@ -209,7 +208,7 @@ Stmt *parseStatement(Parser *p) {
     }
     break;
   }
-  default:
+  default: {
     ExprStatement *exprStmt = parseExpressionStatement(p);
     if (stmt != NULL) {
       stmt->type = EXPR_STATEMENT;
@@ -219,6 +218,7 @@ Stmt *parseStatement(Parser *p) {
       return NULL;
     }
     break;
+  }
   }
 
   return stmt;

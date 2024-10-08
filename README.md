@@ -26,5 +26,4 @@ The way we look for Keywords is different from the go version. In go we use a ma
 
 ### Parser
 
-Struggeling a bit with implementing the pasrse. I think the issue is that I don't know in which direction the code is going and I'm staying to close to the Golang gode in the book. After chapter 2.6 - the first part of the PRATT parser, I'll do some heavy refactoring. 
 
