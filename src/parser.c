@@ -84,8 +84,8 @@ bool expectCurrentToken(Parser *p, TokenType ttype) {
   return false;
 }
 
-// TODO: change identifier to look at current token and create expect current
-// token function
+bool isLineBreak(Parser *p) { return *p->ct.literal == '\n'; }
+
 void *parseIdentifier(Parser *p) {
   Identifier *identifier = malloc(sizeof(Identifier));
   int length = p->ct.length;
@@ -127,7 +127,12 @@ LetStmt *parseLetStatement(Parser *p) {
   while (p->ct.type != TOKEN_SEMICOLON) {
     advance(p);
   }
-
+  // NOTE: Consume ';' and '\n'
+  if (p->ct.type == TOKEN_SEMICOLON) {
+    advance(p);
+  }
+    if (isLineBreak(p))
+      advance(p);
   return letStmt;
 }
 
@@ -141,6 +146,15 @@ ReturnStatement *parseReturnStatement(Parser *p) {
   returnStatement->type = TOKEN_RETURN;
   while (p->ct.type != TOKEN_SEMICOLON) {
     advance(p);
+  }
+
+  // NOTE: Consume ';' and '\n'
+  //TODO: remove duplicate code?
+  if (p->ct.type == TOKEN_SEMICOLON) {
+    printf("In let statement");
+    advance(p);
+    if (isLineBreak(p))
+      advance(p);
   }
   return returnStatement;
 }
@@ -172,6 +186,13 @@ ExprStatement *parseExpressionStatement(Parser *p) {
   while (p->ct.type != TOKEN_SEMICOLON) {
     advance(p);
   }
+
+  /*//TODO: remove duplicate code?*/
+  /*if (p->ct.type == TOKEN_SEMICOLON) {*/
+  /*  advance(p);*/
+  /*  if (isLineBreak(p))*/
+  /*    advance(p);*/
+  /*}*/
   return stmt;
 }
 
@@ -229,8 +250,8 @@ Program parseProgram(Parser *p) {
   Program prog = createProgram();
   // NOTE:  Stop looping when ct points to;
   while (p->pt.type != TOKEN_EOF) {
-    printf("type = %s\n", tokenTypeToString(p->pt.type));
-    printf("literal = %s\n", p->pt.literal);
+    /*printf("type = %s\n", tokenTypeToString(p->pt.type));*/
+    /*printf("literal = %s\n", p->pt.literal);*/
     Stmt *stmt = parseStatement(p);
     pushtStmt(&prog, stmt);
   }

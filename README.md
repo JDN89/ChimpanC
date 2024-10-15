@@ -3,15 +3,15 @@ C Implementation of 'Writing an interpreter in GO - Thorsten Ball'
 
 ## TODO
 
-- unwind the errors in case of errors before exiting
-- parse return statment
-- write test
+- write test -> test_parser is broken
+    - fix bug
+    - write test for let, parse expression and return statement
+- instead interrupting the program whilst parsing -> report the errors and keep running?
+
 - simplify code and improve memeory usage:
     - Do I need to create a literal for all the tokenTypes? -> LET will always be let?
     - Do I even need to store a pointer? can't I just store the starting position of the thing in the source code and then callculate the offset of the start of the identifier, literal, number and the start of the next token?
         - int instead of pointer allready saves 4 bytes!
-
-
 
 
 ## Notes
