@@ -17,5 +17,5 @@ The goal is to also read "Writing a Compiler in Go", create a C version of the b
         - int instead of pointer allready saves 4 bytes!
 
 ### Compile
-```run the following command to produce ./chimp executable -> make
-run the following command to produce ./test_parser executable -> make test_parser```
+```run the following command to produce ./chimp executable -> make \
+run the following command to produce ./test_parser executable -> make test_parser \ ```
