@@ -19,3 +19,7 @@ The goal is to also read "Writing a Compiler in Go", create a C version of the b
 ### Compile
 ```Run the following command to produce ./chimp executable -> make ``` \
 ```Run the following command to produce ./test_parser executable -> make test_parser ``` \
+
+### Sources
+[Crafting Interpreters - Robert Nystrom](https://craftinginterpreters.com/)
+[Writing an Interpreter in Go](https://interpreterbook.com/)
