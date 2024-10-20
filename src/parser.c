@@ -50,7 +50,6 @@ bool isLineBreak(Parser *p) { return *p->ct.literal == '\n'; }
 
 void consumeSemiColonAndLineBreak(Parser *p) {
   if (p->ct.type == TOKEN_SEMICOLON) {
-    printf("In let statement");
     advance(p);
     if (isLineBreak(p))
       advance(p);
