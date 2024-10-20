@@ -39,7 +39,7 @@ Parser newParser(Lexer *l) {
   Parser p;
   p.l = l;
 
-  // NOTE:Read two tokens, so curToken and peekToken are both set
+  // Read two tokens, so curToken and peekToken are both set
   advance(&p);
   advance(&p);
   p.errorCount = 0;
@@ -73,7 +73,7 @@ void registerParserError(Parser *p, char *message) {
 }
 
 // TODO: Now we immediatley exit after calling this function -> better way to do
-// this? Can't we just repost and keep parsing?
+// this? Can't we just repost and keep parsing? -> look at bug tag
 void freeParserErrors(Parser *p) {
   for (int i = 0; i < +p->errorCount; i++) {
     printf("%s", p->errors[i]);
@@ -126,35 +126,37 @@ void *parseIdentifier(Parser *p) {
 void *parseNumber(Parser *p) {
 
   // TODO: free IntegerLiteral
-  IntegerLiteral *integerLiteral = malloc(sizeof(IntegerLiteral));
+  IntegerLiteral *number = malloc(sizeof(IntegerLiteral));
 
-  char *heapIntLit = malloc((char)p->ct.length + 1);
-  memcpy(heapIntLit, p->ct.literal, p->ct.length);
-  heapIntLit[p->ct.length] = '\0';
+  char *literal = malloc((char)p->ct.length + 1);
+  memcpy(literal, p->ct.literal, p->ct.length);
+  literal[p->ct.length] = '\0';
 
-  if (heapIntLit == NULL) {
-    printf("parsing of integer literal went wrong");
-    free(heapIntLit);
+  if (literal == NULL) {
+    printf("Error during allocation of number literal value on the stack. \n");
+    free(literal);
   }
 
-  // convert intVal to int64_t
   char *endptr;
 
-  integerLiteral->value = strtol(heapIntLit, &endptr, 10);
+  // Convert the *char to a number. We first create a substring because the
+  // literal stored in the Token points to the entire source string, starting
+  // where the current number begins.
+  number->value = strtol(literal, &endptr, 10);
 
   if (*endptr != '\0') {
     char *errorMessage = "Conversion error, non-numeric character found: %s\n";
     registerParserError(p, errorMessage);
   }
 
-  integerLiteral->ttype = p->ct.type;
+  number->ttype = p->ct.type;
 
-  return (void *)integerLiteral;
+  return (void *)number;
 }
 
 LetStmt *parseLetStatement(Parser *p) {
   LetStmt *letStmt = malloc(sizeof(LetStmt));
-  // NOTE: check pt and consume ct
+  // check pt and consume ct
   if (!expectPeekToken(p, TOKEN_IDENTIFIER)) {
     freeParserErrors(p);
     exit(EXIT_FAILURE);
@@ -222,7 +224,6 @@ ExprStatement *parseExpressionStatement(Parser *p) {
   case TOKEN_INT: {
     IntegerLiteral *intLit = prefixRule(p);
 
-
     if (intLit->ttype == TOKEN_INT) {
       stmt->expr->as.integerLiteral = intLit;
     }
@@ -254,7 +255,6 @@ Stmt *parseStmt(Parser *p) {
   HANDLE_ALLOC_FAILURE(stmt, "Failed to allocate memeory for Stmt. \n");
 
   switch (p->ct.type) {
-
   case TOKEN_LET: {
     LetStmt *letStmt = parseLetStatement(p);
     if (letStmt != NULL) {
@@ -266,6 +266,7 @@ Stmt *parseStmt(Parser *p) {
     }
     break;
   }
+
   case TOKEN_RETURN: {
     ReturnStatement *returnStatement = parseReturnStatement(p);
     if (returnStatement != NULL) {
@@ -277,6 +278,7 @@ Stmt *parseStmt(Parser *p) {
     }
     break;
   }
+
   default: {
     ExprStatement *exprStmt = parseExpressionStatement(p);
     if (stmt != NULL) {
@@ -296,7 +298,6 @@ Stmt *parseStmt(Parser *p) {
 // TODO: convert program to a dynamic array of AST nodes
 Program parseProgram(Parser *p) {
   Program prog = createProgram();
-  // NOTE:  Stop looping when ct points to;
   while (p->pt.type != TOKEN_EOF) {
     Stmt *stmt = parseStmt(p);
     pushtStmt(&prog, stmt);
