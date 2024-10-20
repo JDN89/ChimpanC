@@ -227,6 +227,7 @@ ExprStatement *parseExpressionStatement(Parser *p) {
     if (identifier->ttype == TOKEN_IDENTIFIER) {
       stmt->expr->as.identifier = identifier;
     }
+      break;
   }
   case TOKEN_INT: {
     IntegerLiteral *intLit = prefixRule(p);
@@ -238,6 +239,7 @@ ExprStatement *parseExpressionStatement(Parser *p) {
     if (intLit->ttype == TOKEN_INT) {
       stmt->expr->as.integerLiteral = intLit;
     }
+      break;
   }
 
   default: {
