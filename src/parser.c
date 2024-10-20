@@ -9,7 +9,7 @@
 #define HANDLE_ALLOC_FAILURE(ptr, msg)                                         \
   if ((ptr) == NULL) {                                                         \
     fprintf(stderr, "%s\n", msg);                                              \
-    return NULL;                                                               \
+    exit(EXIT_FAILURE);                                                        \
   }
 
 typedef enum {
@@ -104,7 +104,6 @@ void *parseIdentifier(Parser *p) {
   Identifier *identifier = malloc(sizeof(Identifier));
   HANDLE_ALLOC_FAILURE(identifier,
                        "Failed allocating memory for Identifier \n.");
-  free(identifier);
 
   int length = p->ct.length;
   char *literal = malloc(length + 1 * sizeof(char));
@@ -113,7 +112,6 @@ void *parseIdentifier(Parser *p) {
                        "Failed allocating memory for identifierLiteral \n.");
   memcpy(literal, p->ct.literal, length);
 
-
   literal[length] = '\0';
 
   identifier->length = length;
@@ -121,9 +119,6 @@ void *parseIdentifier(Parser *p) {
   identifier->value = literal;
 
   free(literal);
-
-  //Consume identifier Token
-  advance(p);
 
   return (void *)identifier;
 }
@@ -139,6 +134,7 @@ void *parseNumber(Parser *p) {
 
   if (heapIntLit == NULL) {
     printf("parsing of integer literal went wrong");
+    free(heapIntLit);
   }
 
   // convert intVal to int64_t
@@ -146,18 +142,12 @@ void *parseNumber(Parser *p) {
 
   integerLiteral->value = strtol(heapIntLit, &endptr, 10);
 
-
   if (*endptr != '\0') {
     char *errorMessage = "Conversion error, non-numeric character found: %s\n";
     registerParserError(p, errorMessage);
   }
 
-  free(heapIntLit);
-
   integerLiteral->ttype = p->ct.type;
-
-  //consume token that contains number
-  advance(p);
 
   return (void *)integerLiteral;
 }
@@ -173,6 +163,10 @@ LetStmt *parseLetStatement(Parser *p) {
   letStmt->identifier = parseIdentifier(p);
 
   if (!expectPeekToken(p, TOKEN_ASSIGN)) {
+    // BUG: add to parser errors and test the parser errors reporting! instead
+    // of exeting report the parser errors. We  probably should unwind and
+    // consume until next valid token. At the end report all the errors we
+    // encountered in parse program and exit after reporting!
     freeParserErrors(p);
     exit(EXIT_FAILURE);
   }
@@ -209,9 +203,8 @@ static ParseFn *getPrefixRule(TokenType ttype) { return &pr[ttype].prefix; }
 ExprStatement *parseExpressionStatement(Parser *p) {
   ExprStatement *stmt = malloc(sizeof(ExprStatement));
   stmt->expr = malloc(sizeof(Expr));
-  if (stmt->expr == NULL) {
-    HANDLE_ALLOC_FAILURE(stmt, "Failed to alocate memory for ExprStatement")
-  }
+
+  HANDLE_ALLOC_FAILURE(stmt->expr, "Failed to alocate memory for ExprStatement")
 
   ParseFn prefixRule = *getPrefixRule(p->ct.type);
 
@@ -219,6 +212,8 @@ ExprStatement *parseExpressionStatement(Parser *p) {
   case TOKEN_IDENTIFIER: {
 
     Identifier *identifier = prefixRule(p);
+    // Consume Identifier Token
+    advance(p);
     if (identifier->ttype == TOKEN_IDENTIFIER) {
       stmt->expr->as.identifier = identifier;
     }
@@ -227,9 +222,12 @@ ExprStatement *parseExpressionStatement(Parser *p) {
   case TOKEN_INT: {
     IntegerLiteral *intLit = prefixRule(p);
 
+
     if (intLit->ttype == TOKEN_INT) {
       stmt->expr->as.integerLiteral = intLit;
     }
+    // consume token that contains number
+    advance(p);
     break;
   }
 
