@@ -17,8 +17,8 @@ void test_parse_let_statement() {
   Program program = parseProgram(&parser);
 
   Stmt *current = program.head;
-
   int i = 0;
+
   while (current != NULL) {
     assert(current->type == LET_STATEMENT);
     assert(strcmp(current->as.letStmt->identifier->value, identifiers[i]));
@@ -31,17 +31,27 @@ void test_parse_let_statement() {
 
 void test_parse_integer_literal() {
 
-  char source[] = "5;  asdfsfd;";
+  char source[] = " 4; \n"
+                  " 55; \n"
+                  "345345354345";
+
   Lexer l = init_lexer(source);
   Parser parser = newParser(&l);
   Program program = parseProgram(&parser);
 
-  int64_t expectedInt = 5;
+  int64_t expected[] = {4, 55, 345345354345};
 
-  assert(program.head->as.exprStmt->expr->as.integerLiteral->value ==
-         expectedInt);
+  Stmt *current = program.head;
+  int i = 0;
 
-  printf("Parse IntegerLiteral SUCCESS \n");
+  while (current != NULL) {
+    assert(current->type == EXPR_STATEMENT);
+    assert(current->as.exprStmt->expr->as.integerLiteral->value == expected[i]);
+    current = current->next;
+    i++;
+  }
+
+  printf("Parse numbers SUCCESS \n");
 }
 
 int main() {

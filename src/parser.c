@@ -48,7 +48,7 @@ Parser newParser(Lexer *l) {
 
 bool isLineBreak(Parser *p) { return *p->ct.literal == '\n'; }
 
-void consumeSemiColonAndLineBreak(Parser *p) {
+void consumeSemiColonAndNewline(Parser *p) {
   if (p->ct.type == TOKEN_SEMICOLON) {
     advance(p);
     if (isLineBreak(p))
@@ -107,24 +107,28 @@ void *parseIdentifier(Parser *p) {
   free(identifier);
 
   int length = p->ct.length;
-  char *identifierLiteral = malloc(length + 1 * sizeof(char));
+  char *literal = malloc(length + 1 * sizeof(char));
 
-  HANDLE_ALLOC_FAILURE(identifierLiteral,
+  HANDLE_ALLOC_FAILURE(literal,
                        "Failed allocating memory for identifierLiteral \n.");
-  memcpy(identifierLiteral, p->ct.literal, length);
+  memcpy(literal, p->ct.literal, length);
 
-  free(identifierLiteral);
 
-  identifierLiteral[length] = '\0';
+  literal[length] = '\0';
 
   identifier->length = length;
   identifier->ttype = TOKEN_IDENTIFIER;
-  identifier->value = identifierLiteral;
+  identifier->value = literal;
+
+  free(literal);
+
+  //Consume identifier Token
+  advance(p);
 
   return (void *)identifier;
 }
 
-void *parseIntegerLiteral(Parser *p) {
+void *parseNumber(Parser *p) {
 
   // TODO: free IntegerLiteral
   IntegerLiteral *integerLiteral = malloc(sizeof(IntegerLiteral));
@@ -142,14 +146,18 @@ void *parseIntegerLiteral(Parser *p) {
 
   integerLiteral->value = strtol(heapIntLit, &endptr, 10);
 
+
   if (*endptr != '\0') {
     char *errorMessage = "Conversion error, non-numeric character found: %s\n";
     registerParserError(p, errorMessage);
   }
+
   free(heapIntLit);
 
   integerLiteral->ttype = p->ct.type;
-  consumeSemiColonAndLineBreak(p);
+
+  //consume token that contains number
+  advance(p);
 
   return (void *)integerLiteral;
 }
@@ -173,7 +181,7 @@ LetStmt *parseLetStatement(Parser *p) {
     advance(p);
   }
 
-  consumeSemiColonAndLineBreak(p);
+  consumeSemiColonAndNewline(p);
   return letStmt;
 }
 
@@ -189,12 +197,12 @@ ReturnStatement *parseReturnStatement(Parser *p) {
     advance(p);
   }
 
-  consumeSemiColonAndLineBreak(p);
+  consumeSemiColonAndNewline(p);
   return returnStatement;
 }
 
 PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parseIdentifier, LOWEST},
-                   [TOKEN_INT] = {parseIntegerLiteral, LOWEST}};
+                   [TOKEN_INT] = {parseNumber, LOWEST}};
 
 static ParseFn *getPrefixRule(TokenType ttype) { return &pr[ttype].prefix; }
 
@@ -234,15 +242,14 @@ ExprStatement *parseExpressionStatement(Parser *p) {
     return NULL;
   }
   }
-
-  while (p->ct.type != TOKEN_SEMICOLON) {
-    advance(p);
-  }
+  // WARNING: This probably has to be removed once the other sided of the
+  // expressions are fixed;
+  consumeSemiColonAndNewline(p);
 
   return stmt;
 }
 
-Stmt *parseStatement(Parser *p) {
+Stmt *parseStmt(Parser *p) {
 
   Stmt *stmt = malloc(sizeof(Stmt));
 
@@ -293,7 +300,7 @@ Program parseProgram(Parser *p) {
   Program prog = createProgram();
   // NOTE:  Stop looping when ct points to;
   while (p->pt.type != TOKEN_EOF) {
-    Stmt *stmt = parseStatement(p);
+    Stmt *stmt = parseStmt(p);
     pushtStmt(&prog, stmt);
   }
 
