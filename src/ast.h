@@ -2,6 +2,7 @@
 #define AST_H
 
 #include "lexer.h"
+#include <stdint.h>
 #include <stdio.h>
 
 // NOTE: both epxression and STmt have to return the literal value of the token
@@ -15,6 +16,12 @@ typedef enum {
   RETURN_STATEMENT,
   EXPR_STATEMENT,
 } StatementType;
+
+/*int64_t*/
+typedef struct {
+  TokenType ttype;
+  int64_t value;
+} IntegerLiteral;
 
 // TODO: Do we need the token type here? we can infer it wil be identifer... and
 // do we need to knop the length here?
@@ -37,6 +44,7 @@ typedef struct {
 typedef struct {
   union {
     Identifier *identifier;
+    IntegerLiteral *integerLiteral;
   } as;
 } Expr;
 

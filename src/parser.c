@@ -22,9 +22,8 @@ typedef enum {
   CALL
 } Precedece;
 
-// NOTE: function pointer, that returns void * (Identifier,...)
-// TODO:generalize return void * parseIdentifier,.. so we can reuse parseFn for
-// the other parsing functions
+// NOTE: function pointer, that returns void * (ParseIdentifier,
+// parseIntgerLiteral,...)
 typedef void *(*ParseFn)(Parser *p);
 typedef Parser p;
 
@@ -109,6 +108,47 @@ void *parseIdentifier(Parser *p) {
   return (void *)identifier;
 }
 
+void *parseIntegerLiteral(Parser *p) {
+
+  // TODO: free IntegerLiteral
+  IntegerLiteral *integerLiteral = malloc(sizeof(IntegerLiteral));
+
+  char *heapIntLit = malloc((char)p->ct.length + 1);
+  memcpy(heapIntLit, p->ct.literal, p->ct.length);
+  heapIntLit[p->ct.length] = '\0';
+
+  if (heapIntLit == NULL) {
+    printf("parsing of integer literal went wrong");
+  }
+
+  // convert intVal to int64_t
+  char *endptr;
+
+  int64_t number = strtol(heapIntLit, &endptr, 10);
+
+  // Check if the conversion was successful
+  if (*endptr != '\0') {
+    printf("Conversion error, non-numeric character found: %s\n", endptr);
+  } else {
+    printf("Converted number: %ld"
+           "\n",
+           number);
+  }
+
+  integerLiteral->ttype = p->ct.type;
+  integerLiteral->value = number;
+  // NOTE: Consume ';' and '\n'
+  // TODO: remove duplicate code?
+  if (p->ct.type == TOKEN_SEMICOLON) {
+    printf("In let statement");
+    advance(p);
+    if (isLineBreak(p))
+      advance(p);
+  }
+
+  return (void *)integerLiteral;
+}
+
 LetStmt *parseLetStatement(Parser *p) {
   LetStmt *letStmt = malloc(sizeof(LetStmt));
   // NOTE: check pt and consume ct
@@ -131,8 +171,8 @@ LetStmt *parseLetStatement(Parser *p) {
   if (p->ct.type == TOKEN_SEMICOLON) {
     advance(p);
   }
-    if (isLineBreak(p))
-      advance(p);
+  if (isLineBreak(p))
+    advance(p);
   return letStmt;
 }
 
@@ -149,7 +189,7 @@ ReturnStatement *parseReturnStatement(Parser *p) {
   }
 
   // NOTE: Consume ';' and '\n'
-  //TODO: remove duplicate code?
+  // TODO: remove duplicate code?
   if (p->ct.type == TOKEN_SEMICOLON) {
     printf("In let statement");
     advance(p);
@@ -159,7 +199,8 @@ ReturnStatement *parseReturnStatement(Parser *p) {
   return returnStatement;
 }
 
-PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parseIdentifier, LOWEST}};
+PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parseIdentifier, LOWEST},
+                   [TOKEN_INT] = {parseIntegerLiteral, LOWEST}};
 
 static ParseFn *getPrefixRule(TokenType ttype) { return &pr[ttype].prefix; }
 
@@ -173,16 +214,39 @@ ExprStatement *parseExpressionStatement(Parser *p) {
   // TODO: we probably have to switch on ct.type in next steps
   ParseFn prefixRule = *getPrefixRule(p->ct.type);
 
-  Identifier *identifier = prefixRule(p);
+  switch (p->ct.type) {
+  case TOKEN_IDENTIFIER: {
 
-  if (identifier == NULL) {
-    // TODO: free statement and free epxr!!
-    fprintf(stderr, "Failed to parse an identifier.\n");
+    Identifier *identifier = prefixRule(p);
+
+    if (identifier == NULL) {
+      // TODO: free statement and free epxr!!
+      fprintf(stderr, "Failed to parse an identifier.\n");
+      return NULL;
+    }
+    if (identifier->ttype == TOKEN_IDENTIFIER) {
+      stmt->expr->as.identifier = identifier;
+    }
+  }
+  case TOKEN_INT: {
+    IntegerLiteral *intLit = prefixRule(p);
+
+    if (intLit == NULL) {
+      fprintf(stderr, "Failed to parse IntegerLiteral. \n");
+      return NULL;
+    }
+    if (intLit->ttype == TOKEN_INT) {
+      stmt->expr->as.integerLiteral = intLit;
+    }
+  }
+
+  default: {
+
+    fprintf(stderr, " parseExpressionStatement is not supporterd. \n");
     return NULL;
   }
-  if (identifier->ttype == TOKEN_IDENTIFIER) {
-    stmt->expr->as.identifier = identifier;
   }
+
   while (p->ct.type != TOKEN_SEMICOLON) {
     advance(p);
   }
