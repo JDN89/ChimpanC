@@ -19,7 +19,7 @@ void test_parse_let_statement() {
   /*}*/
   /*fprintf(stdout, "%s  \n", tokenTypeToString(parser.ct.type));*/
 
-  printf("Test parse let statement done");
+  printf("Parse let statement SUCCESS! \n");
 }
 
 void test_parse_integer_literal() {
@@ -34,7 +34,7 @@ void test_parse_integer_literal() {
   assert(program.head->as.exprStmt->expr->as.integerLiteral->value ==
          expectedInt);
 
-  printf("Test parse IntegerLiteral SUCCESS");
+  printf("Parse IntegerLiteral SUCCESS \n");
 }
 
 int main() {

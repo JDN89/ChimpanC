@@ -22,8 +22,6 @@ typedef enum {
   CALL
 } Precedece;
 
-// NOTE: function pointer, that returns void * (ParseIdentifier,
-// parseIntgerLiteral,...)
 typedef void *(*ParseFn)(Parser *p);
 typedef Parser p;
 
@@ -48,9 +46,29 @@ Parser newParser(Lexer *l) {
   return p;
 };
 
+bool isLineBreak(Parser *p) { return *p->ct.literal == '\n'; }
+
+void consumeSemiColonAndLineBreak(Parser *p) {
+  if (p->ct.type == TOKEN_SEMICOLON) {
+    printf("In let statement");
+    advance(p);
+    if (isLineBreak(p))
+      advance(p);
+  }
+}
+
 void peekError(Parser *p, char *expected, char *got) {
   char *msg = malloc(256 * sizeof(char));
   snprintf(msg, 256, "Expected token %s, but got %s \n", expected, got);
+  p->errorCount++;
+  p->errors[p->errorCount - 1] = msg;
+}
+
+// TODO: test register parser error!
+void registerParserError(Parser *p, char *message) {
+  char *msg = malloc(256 * sizeof(char));
+  snprintf(msg, 256, "%s  -  TOKEN_TYPE: %s \n", message,
+           tokenTypeToString(p->ct.type));
   p->errorCount++;
   p->errors[p->errorCount - 1] = msg;
 }
@@ -83,27 +101,26 @@ bool expectCurrentToken(Parser *p, TokenType ttype) {
   return false;
 }
 
-bool isLineBreak(Parser *p) { return *p->ct.literal == '\n'; }
-
 void *parseIdentifier(Parser *p) {
   Identifier *identifier = malloc(sizeof(Identifier));
-  int length = p->ct.length;
-  if (identifier == NULL) {
-    fprintf(stderr, "Failed to allocate memory for Identifier struct. \n");
-    exit(EXIT_FAILURE);
-  }
-  char *heapchars = malloc(length + 1);
+  HANDLE_ALLOC_FAILURE(identifier,
+                       "Failed allocating memory for Identifier \n.");
+  free(identifier);
 
-  if (heapchars == NULL) {
-    fprintf(stderr, "Failed to allocate memory heapchars. \n");
-    exit(EXIT_FAILURE);
-  }
-  memcpy(heapchars, p->ct.literal, length);
-  heapchars[length] = '\0';
+  int length = p->ct.length;
+  char *identifierLiteral = malloc(length + 1 * sizeof(char));
+
+  HANDLE_ALLOC_FAILURE(identifierLiteral,
+                       "Failed allocating memory for identifierLiteral \n.");
+  memcpy(identifierLiteral, p->ct.literal, length);
+
+  free(identifierLiteral);
+
+  identifierLiteral[length] = '\0';
 
   identifier->length = length;
   identifier->ttype = TOKEN_IDENTIFIER;
-  identifier->value = heapchars;
+  identifier->value = identifierLiteral;
 
   return (void *)identifier;
 }
@@ -124,27 +141,16 @@ void *parseIntegerLiteral(Parser *p) {
   // convert intVal to int64_t
   char *endptr;
 
-  int64_t number = strtol(heapIntLit, &endptr, 10);
+  integerLiteral->value = strtol(heapIntLit, &endptr, 10);
 
-  // Check if the conversion was successful
   if (*endptr != '\0') {
-    printf("Conversion error, non-numeric character found: %s\n", endptr);
-  } else {
-    printf("Converted number: %ld"
-           "\n",
-           number);
+    char *errorMessage = "Conversion error, non-numeric character found: %s\n";
+    registerParserError(p, errorMessage);
   }
+  free(heapIntLit);
 
   integerLiteral->ttype = p->ct.type;
-  integerLiteral->value = number;
-  // NOTE: Consume ';' and '\n'
-  // TODO: remove duplicate code?
-  if (p->ct.type == TOKEN_SEMICOLON) {
-    printf("In let statement");
-    advance(p);
-    if (isLineBreak(p))
-      advance(p);
-  }
+  consumeSemiColonAndLineBreak(p);
 
   return (void *)integerLiteral;
 }
@@ -167,12 +173,8 @@ LetStmt *parseLetStatement(Parser *p) {
   while (p->ct.type != TOKEN_SEMICOLON) {
     advance(p);
   }
-  // NOTE: Consume ';' and '\n'
-  if (p->ct.type == TOKEN_SEMICOLON) {
-    advance(p);
-  }
-  if (isLineBreak(p))
-    advance(p);
+
+  consumeSemiColonAndLineBreak(p);
   return letStmt;
 }
 
@@ -188,14 +190,7 @@ ReturnStatement *parseReturnStatement(Parser *p) {
     advance(p);
   }
 
-  // NOTE: Consume ';' and '\n'
-  // TODO: remove duplicate code?
-  if (p->ct.type == TOKEN_SEMICOLON) {
-    printf("In let statement");
-    advance(p);
-    if (isLineBreak(p))
-      advance(p);
-  }
+  consumeSemiColonAndLineBreak(p);
   return returnStatement;
 }
 
@@ -211,40 +206,32 @@ ExprStatement *parseExpressionStatement(Parser *p) {
     HANDLE_ALLOC_FAILURE(stmt, "Failed to alocate memory for ExprStatement")
   }
 
-  // TODO: we probably have to switch on ct.type in next steps
   ParseFn prefixRule = *getPrefixRule(p->ct.type);
 
   switch (p->ct.type) {
   case TOKEN_IDENTIFIER: {
 
     Identifier *identifier = prefixRule(p);
-
-    if (identifier == NULL) {
-      // TODO: free statement and free epxr!!
-      fprintf(stderr, "Failed to parse an identifier.\n");
-      return NULL;
-    }
     if (identifier->ttype == TOKEN_IDENTIFIER) {
       stmt->expr->as.identifier = identifier;
     }
-      break;
+    break;
   }
   case TOKEN_INT: {
     IntegerLiteral *intLit = prefixRule(p);
 
-    if (intLit == NULL) {
-      fprintf(stderr, "Failed to parse IntegerLiteral. \n");
-      return NULL;
-    }
     if (intLit->ttype == TOKEN_INT) {
       stmt->expr->as.integerLiteral = intLit;
     }
-      break;
+    break;
   }
 
   default: {
+    char *errorMessage = "Failed parsing ExpressionStatement for: ";
 
-    fprintf(stderr, " parseExpressionStatement is not supporterd. \n");
+    registerParserError(p, errorMessage);
+    free(stmt);
+
     return NULL;
   }
   }
@@ -253,12 +240,6 @@ ExprStatement *parseExpressionStatement(Parser *p) {
     advance(p);
   }
 
-  /*//TODO: remove duplicate code?*/
-  /*if (p->ct.type == TOKEN_SEMICOLON) {*/
-  /*  advance(p);*/
-  /*  if (isLineBreak(p))*/
-  /*    advance(p);*/
-  /*}*/
   return stmt;
 }
 
@@ -266,10 +247,7 @@ Stmt *parseStatement(Parser *p) {
 
   Stmt *stmt = malloc(sizeof(Stmt));
 
-  if (stmt == NULL) {
-    fprintf(stderr, "Memory allocation failed for Stmt\n");
-    exit(EXIT_FAILURE);
-  }
+  HANDLE_ALLOC_FAILURE(stmt, "Failed to allocate memeory for Stmt. \n");
 
   switch (p->ct.type) {
 
@@ -316,8 +294,6 @@ Program parseProgram(Parser *p) {
   Program prog = createProgram();
   // NOTE:  Stop looping when ct points to;
   while (p->pt.type != TOKEN_EOF) {
-    /*printf("type = %s\n", tokenTypeToString(p->pt.type));*/
-    /*printf("literal = %s\n", p->pt.literal);*/
     Stmt *stmt = parseStatement(p);
     pushtStmt(&prog, stmt);
   }

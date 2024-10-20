@@ -5,7 +5,7 @@
 #include "ast.h"
 #include "lexer.h"
 
-#define ERROR_SIZE 10
+#define ERROR_SIZE 256
 
 
 typedef struct {
