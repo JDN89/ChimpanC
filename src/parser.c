@@ -63,7 +63,6 @@ void peekError(Parser *p, char *expected, char *got) {
   p->errors[p->errorCount - 1] = msg;
 }
 
-// TODO: test register parser error!
 void registerParserError(Parser *p, char *message) {
   char *msg = malloc(256 * sizeof(char));
   snprintf(msg, 256, "%s  -  TOKEN_TYPE: %s \n", message,
@@ -72,13 +71,13 @@ void registerParserError(Parser *p, char *message) {
   p->errors[p->errorCount - 1] = msg;
 }
 
-// TODO: Now we immediatley exit after calling this function -> better way to do
-// this? Can't we just repost and keep parsing? -> look at bug tag
 void freeParserErrors(Parser *p) {
   for (int i = 0; i < +p->errorCount; i++) {
-    printf("%s", p->errors[i]);
-    free(p->errors[i]);
-    p->errors[i] = NULL;
+    if (p->errors[i] != NULL) {
+      printf("%s", p->errors[i]);
+      free(p->errors[i]);
+      p->errors[i] = NULL;
+    }
   }
 }
 
@@ -118,8 +117,6 @@ void *parseIdentifier(Parser *p) {
   identifier->ttype = TOKEN_IDENTIFIER;
   identifier->value = literal;
 
-  free(literal);
-
   return (void *)identifier;
 }
 
@@ -158,19 +155,13 @@ LetStmt *parseLetStatement(Parser *p) {
   LetStmt *letStmt = malloc(sizeof(LetStmt));
   // check pt and consume ct
   if (!expectPeekToken(p, TOKEN_IDENTIFIER)) {
-    freeParserErrors(p);
-    exit(EXIT_FAILURE);
+    // TODO: consume until ;  so we can continue parsing and reporting erros
   }
 
   letStmt->identifier = parseIdentifier(p);
 
   if (!expectPeekToken(p, TOKEN_ASSIGN)) {
-    // BUG: add to parser errors and test the parser errors reporting! instead
-    // of exeting report the parser errors. We  probably should unwind and
-    // consume until next valid token. At the end report all the errors we
-    // encountered in parse program and exit after reporting!
-    freeParserErrors(p);
-    exit(EXIT_FAILURE);
+    // TODO: consume until ;  so we can continue parsing and reporting erros
   }
 
   while (p->ct.type != TOKEN_SEMICOLON) {
@@ -241,8 +232,8 @@ ExprStatement *parseExpressionStatement(Parser *p) {
     return NULL;
   }
   }
-  // WARNING: This probably has to be removed once the other sided of the
-  // expressions are fixed;
+  // WARNING: This probably has to be removed once the right node of the
+  // expression gets parsed;
   consumeSemiColonAndNewline(p);
 
   return stmt;

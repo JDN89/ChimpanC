@@ -4,6 +4,29 @@
 #include <stdio.h>
 #include <string.h>
 
+void test_parser_error_during_parse_let_statement() {
+
+  // GIVEN:
+  char source[] = "let x & 5;\n";
+
+  Lexer l = init_lexer(source);
+  Parser parser = newParser(&l);
+  // WHEN:
+  Program program = parseProgram(&parser);
+
+  // THEN:
+  if (parser.errorCount > 0) {
+
+    for (int i = 0; i < parser.errorCount; i++) {
+      printf("Error %d: %s\n", i + 1, parser.errors[i]);
+    }
+    printf("Parse error during parse Let Statement SUCCESS!\n");
+  } else {
+    printf("Expected parsing error, but no error found.\n");
+  }
+}
+
+
 void test_parse_let_statement() {
 
   char source[] = " let x = 5;\n"
@@ -55,7 +78,7 @@ void test_parse_integer_literal() {
 }
 
 int main() {
+  test_parser_error_during_parse_let_statement();
   test_parse_let_statement();
-
   test_parse_integer_literal();
 }

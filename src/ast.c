@@ -1,4 +1,5 @@
 #include "ast.h"
+#include "parser.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -19,9 +20,9 @@ void pushtStmt(Program *program, Stmt *stmt) {
     program->head = stmt;
     program->tail = stmt;
   } else {
-    // NOTE: the current tail should point to stmt
+    // The current tail should point to stmt
     program->tail->next = stmt;
-    // NOTE: set tail to stmt
+    // Set tail to stmt
     program->tail = stmt;
     program->tail->next = NULL;
   }
@@ -41,13 +42,15 @@ void freeLetStmt(LetStmt *stmt) {
   }
 }
 
+// TODO: free other statements
 void freeStmt(Stmt *stmt) {
   if (stmt != NULL) {
     if (IS_LET_STMT(stmt)) {
       freeLetStmt(stmt->as.letStmt);
+    } else {
+      free(stmt);
     }
   }
-  free(stmt);
 }
 
 void freeProgram(Program *prog) {

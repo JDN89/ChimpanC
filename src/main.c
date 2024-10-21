@@ -41,6 +41,7 @@ static void repl() {
       }
     }
 
+    freeParserErrors(&p);
     freeProgram(&program);
 
     break;
