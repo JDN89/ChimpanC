@@ -5,12 +5,9 @@ The goal is to also read "Writing a Compiler in Go", create a C version of the b
 
 ## TODO
 
+- Not freeing allocated objects makes me nervous. I should expand the free program function before the code becomes unamnageble. + check that everywhere you call exit you free the program.
 - replace MAKEFILE with (Cmake)[https://cmake.org/getting-started/]
-- write test for let, parse expression and return statement
-- instead interrupting the program whilst parsing -> report the errors and keep parsing or should we intterupt during parsing? I think we should interupt during parsing, but not whilst interpreting?
-- Now I interrupt the REPL while we encounter an EOF in parsing step, but I should create an infinte for loop and keep parsing and interpreting. (check book writing interperter in GO)
-- free all allocated objects! I haven't done this so far -> stop playing Inscryption and clean up your mess mofo!!!
-- clean up code after parser chapter before continuing to the interpreter part and see that all objects are properly freed!
+- clean up code after parser chapter before continuing to the interpreter part and see that all allocated objects are properly freed! See if there is a library tool that helps detecting unfreed memory.
 
 ### Refactoring ideas
 - simplify code and improve memeory usage:

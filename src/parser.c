@@ -155,7 +155,9 @@ LetStmt *parseLetStatement(Parser *p) {
   LetStmt *letStmt = malloc(sizeof(LetStmt));
   // check pt and consume ct
   if (!expectPeekToken(p, TOKEN_IDENTIFIER)) {
-    // TODO: consume until ;  so we can continue parsing and reporting erros
+    // TODO: consume until ;  so we can continue parsing and reporting erros.
+    // There was a chapter in Crafting Interpreters - Clox that discussed
+    // somehting similar. Look it up.
   }
 
   letStmt->identifier = parseIdentifier(p);
