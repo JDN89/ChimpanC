@@ -21,7 +21,7 @@ typedef enum {
 typedef struct {
   TokenType ttype;
   int64_t value;
-} IntegerLiteral;
+} NumberLiteral;
 
 // TODO: Do we need the token type here? we can infer it wil be identifer... and
 // do we need to knop the length here?
@@ -36,7 +36,7 @@ typedef struct {
 typedef struct {
   union {
     Identifier *identifier;
-    IntegerLiteral *integerLiteral;
+    NumberLiteral *numberLiteral;
   } as;
 } Expr;
 

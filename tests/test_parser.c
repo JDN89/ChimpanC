@@ -44,12 +44,12 @@ void test_parse_let_statement() {
   int i = 0;
 
   while (current != NULL) {
-    printf("Parsed identifier: %s\n",
-           current->as.letStmt->expr->as.identifier->value);
-    printf("Expected identifier: %s\n", identifiers[i]);
+    /*printf("Parsed identifier: %s\n",*/
+    /*       current->as.letStmt->expr->as.identifier->value);*/
+    /*printf("Expected identifier: %s\n", identifiers[i]);*/
     assert(current->type == LET_STATEMENT);
     assert(strcmp(current->as.letStmt->expr->as.identifier->value,
-                  identifiers[i])==0);
+                  identifiers[i]) == 0);
     current = current->next;
     i++;
   }
@@ -74,7 +74,7 @@ void test_parse_integer_literal() {
 
   while (current != NULL) {
     assert(current->type == EXPR_STATEMENT);
-    assert(current->as.exprStmt->expr->as.integerLiteral->value == expected[i]);
+    assert(current->as.exprStmt->expr->as.numberLiteral->value == expected[i]);
     current = current->next;
     i++;
   }
@@ -83,7 +83,7 @@ void test_parse_integer_literal() {
 }
 
 int main() {
-  /*test_parser_error_during_parse_let_statement();*/
+  test_parser_error_during_parse_let_statement();
   test_parse_let_statement();
   test_parse_integer_literal();
 }

@@ -27,6 +27,7 @@ typedef Parser p;
 
 static ParseFn *getPrefixRule(TokenType ttype); // Forward declaration
 static Expr *createIdentifierExpr(Identifier *identifier);
+static Expr *createNumberExpression(NumberLiteral *number);
 
 typedef struct {
   ParseFn prefix;
@@ -123,14 +124,13 @@ Expr *parseIdentifier(Parser *p) {
 
   advance(p);
 
-
   return createIdentifierExpr(identifier);
 }
 
 Expr *parseNumber(Parser *p) {
 
   // TODO: free IntegerLiteral
-  IntegerLiteral *number = malloc(sizeof(IntegerLiteral));
+  NumberLiteral *number = malloc(sizeof(NumberLiteral));
 
   char *literal = malloc((char)p->ct.length + 1);
   memcpy(literal, p->ct.literal, p->ct.length);
@@ -154,8 +154,11 @@ Expr *parseNumber(Parser *p) {
   }
 
   number->ttype = p->ct.type;
+  advance(p);
+  consumeSemiColonAndNewline(p);
 
-  return (void *)number;
+
+  return createNumberExpression(number);
 }
 
 Expr *createIdentifierExpr(Identifier *identifier) {
@@ -166,12 +169,19 @@ Expr *createIdentifierExpr(Identifier *identifier) {
   return expr;
 }
 
+Expr *createNumberExpression(NumberLiteral *number) {
+  Expr *expr = malloc(sizeof(Expr));
+  HANDLE_ALLOC_FAILURE(expr, "Failed allocating memory for IntegerLiteral \n.");
+  expr->as.numberLiteral = number;
+  return expr;
+}
+
 Expr *parseExpression(Parser *p, Precedece prec) {
 
   ParseFn prefixRule = *getPrefixRule(p->ct.type);
   Expr *leftExpr = prefixRule(p);
 
-  printf("Keep parsing while prec is lower, %i", prec);
+  // TODO: keep parsing while prc is lower
   return leftExpr;
 }
 
