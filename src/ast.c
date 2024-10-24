@@ -35,9 +35,16 @@ void freeIdentifier(Identifier *identifier) {
     free(identifier);
   }
 }
+
+void freeExpr(Expr *expr) {
+  if (expr!=NULL) {
+    freeIdentifier(expr->as.identifier);
+    free(expr);
+  }
+}
 void freeLetStmt(LetStmt *stmt) {
   if (stmt != NULL) {
-    freeIdentifier(stmt->identifier);
+    freeExpr(stmt->expr);
     free(stmt);
   }
 }

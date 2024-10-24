@@ -31,14 +31,6 @@ typedef struct {
   char *value;
 } Identifier;
 
-typedef struct {
-  Identifier *identifier;
-} LetStmt;
-
-typedef struct {
-  TokenType type;
-} ReturnStatement;
-
 // TODO: I'll probably have to split this up later
 // expr -> union infix, prefix,...
 typedef struct {
@@ -47,6 +39,15 @@ typedef struct {
     IntegerLiteral *integerLiteral;
   } as;
 } Expr;
+
+typedef struct {
+  Expr *expr;
+} LetStmt;
+
+typedef struct {
+  TokenType type;
+} ReturnStatement;
+
 
 typedef struct {
   Expr *expr;

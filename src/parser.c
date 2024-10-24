@@ -22,8 +22,11 @@ typedef enum {
   CALL
 } Precedece;
 
-typedef void *(*ParseFn)(Parser *p);
+typedef Expr *(*ParseFn)(Parser *p);
 typedef Parser p;
+
+static ParseFn *getPrefixRule(TokenType ttype); // Forward declaration
+static Expr *createIdentifierExpr(Identifier *identifier);
 
 typedef struct {
   ParseFn prefix;
@@ -99,7 +102,8 @@ bool expectCurrentToken(Parser *p, TokenType ttype) {
   return false;
 }
 
-void *parseIdentifier(Parser *p) {
+Expr *parseIdentifier(Parser *p) {
+
   Identifier *identifier = malloc(sizeof(Identifier));
   HANDLE_ALLOC_FAILURE(identifier,
                        "Failed allocating memory for Identifier \n.");
@@ -117,10 +121,10 @@ void *parseIdentifier(Parser *p) {
   identifier->ttype = TOKEN_IDENTIFIER;
   identifier->value = literal;
 
-  return (void *)identifier;
+  return createIdentifierExpr(identifier);
 }
 
-void *parseNumber(Parser *p) {
+Expr *parseNumber(Parser *p) {
 
   // TODO: free IntegerLiteral
   IntegerLiteral *number = malloc(sizeof(IntegerLiteral));
@@ -151,6 +155,33 @@ void *parseNumber(Parser *p) {
   return (void *)number;
 }
 
+Expr *createIdentifierExpr(Identifier *identifier) {
+  Expr *expr = malloc(sizeof(Expr));
+  HANDLE_ALLOC_FAILURE(expr,
+                       "Failed allocating memory for identifierLiteral \n.");
+  expr->as.identifier = identifier;
+  return expr;
+}
+
+Expr *parseExpression(Parser *p, Precedece prec) {
+
+  ParseFn prefixRule = *getPrefixRule(p->ct.type);
+  Expr *leftExpr = prefixRule(p);
+
+  printf("Keep parsing while prec is lower, %i", prec);
+  return leftExpr;
+}
+
+// TODO read parseprecedence notes in book and comment
+PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parseIdentifier, LOWEST},
+                   [TOKEN_INT] = {parseNumber, LOWEST}};
+
+static ParseFn *getPrefixRule(TokenType ttype) { return &pr[ttype].prefix; }
+
+///////////////////////////
+// Parse statements
+// ///////////////////
+
 LetStmt *parseLetStatement(Parser *p) {
   LetStmt *letStmt = malloc(sizeof(LetStmt));
   // check pt and consume ct
@@ -160,7 +191,7 @@ LetStmt *parseLetStatement(Parser *p) {
     // somehting similar. Look it up.
   }
 
-  letStmt->identifier = parseIdentifier(p);
+  letStmt->expr = parseIdentifier(p);
 
   if (!expectPeekToken(p, TOKEN_ASSIGN)) {
     // TODO: consume until ;  so we can continue parsing and reporting erros
@@ -190,53 +221,15 @@ ReturnStatement *parseReturnStatement(Parser *p) {
   return returnStatement;
 }
 
-PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parseIdentifier, LOWEST},
-                   [TOKEN_INT] = {parseNumber, LOWEST}};
-
-static ParseFn *getPrefixRule(TokenType ttype) { return &pr[ttype].prefix; }
-
 ExprStatement *parseExpressionStatement(Parser *p) {
   ExprStatement *stmt = malloc(sizeof(ExprStatement));
   stmt->expr = malloc(sizeof(Expr));
 
   HANDLE_ALLOC_FAILURE(stmt->expr, "Failed to alocate memory for ExprStatement")
 
-  ParseFn prefixRule = *getPrefixRule(p->ct.type);
+  Expr *expr = parseExpression(p, LOWEST);
 
-  switch (p->ct.type) {
-  case TOKEN_IDENTIFIER: {
-
-    Identifier *identifier = prefixRule(p);
-    // Consume Identifier Token
-    advance(p);
-    if (identifier->ttype == TOKEN_IDENTIFIER) {
-      stmt->expr->as.identifier = identifier;
-    }
-    break;
-  }
-  case TOKEN_INT: {
-    IntegerLiteral *intLit = prefixRule(p);
-
-    if (intLit->ttype == TOKEN_INT) {
-      stmt->expr->as.integerLiteral = intLit;
-    }
-    // consume token that contains number
-    advance(p);
-    break;
-  }
-
-  default: {
-    char *errorMessage = "Failed parsing ExpressionStatement for: ";
-
-    registerParserError(p, errorMessage);
-    free(stmt);
-
-    return NULL;
-  }
-  }
-  // WARNING: This probably has to be removed once the right node of the
-  // expression gets parsed;
-  consumeSemiColonAndNewline(p);
+  stmt->expr = expr;
 
   return stmt;
 }
