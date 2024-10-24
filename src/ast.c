@@ -37,7 +37,7 @@ void freeIdentifier(Identifier *identifier) {
 }
 
 void freeExpr(Expr *expr) {
-  if (expr!=NULL) {
+  if (expr != NULL) {
     freeIdentifier(expr->as.identifier);
     free(expr);
   }

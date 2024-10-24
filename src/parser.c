@@ -121,6 +121,9 @@ Expr *parseIdentifier(Parser *p) {
   identifier->ttype = TOKEN_IDENTIFIER;
   identifier->value = literal;
 
+  advance(p);
+
+
   return createIdentifierExpr(identifier);
 }
 
