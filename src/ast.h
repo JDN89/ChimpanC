@@ -11,6 +11,8 @@
 #define AS_LET_STMT(stmt) ((stmt).as.letStmt)
 #define CREATE_STMT_LET(stmt) ((Stmt){LET_STATEMENT, as.letStmt = &stmt})
 
+typedef struct Expr Expr;
+
 typedef enum {
   LET_STATEMENT = 0,
   RETURN_STATEMENT,
@@ -31,14 +33,21 @@ typedef struct {
   char *value;
 } Identifier;
 
-// TODO: I'll probably have to split this up later
-// expr -> union infix, prefix,...
 typedef struct {
+  // Again, is token necessary. Keep following the book but throw this shit out if you can!
+  TokenType token;
+  const char *op;
+  Expr *right;
+} PrefixExpr;
+
+struct Expr {
+  //TODO: Add Expr type to check that I'm accessing the correct Expresson kind
   union {
     Identifier *identifier;
     NumberLiteral *numberLiteral;
+    PrefixExpr *prefix;
   } as;
-} Expr;
+};
 
 typedef struct {
   Expr *expr;
@@ -47,7 +56,6 @@ typedef struct {
 typedef struct {
   TokenType type;
 } ReturnStatement;
-
 
 typedef struct {
   Expr *expr;

@@ -1,6 +1,7 @@
 #include "parser.h"
 #include "ast.h"
 #include "lexer.h"
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +19,7 @@ typedef enum {
   LESSGREATER,
   SUM,
   PRODUCT,
-  PREFIC,
+  PREFIX,
   CALL
 } Precedece;
 
@@ -157,7 +158,6 @@ Expr *parseNumber(Parser *p) {
   advance(p);
   consumeSemiColonAndNewline(p);
 
-
   return createNumberExpression(number);
 }
 
@@ -181,13 +181,42 @@ Expr *parseExpression(Parser *p, Precedece prec) {
   ParseFn prefixRule = *getPrefixRule(p->ct.type);
   Expr *leftExpr = prefixRule(p);
 
-  // TODO: keep parsing while prc is lower
   return leftExpr;
+}
+
+Expr *parsePrefixExpression(Parser *p) {
+  Expr *expr = malloc(sizeof(Expr));
+  HANDLE_ALLOC_FAILURE(expr,
+                       "Failed to allocate Expr in parsePrefixExpression\n");
+
+  PrefixExpr *pre = malloc(sizeof(PrefixExpr));
+  HANDLE_ALLOC_FAILURE(
+      expr, "Failed to allocate PrefixExpr in parsePrefixExpression\n");
+
+  char *literal = malloc(sizeof(char) * p->ct.length + 1);
+  HANDLE_ALLOC_FAILURE(expr, "Failed to allocate memory for operator literal "
+                             "in parsePrefixExpression\n");
+  memcpy(literal, p->ct.literal, p->ct.length);
+  literal[p->ct.length] = '\0';
+
+  pre->op = literal;
+  pre->token = p->ct.type;
+
+  advance(p);
+
+  pre->right = parseExpression(p, PREFIX);
+  expr->as.prefix = pre;
+
+  return expr;
 }
 
 // TODO read parseprecedence notes in book and comment
 PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parseIdentifier, LOWEST},
-                   [TOKEN_INT] = {parseNumber, LOWEST}};
+                   [TOKEN_INT] = {parseNumber, LOWEST},
+                   [TOKEN_BANG] = {parsePrefixExpression, LOWEST},
+                   [TOKEN_MINUS] = {parsePrefixExpression, LOWEST}
+
+};
 
 static ParseFn *getPrefixRule(TokenType ttype) { return &pr[ttype].prefix; }
 
