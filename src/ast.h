@@ -19,6 +19,12 @@ typedef enum {
   EXPR_STATEMENT,
 } StatementType;
 
+typedef enum {
+  IDENTIFIER_EXPR = 0,
+  NUMBER_EXPR,
+  PREFIX_EXPR,
+} ExprType;
+
 /*int64_t*/
 typedef struct {
   TokenType ttype;
@@ -41,6 +47,7 @@ typedef struct {
 } PrefixExpr;
 
 struct Expr {
+  ExprType type;
   //TODO: Add Expr type to check that I'm accessing the correct Expresson kind
   union {
     Identifier *identifier;

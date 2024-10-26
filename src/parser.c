@@ -1,7 +1,6 @@
 #include "parser.h"
 #include "ast.h"
 #include "lexer.h"
-#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,6 +28,7 @@ typedef Parser p;
 static ParseFn *getPrefixRule(TokenType ttype); // Forward declaration
 static Expr *createIdentifierExpr(Identifier *identifier);
 static Expr *createNumberExpression(NumberLiteral *number);
+Expr *parseExpression(Parser *p, Precedece prec);
 
 typedef struct {
   ParseFn prefix;
@@ -128,6 +128,15 @@ Expr *parseIdentifier(Parser *p) {
   return createIdentifierExpr(identifier);
 }
 
+Expr *createIdentifierExpr(Identifier *identifier) {
+  Expr *expr = malloc(sizeof(Expr));
+  HANDLE_ALLOC_FAILURE(expr,
+                       "Failed allocating memory for identifierLiteral \n.");
+  expr->type = IDENTIFIER_EXPR;
+  expr->as.identifier = identifier;
+  return expr;
+}
+
 Expr *parseNumber(Parser *p) {
 
   // TODO: free IntegerLiteral
@@ -161,27 +170,12 @@ Expr *parseNumber(Parser *p) {
   return createNumberExpression(number);
 }
 
-Expr *createIdentifierExpr(Identifier *identifier) {
-  Expr *expr = malloc(sizeof(Expr));
-  HANDLE_ALLOC_FAILURE(expr,
-                       "Failed allocating memory for identifierLiteral \n.");
-  expr->as.identifier = identifier;
-  return expr;
-}
-
 Expr *createNumberExpression(NumberLiteral *number) {
   Expr *expr = malloc(sizeof(Expr));
   HANDLE_ALLOC_FAILURE(expr, "Failed allocating memory for IntegerLiteral \n.");
   expr->as.numberLiteral = number;
+  expr->type = NUMBER_EXPR;
   return expr;
-}
-
-Expr *parseExpression(Parser *p, Precedece prec) {
-
-  ParseFn prefixRule = *getPrefixRule(p->ct.type);
-  Expr *leftExpr = prefixRule(p);
-
-  return leftExpr;
 }
 
 Expr *parsePrefixExpression(Parser *p) {
@@ -206,9 +200,19 @@ Expr *parsePrefixExpression(Parser *p) {
 
   pre->right = parseExpression(p, PREFIX);
   expr->as.prefix = pre;
+  expr->type = PREFIX_EXPR;
 
   return expr;
 }
+
+Expr *parseExpression(Parser *p, Precedece prec) {
+
+  ParseFn prefixRule = *getPrefixRule(p->ct.type);
+  Expr *leftExpr = prefixRule(p);
+
+  return leftExpr;
+}
+
 
 // TODO read parseprecedence notes in book and comment
 PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parseIdentifier, LOWEST},

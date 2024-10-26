@@ -20,9 +20,9 @@ void test_parser_error_during_parse_let_statement() {
     for (int i = 0; i < parser.errorCount; i++) {
       printf("Error %d: %s\n", i + 1, parser.errors[i]);
     }
-    printf("Parse error during parse Let Statement SUCCESS!\n");
+    printf("Report parse error - SUCCESS!\n");
   } else {
-    printf("Expected parsing error, but no error found.\n");
+    printf("Report parser error - FAILED!\n");
   }
 }
 
@@ -48,13 +48,14 @@ void test_parse_let_statement() {
     /*       current->as.letStmt->expr->as.identifier->value);*/
     /*printf("Expected identifier: %s\n", identifiers[i]);*/
     assert(current->type == LET_STATEMENT);
+    assert(current->as.exprStmt->expr->type == IDENTIFIER_EXPR);
     assert(strcmp(current->as.letStmt->expr->as.identifier->value,
                   identifiers[i]) == 0);
     current = current->next;
     i++;
   }
 
-  printf("Parse let statement SUCCESS! \n");
+  printf("Parse let statement - SUCCESS! \n");
 }
 
 void test_parse_integer_literal() {
@@ -74,12 +75,13 @@ void test_parse_integer_literal() {
 
   while (current != NULL) {
     assert(current->type == EXPR_STATEMENT);
+    assert(current->as.exprStmt->expr->type == NUMBER_EXPR);
     assert(current->as.exprStmt->expr->as.numberLiteral->value == expected[i]);
     current = current->next;
     i++;
   }
 
-  printf("Parse numbers SUCCESS \n");
+  printf("Parse numbers - SUCCESS! \n");
 }
 
 int main() {
