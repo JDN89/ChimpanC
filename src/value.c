@@ -6,15 +6,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-ObjString *createString(int length, char *source) {
+ObjString *createLiteralSubstring(int length, char *source) {
   ObjString *obj = malloc(sizeof(ObjString));
   HANDLE_ALLOC_FAILURE(obj, "Failed to allocate ObjString in value.c \n");
 
   obj->pointer = malloc(length + 1);
   HANDLE_ALLOC_FAILURE(obj->pointer,
                        "Failed to allocate string pointer in value.c\n");
-
-  char *literal = malloc(sizeof(char) * length + 1);
 
   memcpy(obj->pointer, source, length);
   obj->pointer[length] = '\0';
@@ -28,13 +26,24 @@ Value *createStringValue(int length, char *source) {
   Value *value = malloc(sizeof(Value));
   HANDLE_ALLOC_FAILURE(value,
                        "Failed to allocate memory for Value in value.c \n");
-  ObjString *str = createString(length, source);
+  ObjString *str = createLiteralSubstring(length, source);
   if (str == NULL) {
     freeString(str);
   }
 
   value->type = VAL_STRING;
   value->as.string = str;
+  return value;
+}
+
+Value *createNumberValue(int length, char *source) {
+  Value *value = malloc(sizeof(Value));
+  HANDLE_ALLOC_FAILURE(value,
+                       "Failed to allocate memory for Value in value.c \n");
+
+  char *literal = malloc(sizeof(char) * length +1);
+  HANDLE_ALLOC_FAILURE(literal, "Failed allocatig memeory for number literal");
+
   return value;
 }
 

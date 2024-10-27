@@ -30,8 +30,9 @@ struct Value {
 };
 
 void freeString(ObjString *string);
-ObjString *createString(int length, char *source);
+ObjString *createLiteralSubstring(int length, char *source);
 Value *createStringValue(int length, char *source);
 void freeValue(Value *val);
+Value *creatNumberValue(int length, char *source);
 
 #endif
