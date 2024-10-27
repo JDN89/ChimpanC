@@ -3,9 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void freeString(ObjString *string) {
-  if (string == NULL) {
+
+
+void freeString(ObjString *obj) {
+  if (obj == NULL) {
     return;
   }
-  free(string);
+  free(obj->pointer);
+  free(obj);
 }
