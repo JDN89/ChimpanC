@@ -30,13 +30,13 @@ TEST_PARSER_OBJECTS = $(TEST_PARSER_SOURCES:.c=.o)
 TEST_PARSER_EXECUTABLE = test_parser
 
 # Test source files for parser tests
-TEST_STRING_SOURCES = tests/test_string.c 
+TEST_VALUE_SOURCES = tests/test_value.c 
 
 # Object files for parser tests
-TEST_STRING_OBJECTS = $(TEST_STRING_SOURCES:.c=.o)
+TEST_VALUE_OBJECTS = $(TEST_VALUE_SOURCES:.c=.o)
 
 # Test executable name for parser tests
-TEST_STRING_EXECUTABLE = test_string
+TEST_VALUE_EXECUTABLE = test_value
 
 # Build the main executable
 all: $(EXECUTABLE)
@@ -60,9 +60,9 @@ $(TEST_LEXER_EXECUTABLE): $(TEST_LEXER_OBJECTS)
 $(TEST_PARSER_EXECUTABLE): $(TEST_PARSER_OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(TEST_PARSER_OBJECTS)
 
-# Build string tests
-$(TEST_STRING_EXECUTABLE): $(TEST_STRING_OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(TEST_STRING_OBJECTS)
+# Build value tests
+$(TEST_VALUE_EXECUTABLE): $(TEST_VALUE_OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(TEST_VALUE_OBJECTS)
 
 # Run lexer tests
 run_test_lexer: $(TEST_LEXER_EXECUTABLE)
@@ -72,19 +72,19 @@ run_test_lexer: $(TEST_LEXER_EXECUTABLE)
 run_test_parser: $(TEST_PARSER_EXECUTABLE)
 	./$(TEST_PARSER_EXECUTABLE)
 
-# Run string tests
-run_test_string: $(TEST_STRING_EXECUTABLE)
-	./$(TEST_STRING_EXECUTABLE)
+# Run value tests
+run_test_value: $(TEST_VALUE_EXECUTABLE)
+	./$(TEST_VALUE_EXECUTABLE)
 
 # Build and run all tests
-test: $(TEST_LEXER_EXECUTABLE) $(TEST_PARSER_EXECUTABLE) $(TEST_STRING_EXECUTABLE)
+test: $(TEST_LEXER_EXECUTABLE) $(TEST_PARSER_EXECUTABLE) $(TEST_VALUE_EXECUTABLE)
 	./$(TEST_LEXER_EXECUTABLE)
 	./$(TEST_PARSER_EXECUTABLE)
-	./$(TEST_STRING_EXECUTABLE)
+	./$(TEST_VALUE_EXECUTABLE)
 
 # Clean up build artifacts
 clean:
-	rm -f $(EXECUTABLE) $(OBJECTS) $(TEST_LEXER_OBJECTS) $(TEST_PARSER_OBJECTS) $(TEST_LEXER_EXECUTABLE) $(TEST_PARSER_EXECUTABLE) $(TEST_STRING_EXECUTABLE)
+	rm -f $(EXECUTABLE) $(OBJECTS) $(TEST_LEXER_OBJECTS) $(TEST_PARSER_OBJECTS) $(TEST_LEXER_EXECUTABLE) $(TEST_PARSER_EXECUTABLE) $(TEST_VALUE_EXECUTABLE)
 
 # Mark targets as phony
-.PHONY: all clean test run_test_lexer run_test_parser run_test_string
+.PHONY: all clean test run_test_lexer run_test_parser run_test_value

@@ -1,3 +1,4 @@
+#include "utilities.h"
 #include "parser.h"
 #include "ast.h"
 #include "lexer.h"
@@ -5,12 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define HANDLE_ALLOC_FAILURE(ptr, msg)                                         \
-  if ((ptr) == NULL) {                                                         \
-    fprintf(stderr, "%s\n", msg);                                              \
-    exit(EXIT_FAILURE);                                                        \
-  }
 
 typedef enum {
   LOWEST,
@@ -212,7 +207,6 @@ Expr *parseExpression(Parser *p, Precedece prec) {
 
   return leftExpr;
 }
-
 
 // TODO read parseprecedence notes in book and comment
 PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parseIdentifier, LOWEST},
