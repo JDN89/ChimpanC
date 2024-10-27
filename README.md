@@ -4,9 +4,9 @@ A C implementation based on "Writing an Interpreter in Go" by Thorsten Ball.
 The goal is to also read "Writing a Compiler in Go", create a C version of the byteCode VM, compile Monkey's bytecode to WebAssembly (WASM), write a Snake game in Monkey, and possibly extend the language as needed. Finally, I want to run the WASM binary in the browser.
 
 ## TODO
-
-- Wrap values (number, string, identifiers,prefix operators) stored in leafnodes in a value.h object. This will make comparing them in tests and executing them in the interpreter a lot easier.
-- Not freeing allocated objects makes me nervous. I should expand the free program function before the code becomes unamnageble. + check that everywhere you call exit you free the program.
+- wrap numbers and string into Val struct
+- call free() also in tests!
+- use Valgrind to look for memory leaks
 - replace MAKEFILE with (Cmake)[https://cmake.org/getting-started/]
 - clean up code after parser chapter before continuing to the interpreter part and see that all allocated objects are properly freed! See if there is a library tool that helps detecting unfreed memory.
 
