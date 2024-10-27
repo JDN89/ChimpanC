@@ -4,16 +4,22 @@
 #include <string.h>
 
 void test_make_string() {
-  char *source = "hello you";
-  int length = 5;
-  char *expected_result = "hello";
+  char *source[3] = {"hello you.\n Yes you!", "dikke tetten.", "yo4"};
+  int lengthOfStringLiteral[] = {5, 9, 3};
 
-  Value *val = createStringValue(length, source);
-  assert(val->type == VAL_STRING);
-  assert(strcmp(expected_result, val->as.string->pointer) == 0);
-  assert(length == val->as.string->length);
+  char *expectedLiterals[] = {"hello", "dikke tet", "yo4"};
 
-  freeValue(val);
+  int i = 0;
+  while (i < 3) {
+
+    Value *val = createStringValue(lengthOfStringLiteral[i], source[i]);
+    assert(val->type == VAL_STRING);
+    assert(strcmp(expectedLiterals[i], val->as.string->pointer) == 0);
+    assert(lengthOfStringLiteral[i] == val->as.string->length);
+
+    freeValue(val);
+    i++;
+  }
 
   printf("Create string value - SUCCESS! \n");
 }

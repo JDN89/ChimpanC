@@ -4,6 +4,7 @@ A C implementation based on "Writing an Interpreter in Go" by Thorsten Ball.
 The goal is to also read "Writing a Compiler in Go", create a C version of the byteCode VM, compile Monkey's bytecode to WebAssembly (WASM), write a Snake game in Monkey, and possibly extend the language as needed. Finally, I want to run the WASM binary in the browser.
 
 ## TODO
+- add char* next to Objstring. Walk the linked list upon freeing and free all the allocated literals;
 - wrap numbers and string into Val struct
 - call free() also in tests!
 - use Valgrind to look for memory leaks
