@@ -16,7 +16,6 @@ typedef enum {
 #define AS_STRING(value) ((value).as.string)
 #define AS_CSTRING(value) ((value).as.string->pointer)
 
-
 typedef struct {
   int length;
   char *pointer;
@@ -32,7 +31,6 @@ struct Value {
 
 void freeString(ObjString *string);
 ObjString *createString(int length, char *source);
-Value * createStringValue(ObjString strl) ;
-
+Value *createStringValue( int length, char *source);
 
 #endif

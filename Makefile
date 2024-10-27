@@ -30,7 +30,7 @@ TEST_PARSER_OBJECTS = $(TEST_PARSER_SOURCES:.c=.o)
 TEST_PARSER_EXECUTABLE = test_parser
 
 # Test source files for parser tests
-TEST_VALUE_SOURCES = tests/test_value.c 
+TEST_VALUE_SOURCES = tests/test_value.c src/value.c 
 
 # Object files for parser tests
 TEST_VALUE_OBJECTS = $(TEST_VALUE_SOURCES:.c=.o)

@@ -24,7 +24,7 @@ ObjString *createString(int length, char *source) {
   return obj;
 }
 
-Value *createValueString(int length, char *source) {
+Value *createStringValue(int length, char *source) {
   Value *value = malloc(sizeof(Value));
   HANDLE_ALLOC_FAILURE(value,
                        "Failed to allocate memory for Value in value.c \n");
