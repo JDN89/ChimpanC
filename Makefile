@@ -3,7 +3,7 @@ CC = clang -std=c2x
 CFLAGS = -Wall -Wextra -g -Isrc
 
 # Source files for the main program
-SOURCES = src/main.c src/lexer.c src/parser.c src/ast.c
+SOURCES = src/main.c src/lexer.c src/parser.c src/ast.c src/value.c
 
 # Object files for the main program
 OBJECTS = $(SOURCES:.c=.o)
