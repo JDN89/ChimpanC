@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void test_make_string() {
+void test_parse_string_value() {
   char *source[3] = {"hello you.\n Yes you!", "dikke tetten.", "yo4"};
   int lengthOfStringLiteral[] = {5, 9, 3};
 
@@ -24,4 +24,26 @@ void test_make_string() {
   printf("Create string value - SUCCESS! \n");
 }
 
-int main() { test_make_string(); }
+void test_parse_number_value() {
+  char *source[3] = {"56 hello you.", "99999  mofo;", "666.55\n!!"};
+
+  double expectedLiterals[] = {56, 99999, 666.55};
+
+  int i = 0;
+  while (i < 3) {
+
+    Value *val = createNumberValue(source[i]);
+    assert(val->type == VAL_NUMBER);
+    assert(val->as.number == expectedLiterals[i]);
+
+    freeValue(val);
+    i++;
+  }
+
+  printf("Create number Value - SUCCESS! \n");
+}
+
+int main() {
+  test_parse_string_value();
+  test_parse_number_value();
+}

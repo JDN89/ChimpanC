@@ -33,6 +33,6 @@ void freeString(ObjString *string);
 ObjString *createLiteralSubstring(int length, char *source);
 Value *createStringValue(int length, char *source);
 void freeValue(Value *val);
-Value *creatNumberValue(int length, char *source);
+Value *createNumberValue(char *source);
 
 #endif

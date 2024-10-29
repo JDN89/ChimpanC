@@ -36,14 +36,12 @@ Value *createStringValue(int length, char *source) {
   return value;
 }
 
-Value *createNumberValue(int length, char *source) {
+Value *createNumberValue(char *source) {
   Value *value = malloc(sizeof(Value));
-  HANDLE_ALLOC_FAILURE(value,
-                       "Failed to allocate memory for Value in value.c \n");
+  HANDLE_ALLOC_FAILURE(value, "Failed to allocate memory for Value");
+  double number = strtod(source, NULL);
 
-  char *literal = malloc(sizeof(char) * length +1);
-  HANDLE_ALLOC_FAILURE(literal, "Failed allocatig memeory for number literal");
-
+  *value = NUMBER(number);
   return value;
 }
 
