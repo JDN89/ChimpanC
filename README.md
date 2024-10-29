@@ -8,8 +8,13 @@ The goal is to also read "Writing a Compiler in Go", create a C version of the b
 - wrap numbers and string into Val struct
 - call free() also in tests!
 - use Valgrind to look for memory leaks
-- replace MAKEFILE with (Cmake)[https://cmake.org/getting-started/]
+- replace MAKEFILE with [Cmake](https://cmake.org/getting-started/)
 - clean up code after parser chapter before continuing to the interpreter part and see that all allocated objects are properly freed! See if there is a library tool that helps detecting unfreed memory.
+- Read [tigerbeetle](https://github.com/tigerbeetle/tigerbeetle/blob/main/docs/TIGER_STYLE.md) -> Assert more in your code!
+- Fuzzy test the lexer and parser and see where the program crashes. Pump random text into it!
+    - [LibAFL](https://github.com/AFLplusplus/LibAFL)
+    - [OSSFuzz](https://github.com/google/oss-fuzz)
+- implement sanitizer tests! [google Sanitizers](https://github.com/google/sanitizers?tab=readme-ov-file)
 
 ### Refactoring ideas
 - simplify code and improve memeory usage:
