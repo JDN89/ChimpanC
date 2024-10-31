@@ -1,7 +1,8 @@
-#include "utilities.h"
 #include "parser.h"
 #include "ast.h"
 #include "lexer.h"
+#include "utilities.h"
+#include "value.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,7 +23,7 @@ typedef Parser p;
 
 static ParseFn *getPrefixRule(TokenType ttype); // Forward declaration
 static Expr *createIdentifierExpr(Identifier *identifier);
-static Expr *createNumberExpression(NumberLiteral *number);
+static Expr *createNumberExpression(Value *number);
 Expr *parseExpression(Parser *p, Precedece prec);
 
 typedef struct {
@@ -105,18 +106,10 @@ Expr *parseIdentifier(Parser *p) {
   HANDLE_ALLOC_FAILURE(identifier,
                        "Failed allocating memory for Identifier \n.");
 
-  int length = p->ct.length;
-  char *literal = malloc(length + 1 * sizeof(char));
+  Value *value = createStringValue(p->ct.length, p->ct.literal);
 
-  HANDLE_ALLOC_FAILURE(literal,
-                       "Failed allocating memory for identifierLiteral \n.");
-  memcpy(literal, p->ct.literal, length);
-
-  literal[length] = '\0';
-
-  identifier->length = length;
   identifier->ttype = TOKEN_IDENTIFIER;
-  identifier->value = literal;
+  identifier->value = value;
 
   advance(p);
 

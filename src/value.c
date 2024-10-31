@@ -6,7 +6,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-ObjString *createLiteralSubstring(int length, char *source) {
+static void freeString(ObjString *obj);
+
+ObjString *createLiteralSubstring(int length, const char *source) {
   ObjString *obj = malloc(sizeof(ObjString));
   HANDLE_ALLOC_FAILURE(obj, "Failed to allocate ObjString in value.c \n");
 
@@ -22,7 +24,7 @@ ObjString *createLiteralSubstring(int length, char *source) {
   return obj;
 }
 
-Value *createStringValue(int length, char *source) {
+Value *createStringValue(int length, const char *source) {
   Value *value = malloc(sizeof(Value));
   HANDLE_ALLOC_FAILURE(value,
                        "Failed to allocate memory for Value in value.c \n");
@@ -36,7 +38,7 @@ Value *createStringValue(int length, char *source) {
   return value;
 }
 
-Value *createNumberValue(char *source) {
+Value *createNumberValue(const char *source) {
   Value *value = malloc(sizeof(Value));
   HANDLE_ALLOC_FAILURE(value, "Failed to allocate memory for Value");
   double number = strtod(source, NULL);
@@ -45,7 +47,7 @@ Value *createNumberValue(char *source) {
   return value;
 }
 
-void freeString(ObjString *obj) {
+static void freeString(ObjString *obj) {
   if (obj == NULL) {
     return;
   }

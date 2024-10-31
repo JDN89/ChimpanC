@@ -2,10 +2,9 @@
 #define AST_H
 
 #include "lexer.h"
+#include "value.h"
 #include <stdint.h>
 #include <stdio.h>
-
-// NOTE: both epxression and STmt have to return the literal value of the token
 
 #define IS_LET_STMT(stmt) ((stmt)->type == LET_STATEMENT)
 #define AS_LET_STMT(stmt) ((stmt).as.letStmt)
@@ -25,39 +24,24 @@ typedef enum {
   PREFIX_EXPR,
 } ExprType;
 
-/*int64_t*/
 typedef struct {
-  TokenType ttype;
-  int64_t value;
-} NumberLiteral;
-
-// TODO: Do we need the token type here? we can infer it wil be identifer... and
-// do we need to knop the length here?
-typedef struct {
-  TokenType ttype;
-  int length;
-  char *value;
-} Identifier;
-
-typedef struct {
-  // Again, is token necessary. Keep following the book but throw this shit out if you can!
-  TokenType token;
   const char *op;
   Expr *right;
 } PrefixExpr;
 
 struct Expr {
   ExprType type;
-  //TODO: Add Expr type to check that I'm accessing the correct Expresson kind
   union {
-    Identifier *identifier;
-    NumberLiteral *numberLiteral;
+    Value *value;
     PrefixExpr *prefix;
   } as;
 };
 
+// WARNING: Not sure if I should wrap value in an Identifier struct?
 typedef struct {
-  Expr *expr;
+  TokenType token; // token.Ident
+  Value *name;
+  Expr *value;
 } LetStmt;
 
 typedef struct {
@@ -90,6 +74,6 @@ Program createProgram();
 void pushtStmt(Program *program, Stmt *stmt);
 Stmt *popStmt(Program *program);
 void freeProgram(Program *prog);
-void freeIdentifier(Identifier *identifier);
+void freeIdentifier(Value *identifier);
 
 #endif

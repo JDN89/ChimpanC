@@ -29,10 +29,8 @@ struct Value {
   } as;
 };
 
-void freeString(ObjString *string);
-ObjString *createLiteralSubstring(int length, char *source);
-Value *createStringValue(int length, char *source);
+Value *createStringValue(int length, const char *source);
 void freeValue(Value *val);
-Value *createNumberValue(char *source);
+Value *createNumberValue(const char *source);
 
 #endif
