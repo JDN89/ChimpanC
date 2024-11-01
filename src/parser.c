@@ -38,13 +38,13 @@ void advance(Parser *p) {
 }
 
 Parser newParser(Lexer *l) {
-  Parser p;
+  Parser p = {0};
   p.l = l;
 
   // Read two tokens, so curToken and peekToken are both set
   advance(&p);
   advance(&p);
-  p.errorCount = 0;
+  /*p.errorCount = 0;*/
   return p;
 };
 
@@ -126,6 +126,7 @@ Expr *createIdentifierExpr(Identifier *identifier) {
 }
 
 Expr *createNumberExpression(Value *number) {
+  assert(number != NULL); // Ensure number is not NULL
   Expr *expr = malloc(sizeof(Expr));
   HANDLE_ALLOC_FAILURE(expr, "Failed allocating memory for IntegerLiteral \n.");
   expr->as.value = number;
@@ -221,7 +222,8 @@ LetStmt *parseLetStatement(Parser *p) {
 
 ReturnStatement *parseReturnStatement(Parser *p) {
   ReturnStatement *returnStatement = malloc(sizeof(ReturnStatement));
-  HANDLE_ALLOC_FAILURE(returnStatement, "Memory allocation failed for ReturnStatement\n");
+  HANDLE_ALLOC_FAILURE(returnStatement,
+                       "Memory allocation failed for ReturnStatement\n");
 
   expectPeekToken(p, TOKEN_RETURN);
 

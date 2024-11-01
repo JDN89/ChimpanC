@@ -14,9 +14,9 @@ Program createProgram() {
 
 void pushtStmt(Program *program, Stmt *stmt) {
   assert(program != NULL && stmt != NULL); // Safety check for NULL pointers
-  
-    // Initialize the `next` pointer of the new `stmt` to NULL
-    stmt->next = NULL;
+
+  // Initialize the `next` pointer of the new `stmt` to NULL
+  stmt->next = NULL;
 
   if (program->head == NULL) {
     program->head = stmt;
@@ -54,9 +54,7 @@ void freeExpr(Expr *expr) {
       break;
     }
     case NUMBER_EXPR: {
-      printf("Number expr?");
       freeValue(expr->as.value);
-      free(expr);
       break;
     }
     case PREFIX_EXPR: {
@@ -78,16 +76,47 @@ void freeLetStmt(LetStmt *stmt) {
   }
 }
 
-// TODO: free other statements
-void freeStmt(Stmt *stmt) {
+void freeReturnStatement(ReturnStatement *stmt) {
+  assert(stmt != NULL);
+  // TODO: finish function ones we add expressions to return statement
+  if (stmt != NULL) {
+    free(stmt);
+  }
+  return;
+}
+
+void freeExprStatement(ExprStatement *stmt) {
   assert(stmt != NULL);
   if (stmt != NULL) {
-    if (IS_LET_STMT(stmt)) {
-      freeLetStmt(stmt->as.letStmt);
-    } else {
-      free(stmt);
-    }
+    freeExpr(stmt->expr);
+    free(stmt);
   }
+}
+
+void freeStmt(Stmt *stmt) {
+  assert(stmt != NULL); // Assert to ensure stmt is not NULL
+
+  switch (stmt->type) {
+  case LET_STATEMENT:
+    freeLetStmt(stmt->as.letStmt); // Free the let statement structure
+    break;
+
+  case RETURN_STATEMENT:
+    freeReturnStatement(stmt->as.returnStmt); // Ensure you have a free function
+                                              // for return statement
+    break;
+
+  case EXPR_STATEMENT:
+    freeExprStatement(
+        stmt->as.exprStmt); // Free the expression statement structure
+    break;
+
+  default:
+    fprintf(stderr, "Unknown statement type to free.\n");
+    break;
+  }
+
+  free(stmt); // Free the statement itself
 }
 
 void freeProgram(Program *prog) {

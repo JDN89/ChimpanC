@@ -57,24 +57,22 @@ static void freeString(ObjString *obj) {
 }
 
 void freeValue(Value *val) {
- 
-  if (val == NULL) {  // Additional runtime check
+
+  if (val == NULL) { // Additional runtime check
     return;
   }
-  assert(val !=NULL);
+  assert(val != NULL);
   switch (val->type) {
 
   case VAL_NUMBER:
-    free(val);
     break;
   case VAL_STRING: {
     freeString(val->as.string);
-    free(val);
-      break;
-  } 
-
+    break;
+  }
   default:
     fprintf(stderr, "Unhandled freeValue type \n");
     break; // Optional, for completeness
   }
+  free(val);
 }
