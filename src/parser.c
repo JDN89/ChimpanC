@@ -3,6 +3,7 @@
 #include "lexer.h"
 #include "utilities.h"
 #include "value.h"
+#include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -108,7 +109,6 @@ Expr *parseIdentifier(Parser *p) {
 
   Value *value = createStringValue(p->ct.length, p->ct.literal);
 
-  identifier->ttype = TOKEN_IDENTIFIER;
   identifier->value = value;
 
   advance(p);
@@ -125,44 +125,27 @@ Expr *createIdentifierExpr(Identifier *identifier) {
   return expr;
 }
 
+Expr *createNumberExpression(Value *number) {
+  Expr *expr = malloc(sizeof(Expr));
+  HANDLE_ALLOC_FAILURE(expr, "Failed allocating memory for IntegerLiteral \n.");
+  expr->as.value = number;
+  expr->type = NUMBER_EXPR;
+  return expr;
+}
+
 Expr *parseNumber(Parser *p) {
+  assert(p->ct.type == TOKEN_INT);
 
-  // TODO: free IntegerLiteral
-  NumberLiteral *number = malloc(sizeof(NumberLiteral));
+  Expr *numberExp = malloc(sizeof(Expr));
+  HANDLE_ALLOC_FAILURE(numberExp,
+                       "Failed allocating memory for identifierLiteral \n.");
 
-  char *literal = malloc((char)p->ct.length + 1);
-  memcpy(literal, p->ct.literal, p->ct.length);
-  literal[p->ct.length] = '\0';
-
-  if (literal == NULL) {
-    printf("Error during allocation of number literal value on the stack. \n");
-    free(literal);
-  }
-
-  char *endptr;
-
-  // Convert the *char to a number. We first create a substring because the
-  // literal stored in the Token points to the entire source string, starting
-  // where the current number begins.
-  number->value = strtol(literal, &endptr, 10);
-
-  if (*endptr != '\0') {
-    char *errorMessage = "Conversion error, non-numeric character found: %s\n";
-    registerParserError(p, errorMessage);
-  }
-
-  number->ttype = p->ct.type;
+  Value *value = createNumberValue(p->ct.literal);
+  Expr *expr = createNumberExpression(value);
   advance(p);
   consumeSemiColonAndNewline(p);
 
-  return createNumberExpression(number);
-}
-
-Expr *createNumberExpression(NumberLiteral *number) {
-  Expr *expr = malloc(sizeof(Expr));
-  HANDLE_ALLOC_FAILURE(expr, "Failed allocating memory for IntegerLiteral \n.");
-  expr->as.numberLiteral = number;
-  expr->type = NUMBER_EXPR;
+  assert(expr->as.value != NULL);
   return expr;
 }
 
@@ -175,14 +158,9 @@ Expr *parsePrefixExpression(Parser *p) {
   HANDLE_ALLOC_FAILURE(
       expr, "Failed to allocate PrefixExpr in parsePrefixExpression\n");
 
-  char *literal = malloc(sizeof(char) * p->ct.length + 1);
-  HANDLE_ALLOC_FAILURE(expr, "Failed to allocate memory for operator literal "
-                             "in parsePrefixExpression\n");
-  memcpy(literal, p->ct.literal, p->ct.length);
-  literal[p->ct.length] = '\0';
+  assert(p->ct.literal[0] == '!' || p->ct.literal[0] == '-');
 
-  pre->op = literal;
-  pre->token = p->ct.type;
+  pre->op = p->ct.literal[0];
 
   advance(p);
 
@@ -224,7 +202,7 @@ LetStmt *parseLetStatement(Parser *p) {
     // somehting similar. Look it up.
   }
 
-  letStmt->expr = parseIdentifier(p);
+  letStmt->value = parseIdentifier(p);
 
   if (!expectPeekToken(p, TOKEN_ASSIGN)) {
     // TODO: consume until ;  so we can continue parsing and reporting erros

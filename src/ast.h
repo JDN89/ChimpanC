@@ -25,13 +25,18 @@ typedef enum {
 } ExprType;
 
 typedef struct {
-  const char *op;
+  Value *value;
+} Identifier;
+
+typedef struct {
+  char op;
   Expr *right;
 } PrefixExpr;
 
 struct Expr {
   ExprType type;
   union {
+    Identifier *identifier;
     Value *value;
     PrefixExpr *prefix;
   } as;
@@ -40,7 +45,7 @@ struct Expr {
 // WARNING: Not sure if I should wrap value in an Identifier struct?
 typedef struct {
   TokenType token; // token.Ident
-  Value *name;
+  Identifier *name;
   Expr *value;
 } LetStmt;
 
@@ -74,6 +79,6 @@ Program createProgram();
 void pushtStmt(Program *program, Stmt *stmt);
 Stmt *popStmt(Program *program);
 void freeProgram(Program *prog);
-void freeIdentifier(Value *identifier);
+void freeIdentifier(Identifier *identifier);
 
 #endif

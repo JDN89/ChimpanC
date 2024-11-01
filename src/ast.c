@@ -1,6 +1,10 @@
 #include "ast.h"
+#include "value.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+void freeExpr(Expr *expr);
 
 // TODO: turn into dynamic array and see if this goes Vrooom
 Program createProgram() {
@@ -10,9 +14,6 @@ Program createProgram() {
   program.tail = NULL;
   return program;
 }
-
-// TODO: place creation of letstatemets etc in ast file...
-//
 
 void pushtStmt(Program *program, Stmt *stmt) {
   if (program->head == NULL) {
@@ -29,21 +30,46 @@ void pushtStmt(Program *program, Stmt *stmt) {
 }
 
 void freeIdentifier(Identifier *identifier) {
+  assert(identifier != NULL);
+
   if (identifier != NULL) {
+    freeValue(identifier->value);
     free(identifier->value);
     free(identifier);
   }
 }
 
+void freePrefixExpr(PrefixExpr *pre) {
+  free(pre->op);
+  freeExpr(pre->right);
+}
+
 void freeExpr(Expr *expr) {
+  assert(expr != NULL);
+
   if (expr != NULL) {
-    freeIdentifier(expr->as.identifier);
+    switch (expr->type) {
+
+    case IDENTIFIER_EXPR: {
+      freeIdentifier(expr->as.identifier);
+    }
+    case NUMBER_EXPR: {
+      freeValue(expr->as.value);
+      free(expr);
+    }
+    case PREFIX_EXPR: {
+      freePrefixExpr(expr->as.prefix);
+    } break;
+    }
+
     free(expr);
   }
 }
+
 void freeLetStmt(LetStmt *stmt) {
   if (stmt != NULL) {
-    freeExpr(stmt->expr);
+
+    freeExpr(stmt->value);
     free(stmt);
   }
 }
