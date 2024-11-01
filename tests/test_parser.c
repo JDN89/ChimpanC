@@ -106,10 +106,54 @@ void test_parse_return_statement() {
   printf("Parse return statement - SUCCESS! \n");
 }
 
+void test_parse_expressions() {
+  char source[] = " let a = 5;\n"
+                  " return 10;\n"
+                  " 34; \n";
+
+  const char *identifiers[] = {"a"};
+  int64_t numbers[] = {10, 34};
+
+  Lexer l = init_lexer(source);
+  Parser parser = newParser(&l);
+  Program program = parseProgram(&parser);
+
+  Stmt *current = program.head;
+  int letIndex = 0;
+  int numberIndex = 0;
+
+  while (current != NULL) {
+    if (current->type == LET_STATEMENT) {
+      // Test let statement
+      assert(current->type == LET_STATEMENT);
+      assert(current->as.letStmt->value->type == IDENTIFIER_EXPR);
+      assert(strcmp(current->as.letStmt->value->as.identifier->value->as.string->pointer, identifiers[letIndex]) == 0);
+      letIndex++;
+    } 
+    else if (current->type == RETURN_STATEMENT) {
+      // Test return statement
+      assert(current->type == RETURN_STATEMENT);
+      assert(current->as.returnStmt->type == TOKEN_RETURN);
+      numberIndex++;
+    } 
+    else if (current->type == EXPR_STATEMENT) {
+      // Test expression statement
+      assert(current->type == EXPR_STATEMENT);
+      assert(current->as.exprStmt->expr->type == NUMBER_EXPR);
+      assert(current->as.exprStmt->expr->as.value->as.number == numbers[numberIndex]);
+      numberIndex++;
+    }
+    current = current->next;
+  }
+
+  printf("Test expressions - SUCCESS! \n");
+}
+
 
 int main() {
-  /*test_parser_error_during_parse_let_statement();*/
-  /*test_parse_let_statement();*/
-  /*test_parse_integer_literal();*/
+  test_parser_error_during_parse_let_statement();
+  test_parse_let_statement();
+  test_parse_integer_literal();
   test_parse_return_statement();
+  test_parse_expressions();
 }
