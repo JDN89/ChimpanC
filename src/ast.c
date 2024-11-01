@@ -8,14 +8,16 @@ void freeExpr(Expr *expr);
 
 // TODO: turn into dynamic array and see if this goes Vrooom
 Program createProgram() {
-  Program program;
-  program.length = 0;
-  program.head = NULL;
-  program.tail = NULL;
+  Program program = {0};
   return program;
 }
 
 void pushtStmt(Program *program, Stmt *stmt) {
+  assert(program != NULL && stmt != NULL); // Safety check for NULL pointers
+  
+    // Initialize the `next` pointer of the new `stmt` to NULL
+    stmt->next = NULL;
+
   if (program->head == NULL) {
     program->head = stmt;
     program->tail = stmt;
@@ -34,16 +36,14 @@ void freeIdentifier(Identifier *identifier) {
 
   if (identifier != NULL) {
     freeValue(identifier->value);
-    free(identifier->value);
     free(identifier);
   }
 }
 
-void freePrefixExpr(PrefixExpr *pre) {
-  freeExpr(pre->right);
-}
+void freePrefixExpr(PrefixExpr *pre) { freeExpr(pre->right); }
 
 void freeExpr(Expr *expr) {
+  printf("in free expression!");
   assert(expr != NULL);
 
   if (expr != NULL) {
@@ -51,14 +51,18 @@ void freeExpr(Expr *expr) {
 
     case IDENTIFIER_EXPR: {
       freeIdentifier(expr->as.identifier);
+      break;
     }
     case NUMBER_EXPR: {
+      printf("Number expr?");
       freeValue(expr->as.value);
       free(expr);
+      break;
     }
     case PREFIX_EXPR: {
       freePrefixExpr(expr->as.prefix);
-    } break;
+      break;
+    }
     }
 
     free(expr);
@@ -69,12 +73,14 @@ void freeLetStmt(LetStmt *stmt) {
   if (stmt != NULL) {
 
     freeExpr(stmt->value);
+    assert(stmt != NULL);
     free(stmt);
   }
 }
 
 // TODO: free other statements
 void freeStmt(Stmt *stmt) {
+  assert(stmt != NULL);
   if (stmt != NULL) {
     if (IS_LET_STMT(stmt)) {
       freeLetStmt(stmt->as.letStmt);
@@ -89,7 +95,11 @@ void freeProgram(Program *prog) {
   while (current != NULL) {
     Stmt *next = current->next;
     freeStmt(current); // Free the current statement
-    current = next;    // Move to the next statement
+    if (current != NULL) {
+      current = next; // Move to the next statement
+    } else {
+      break;
+    }
   }
   prog->head = NULL;
   prog->tail = NULL;

@@ -93,7 +93,7 @@ bool expectPeekToken(Parser *p, TokenType ttype) {
 }
 
 bool expectCurrentToken(Parser *p, TokenType ttype) {
-  if (p->pt.type == ttype) {
+  if (p->ct.type == ttype) {
     advance(p);
     return true;
   } else

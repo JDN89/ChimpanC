@@ -2,6 +2,7 @@
 #include "utilities.h"
 
 #include <alloca.h>
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,9 +57,11 @@ static void freeString(ObjString *obj) {
 }
 
 void freeValue(Value *val) {
-  if (val == NULL) {
+ 
+  if (val == NULL) {  // Additional runtime check
     return;
   }
+  assert(val !=NULL);
   switch (val->type) {
 
   case VAL_NUMBER:
@@ -67,7 +70,8 @@ void freeValue(Value *val) {
   case VAL_STRING: {
     freeString(val->as.string);
     free(val);
-  } break;
+      break;
+  } 
 
   default:
     fprintf(stderr, "Unhandled freeValue type \n");
