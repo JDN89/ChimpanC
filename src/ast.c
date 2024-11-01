@@ -40,7 +40,6 @@ void freeIdentifier(Identifier *identifier) {
 }
 
 void freePrefixExpr(PrefixExpr *pre) {
-  free(pre->op);
   freeExpr(pre->right);
 }
 

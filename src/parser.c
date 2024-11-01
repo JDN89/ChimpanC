@@ -195,7 +195,10 @@ static ParseFn *getPrefixRule(TokenType ttype) { return &pr[ttype].prefix; }
 
 LetStmt *parseLetStatement(Parser *p) {
   LetStmt *letStmt = malloc(sizeof(LetStmt));
-  // check pt and consume ct
+
+  assert(p->ct.type == TOKEN_LET);
+
+  // Look at ttype and consume token
   if (!expectPeekToken(p, TOKEN_IDENTIFIER)) {
     // TODO: consume until ;  so we can continue parsing and reporting erros.
     // There was a chapter in Crafting Interpreters - Clox that discussed
