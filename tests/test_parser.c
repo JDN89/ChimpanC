@@ -49,7 +49,8 @@ void test_parse_let_statement() {
     /*printf("Expected identifier: %s\n", identifiers[i]);*/
     assert(current->type == LET_STATEMENT);
     assert(current->as.letStmt->value->type == IDENTIFIER_EXPR);
-    assert(strcmp(current->as.letStmt->value->as.identifier->value->as.string->pointer,
+    assert(strcmp(current->as.letStmt->value->as.identifier->value->as.string
+                      ->pointer,
                   identifiers[i]) == 0);
     current = current->next;
     i++;
@@ -84,8 +85,33 @@ void test_parse_integer_literal() {
   printf("Parse numbers - SUCCESS! \n");
 }
 
+void test_parse_return_statement() {
+
+  char source[] = " return 'your moma'  ; \n"
+                  " return    55; \n"
+                  "return  345345354345";
+
+  Lexer l = init_lexer(source);
+  Parser parser = newParser(&l);
+  Program program = parseProgram(&parser);
+
+  Stmt *current = program.head;
+  int i = 0;
+
+  while (current != NULL) {
+    assert(current->type == RETURN_STATEMENT);
+    assert(current->as.returnStmt->type == TOKEN_RETURN);
+    current = current->next;
+    i++;
+  }
+
+  printf("Parse return statement - SUCCESS! \n");
+}
+
+
 int main() {
   test_parser_error_during_parse_let_statement();
   test_parse_let_statement();
   test_parse_integer_literal();
+  test_parse_return_statement();
 }

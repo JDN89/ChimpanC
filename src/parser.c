@@ -221,11 +221,12 @@ LetStmt *parseLetStatement(Parser *p) {
 
 ReturnStatement *parseReturnStatement(Parser *p) {
   ReturnStatement *returnStatement = malloc(sizeof(ReturnStatement));
-  if (returnStatement == NULL) {
+  HANDLE_ALLOC_FAILURE(returnStatement, "Memory allocation failed for ReturnStatement\n");
 
-    fprintf(stderr, "Memory allocation failed for ReturnStatement\n");
-  }
-  advance(p);
+  expectPeekToken(p, TOKEN_RETURN);
+
+  assert(returnStatement != NULL);
+
   returnStatement->type = TOKEN_RETURN;
   while (p->ct.type != TOKEN_SEMICOLON) {
     advance(p);
@@ -268,6 +269,7 @@ Stmt *parseStmt(Parser *p) {
   }
 
   case TOKEN_RETURN: {
+    assert(p->ct.type == TOKEN_RETURN);
     ReturnStatement *returnStatement = parseReturnStatement(p);
     if (returnStatement != NULL) {
       stmt->type = RETURN_STATEMENT;
