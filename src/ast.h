@@ -46,7 +46,7 @@ struct Expr {
 typedef struct {
   TokenType token; // token.Ident
   Identifier *name;
-  Expr *value;
+  Expr *expr;
 } LetStmt;
 
 typedef struct {

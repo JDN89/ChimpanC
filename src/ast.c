@@ -70,7 +70,7 @@ void freeExpr(Expr *expr) {
 void freeLetStmt(LetStmt *stmt) {
   if (stmt != NULL) {
 
-    freeExpr(stmt->value);
+    freeExpr(stmt->expr);
     assert(stmt != NULL);
     free(stmt);
   }

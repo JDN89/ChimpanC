@@ -30,7 +30,6 @@ static void repl() {
     // Process each statement in the program
     for (Stmt *currentStmt = program.head; currentStmt != NULL;
          currentStmt = currentStmt->next) {
-      printf("in beginning of switch\n");
       assert(currentStmt != NULL); // Ensure statement is valid
       processStatement(currentStmt);
     }
@@ -70,18 +69,19 @@ static void processStatement(Stmt *currentStmt) {
 static void processLetStatement(Stmt *currentStmt) {
   printf("let statement\n");
 
+  Expr *expr = currentStmt->as.letStmt->expr;
   // Ensure nested pointers are valid before accessing
-  if (currentStmt->as.letStmt && currentStmt->as.letStmt->value &&
-      currentStmt->as.letStmt->value->as.identifier &&
-      currentStmt->as.letStmt->value->as.identifier->value) {
+  if (currentStmt->as.letStmt && currentStmt->as.letStmt->expr &&
+      currentStmt->as.letStmt->expr->as.identifier &&
+      currentStmt->as.letStmt->expr->as.identifier->value) {
 
-    switch (currentStmt->as.letStmt->value->as.identifier->value->type) {
+    switch (expr->as.identifier->value->type) {
     case VAL_NUMBER:
-      printf("number\n");
+      printf("val: %f", expr->as.value->as.number);
       break;
 
     case VAL_STRING:
-      printf("string\n");
+      printf("let expr value: %s\n", expr->as.identifier->value->as.string->pointer);
       break;
 
     default:
