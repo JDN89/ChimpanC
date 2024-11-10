@@ -223,12 +223,12 @@ LetStmt *parseLetStatement(Parser *p) {
   letStmt->name = parse_identifier(p);
 
   if (!expectCurrentToken(p, TOKEN_ASSIGN)) {
-    // TODO: consume until ;  so we can continue parsing and reporting erros
+    // TODO: consume until ;  so we can continue parsing and reporting erros.
+    // There was a chapter in Crafting Interpreters - Clox that discussed
+    // somehting similar. Look it up.
   }
 
-  while (p->ct.type != TOKEN_SEMICOLON) {
-    advance(p);
-  }
+  parseExpression(p, LOWEST);
 
   consumeSemiColonAndNewline(p);
   return letStmt;

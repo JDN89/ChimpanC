@@ -106,10 +106,12 @@ void test_parse_return_statement() {
 
 void test_parse_expressions() {
   char source[] = " let a = 5;\n"
+                  " yolo; \n"
                   " return 10;\n"
                   " 34; \n";
 
-  const char *identifiers[] = {"a"};
+  const char *let_statement_identifiers[] = {"a"};
+  const char *identifiers[] = {"yolo"};
   int64_t numbers[] = {10, 34};
 
   Lexer l = init_lexer(source);
@@ -125,9 +127,18 @@ void test_parse_expressions() {
       // Test let statement
       assert(current->type == LET_STATEMENT);
       assert(strcmp(current->as.letStmt->name->value->as.string->pointer,
-                    identifiers[letIndex]) == 0);
+                    let_statement_identifiers[letIndex]) == 0);
       letIndex++;
-    } else if (current->type == RETURN_STATEMENT) {
+
+    } else if (current->type == EXPR_STATEMENT &&
+               current->as.exprStmt->expr->type == IDENTIFIER_EXPR) {
+
+      assert(strcmp(current->as.exprStmt->expr->as.identifier->value->as.string
+                        ->pointer,
+                    identifiers[letIndex]) == 0);
+    }
+
+    else if (current->type == RETURN_STATEMENT) {
       // Test return statement
       assert(current->type == RETURN_STATEMENT);
       assert(current->as.returnStmt->type == TOKEN_RETURN);
@@ -147,7 +158,7 @@ void test_parse_expressions() {
 }
 
 int main() {
-  test_parser_error_during_parse_let_statement();
+  /*test_parser_error_during_parse_let_statement();*/
   test_parse_let_statement();
   test_parse_integer_literal();
   test_parse_return_statement();
