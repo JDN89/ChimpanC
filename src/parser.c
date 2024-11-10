@@ -101,7 +101,22 @@ bool expectCurrentToken(Parser *p, TokenType ttype) {
   return false;
 }
 
-Expr *parseIdentifier(Parser *p) {
+Identifier *parse_identifier(Parser *p) {
+
+  Identifier *identifier = malloc(sizeof(Identifier));
+  HANDLE_ALLOC_FAILURE(identifier,
+                       "Failed allocating memory for Identifier \n.");
+
+  Value *value = createStringValue(p->ct.length, p->ct.literal);
+
+  identifier->value = value;
+
+  advance(p);
+
+  return identifier;
+}
+
+Expr *parse_identifier_expr(Parser *p) {
 
   Identifier *identifier = malloc(sizeof(Identifier));
   HANDLE_ALLOC_FAILURE(identifier,
@@ -180,8 +195,7 @@ Expr *parseExpression(Parser *p, Precedece prec) {
   return leftExpr;
 }
 
-//TODO: change parseIdentifier to parseExpression
-PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parseIdentifier, LOWEST},
+PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
                    [TOKEN_INT] = {parseNumber, LOWEST},
                    [TOKEN_BANG] = {parsePrefixExpression, LOWEST},
                    [TOKEN_MINUS] = {parsePrefixExpression, LOWEST}
@@ -206,7 +220,7 @@ LetStmt *parseLetStatement(Parser *p) {
     // somehting similar. Look it up.
   }
 
-  letStmt->expr = parseIdentifier(p);
+  letStmt->name = parse_identifier(p);
 
   if (!expectCurrentToken(p, TOKEN_ASSIGN)) {
     // TODO: consume until ;  so we can continue parsing and reporting erros

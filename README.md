@@ -4,6 +4,8 @@ A C implementation based on "Writing an Interpreter in Go" by Thorsten Ball.
 The goal is to also read "Writing a Compiler in Go", create a C version of the byteCode VM, compile Monkey's bytecode to WebAssembly (WASM), write a Snake game in Monkey, and possibly extend the language as needed. Finally, I want to run the WASM binary in the browser.
 
 ## TODO
+- Identifiers can appear as both a stand alone expression statement x; TOKEN_IDENTIFIER TOKEN_SEMICOLON. or inside LetStatement: let x = 4; Parsing of letstatment gets called via switch -> parsing of identifier passes via ParseExpressionStatement which I had to refactor and create a new method -> parse_identifier_expression. Inside the Letstament struct we wrap the Identifier field. inside ExpressionStatement, the identifier is wrapped inside an Expr STruct!!! I partily refactored the code but the tests and printer will be broken now.
+- start renaming methods and struct names. Use CAPITAL_CAP
 - refactored ast -> now fix parser.c and related tests!
 - add char* next to Objstring. Walk the linked list upon freeing and free all the allocated literals;
 - call free() also in tests!
