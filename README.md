@@ -5,7 +5,7 @@ The goal is to also read "Writing a Compiler in Go", create a C version of the b
 
 ## TODO
 - Identifiers can appear as both a stand alone expression statement x; TOKEN_IDENTIFIER TOKEN_SEMICOLON. or inside LetStatement: let x = 4; Parsing of letstatment gets called via switch -> parsing of identifier passes via ParseExpressionStatement which I had to refactor and create a new method -> parse_identifier_expression. Inside the Letstament struct we wrap the Identifier field. inside ExpressionStatement, the identifier is wrapped inside an Expr STruct!!! I partily refactored the code but the tests and printer will be broken now.
-- start renaming methods and struct names. Use CAPITAL_CAP
+- start renaming methods and struct names. Use Pascal_Case and snake_case. I find this easier to read 
 - refactored ast -> now fix parser.c and related tests!
 - add char* next to Objstring. Walk the linked list upon freeing and free all the allocated literals;
 - call free() also in tests!
