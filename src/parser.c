@@ -206,7 +206,7 @@ LetStmt *parseLetStatement(Parser *p) {
     // somehting similar. Look it up.
   }
 
-  letStmt->value = parseIdentifier(p);
+  letStmt->expr = parseIdentifier(p);
 
   if (!expectCurrentToken(p, TOKEN_ASSIGN)) {
     // TODO: consume until ;  so we can continue parsing and reporting erros

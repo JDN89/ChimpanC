@@ -48,8 +48,8 @@ void test_parse_let_statement() {
     /*       current->as.letStmt->value->as.identifier->value->as.string->pointer);*/
     /*printf("Expected identifier: %s\n", identifiers[i]);*/
     assert(current->type == LET_STATEMENT);
-    assert(current->as.letStmt->value->type == IDENTIFIER_EXPR);
-    assert(strcmp(current->as.letStmt->value->as.identifier->value->as.string
+    assert(current->as.letStmt->expr->type == IDENTIFIER_EXPR);
+    assert(strcmp(current->as.letStmt->expr->as.identifier->value->as.string
                       ->pointer,
                   identifiers[i]) == 0);
     current = current->next;
@@ -126,8 +126,8 @@ void test_parse_expressions() {
     if (current->type == LET_STATEMENT) {
       // Test let statement
       assert(current->type == LET_STATEMENT);
-      assert(current->as.letStmt->value->type == IDENTIFIER_EXPR);
-      assert(strcmp(current->as.letStmt->value->as.identifier->value->as.string->pointer, identifiers[letIndex]) == 0);
+      assert(current->as.letStmt->expr->type == IDENTIFIER_EXPR);
+      assert(strcmp(current->as.letStmt->expr->as.identifier->value->as.string->pointer, identifiers[letIndex]) == 0);
       letIndex++;
     } 
     else if (current->type == RETURN_STATEMENT) {

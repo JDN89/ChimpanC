@@ -1,6 +1,7 @@
 #include "ast.h"
 #include "lexer.h"
 #include "parser.h"
+#include "printer.h"
 #include <assert.h>
 #include <stdlib.h>
 
@@ -31,7 +32,8 @@ static void repl() {
     for (Stmt *currentStmt = program.head; currentStmt != NULL;
          currentStmt = currentStmt->next) {
       assert(currentStmt != NULL); // Ensure statement is valid
-      processStatement(currentStmt);
+      print_statement(currentStmt);
+      /*processStatement(currentStmt);*/
     }
 
     // Free resources after processing
