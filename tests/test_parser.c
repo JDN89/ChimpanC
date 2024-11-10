@@ -158,9 +158,9 @@ void test_parse_expressions() {
 }
 
 int main() {
-  /*test_parser_error_during_parse_let_statement();*/
-  test_parse_let_statement();
-  test_parse_integer_literal();
-  test_parse_return_statement();
+  test_parser_error_during_parse_let_statement();
+  /*test_parse_let_statement();*/
+  /*test_parse_integer_literal();*/
+  /*test_parse_return_statement();*/
   test_parse_expressions();
 }

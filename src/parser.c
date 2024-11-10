@@ -226,9 +226,14 @@ LetStmt *parseLetStatement(Parser *p) {
     // TODO: consume until ;  so we can continue parsing and reporting erros.
     // There was a chapter in Crafting Interpreters - Clox that discussed
     // somehting similar. Look it up.
+    while (p->ct.type != TOKEN_SEMICOLON) {
+      advance(p);
+    }
   }
 
-  parseExpression(p, LOWEST);
+  else {
+    parseExpression(p, LOWEST);
+  }
 
   consumeSemiColonAndNewline(p);
   return letStmt;
