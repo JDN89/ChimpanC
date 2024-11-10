@@ -180,7 +180,7 @@ Expr *parseExpression(Parser *p, Precedece prec) {
   return leftExpr;
 }
 
-// TODO read parseprecedence notes in book and comment
+//TODO: change parseIdentifier to parseExpression
 PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parseIdentifier, LOWEST},
                    [TOKEN_INT] = {parseNumber, LOWEST},
                    [TOKEN_BANG] = {parsePrefixExpression, LOWEST},

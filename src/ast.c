@@ -49,6 +49,7 @@ void freeExpr(Expr *expr) {
   if (expr != NULL) {
     switch (expr->type) {
 
+      //TODO: remove identiferExpr and free_identifier in let statement
     case IDENTIFIER_EXPR: {
       freeIdentifier(expr->as.identifier);
       break;

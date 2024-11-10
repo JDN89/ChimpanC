@@ -18,6 +18,7 @@ typedef enum {
   EXPR_STATEMENT,
 } StatementType;
 
+//TODO: remove IDentifier expr
 typedef enum {
   IDENTIFIER_EXPR = 0,
   NUMBER_EXPR,
@@ -43,6 +44,7 @@ struct Expr {
 };
 
 // WARNING: Not sure if I should wrap value in an Identifier struct?
+//TODO: -> we add idetifier here and remove it from EXPR union
 typedef struct {
   TokenType token; // token.Ident
   Identifier *name;
