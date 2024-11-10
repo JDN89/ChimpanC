@@ -48,8 +48,7 @@ void test_parse_let_statement() {
     /*       current->as.letStmt->value->as.identifier->value->as.string->pointer);*/
     /*printf("Expected identifier: %s\n", identifiers[i]);*/
     assert(current->type == LET_STATEMENT);
-    assert(strcmp(current->as.letStmt->name->value->as.string
-                      ->pointer,
+    assert(strcmp(current->as.letStmt->name->value->as.string->pointer,
                   identifiers[i]) == 0);
     current = current->next;
     i++;
@@ -125,20 +124,20 @@ void test_parse_expressions() {
     if (current->type == LET_STATEMENT) {
       // Test let statement
       assert(current->type == LET_STATEMENT);
-      assert(strcmp(current->as.letStmt->name->value->as.string->pointer, identifiers[letIndex]) == 0);
+      assert(strcmp(current->as.letStmt->name->value->as.string->pointer,
+                    identifiers[letIndex]) == 0);
       letIndex++;
-    } 
-    else if (current->type == RETURN_STATEMENT) {
+    } else if (current->type == RETURN_STATEMENT) {
       // Test return statement
       assert(current->type == RETURN_STATEMENT);
       assert(current->as.returnStmt->type == TOKEN_RETURN);
       numberIndex++;
-    } 
-    else if (current->type == EXPR_STATEMENT) {
+    } else if (current->type == EXPR_STATEMENT) {
       // Test expression statement
       assert(current->type == EXPR_STATEMENT);
       assert(current->as.exprStmt->expr->type == NUMBER_EXPR);
-      assert(current->as.exprStmt->expr->as.value->as.number == numbers[numberIndex]);
+      assert(current->as.exprStmt->expr->as.value->as.number ==
+             numbers[numberIndex]);
       numberIndex++;
     }
     current = current->next;
@@ -146,7 +145,6 @@ void test_parse_expressions() {
 
   printf("Test expressions - SUCCESS! \n");
 }
-
 
 int main() {
   test_parser_error_during_parse_let_statement();
