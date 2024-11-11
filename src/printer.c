@@ -47,6 +47,14 @@ void print_prefix_expression(PrefixExpr *pre) {
   print_expression(pre->right);
 }
 
+void print_infix_expression(Infix_Expression *ex) {
+  printf("( ");
+  print_expression(ex->left);
+  printf(" %s ", ex->op);
+  print_expression(ex->right);
+  printf(" ) \n");
+}
+
 void print_expression(Expr *ex) {
   assert(ex != NULL);
 
@@ -65,6 +73,9 @@ void print_expression(Expr *ex) {
     assert(ex->as.prefix != NULL);
     print_prefix_expression(ex->as.prefix);
     break;
+  case INFIX_EXPR: {
+    print_infix_expression(ex->as.infix);
+  } break;
   }
 }
 

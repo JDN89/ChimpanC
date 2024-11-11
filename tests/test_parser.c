@@ -1,7 +1,6 @@
 #include "../src/lexer.h"
 #include "../src/parser.h"
 #include "test_helper_functions.h"
-#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
