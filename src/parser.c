@@ -232,7 +232,9 @@ LetStmt *parseLetStatement(Parser *p) {
   }
 
   else {
-    parseExpression(p, LOWEST);
+    Expr *expr = parseExpression(p, LOWEST);
+    assert(expr != NULL);
+    letStmt->expr = expr;
   }
 
   consumeSemiColonAndNewline(p);

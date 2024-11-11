@@ -26,8 +26,9 @@ void test_parser_error_during_parse_let_statement() {
   }
 }
 
-//-----------------
+//----------------------------------------------------
 // TEST parse let statement
+//----------------------------------------------------
 void test_parse_let_statement() {
 
   char source[] = " let x = 5;\n"
@@ -35,6 +36,7 @@ void test_parse_let_statement() {
                   "let foobar = 838383; \n";
 
   const char *identifiers[] = {"x", "y", "foobar"};
+  const double values[] = {5, 10, 838383};
 
   Lexer l = init_lexer(source);
   Parser parser = newParser(&l);
@@ -44,12 +46,11 @@ void test_parse_let_statement() {
   int i = 0;
 
   while (current != NULL) {
-    /*printf("Parsed identifier: %s\n",*/
-    /*       current->as.letStmt->value->as.identifier->value->as.string->pointer);*/
-    /*printf("Expected identifier: %s\n", identifiers[i]);*/
     assert(current->type == LET_STATEMENT);
     assert(strcmp(current->as.letStmt->name->value->as.string->pointer,
                   identifiers[i]) == 0);
+    assert(current->as.letStmt->expr->as.value->as.number == values[i]);
+
     current = current->next;
     i++;
   }
@@ -57,6 +58,9 @@ void test_parse_let_statement() {
   printf("Parse let statement - SUCCESS! \n");
 }
 
+//----------------------------------------------------
+// TEST parse numbers
+//----------------------------------------------------
 void test_parse_integer_literal() {
 
   char source[] = " 4; \n"
@@ -83,9 +87,12 @@ void test_parse_integer_literal() {
   printf("Parse numbers - SUCCESS! \n");
 }
 
+//----------------------------------------------------
+// TEST parse return statements
+//----------------------------------------------------
 void test_parse_return_statement() {
 
-  char source[] = " return 'your moma'  ; \n"
+  char source[] = " return yolo  ; \n"
                   " return    55; \n"
                   "return  345345354345; \n";
 
@@ -104,6 +111,9 @@ void test_parse_return_statement() {
   printf("Parse return statement - SUCCESS! \n");
 }
 
+//----------------------------------------------------
+// TEST parse expressionStatements
+//----------------------------------------------------
 void test_parse_expressions() {
   char source[] = " let a = 5;\n"
                   " yolo; \n"
