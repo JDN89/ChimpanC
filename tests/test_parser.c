@@ -10,9 +10,9 @@ void test_parser_error_during_parse_let_statement() {
   char source[] = "let x & 5;\n";
 
   Lexer l = init_lexer(source);
-  Parser parser = newParser(&l);
+  Parser parser = new_parser(&l);
   // WHEN:
-  parseProgram(&parser);
+  parse_program(&parser);
 
   // THEN:
   if (parser.errorCount > 0) {
@@ -39,8 +39,8 @@ void test_parse_let_statement() {
   const double values[] = {5, 10, 838383};
 
   Lexer l = init_lexer(source);
-  Parser parser = newParser(&l);
-  Program program = parseProgram(&parser);
+  Parser parser = new_parser(&l);
+  Program program = parse_program(&parser);
 
   Stmt *current = program.head;
   int i = 0;
@@ -68,8 +68,8 @@ void test_parse_integer_literal() {
                   "345345354345";
 
   Lexer l = init_lexer(source);
-  Parser parser = newParser(&l);
-  Program program = parseProgram(&parser);
+  Parser parser = new_parser(&l);
+  Program program = parse_program(&parser);
 
   int64_t expected[] = {4, 55, 345345354345};
 
@@ -97,8 +97,8 @@ void test_parse_return_statement() {
                   "return  345345354345; \n";
 
   Lexer l = init_lexer(source);
-  Parser parser = newParser(&l);
-  Program program = parseProgram(&parser);
+  Parser parser = new_parser(&l);
+  Program program = parse_program(&parser);
 
   Stmt *current = program.head;
 
@@ -125,8 +125,8 @@ void test_parse_expressions() {
   int64_t numbers[] = {10, 34};
 
   Lexer l = init_lexer(source);
-  Parser parser = newParser(&l);
-  Program program = parseProgram(&parser);
+  Parser parser = new_parser(&l);
+  Program program = parse_program(&parser);
 
   Stmt *current = program.head;
   int letIndex = 0;

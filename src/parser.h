@@ -16,9 +16,9 @@ typedef struct {
   int errorCount;
 } Parser;
 
-Parser newParser(Lexer *l);
+Parser new_parser(Lexer *l);
 
-Program parseProgram(Parser *p);
+Program parse_program(Parser *p);
 
 void advance(Parser *p);
 

@@ -13,6 +13,7 @@ static void repl();
 static void processLetStatement(Stmt *currentStmt);
 static void processExprStatement(Stmt *currentStmt);
 
+// TODO: create repl h and c file
 static void repl() {
   char line[1024];
 
@@ -25,8 +26,8 @@ static void repl() {
     }
 
     Lexer l = init_lexer(line);
-    Parser p = newParser(&l);
-    Program program = parseProgram(&p);
+    Parser p = new_parser(&l);
+    Program program = parse_program(&p);
 
     // Process each statement in the program
     for (Stmt *currentStmt = program.head; currentStmt != NULL;
@@ -42,72 +43,6 @@ static void repl() {
     }
 
     freeProgram(&program);
-  }
-}
-
-// Function to handle different statement types
-static void processStatement(Stmt *currentStmt) {
-  switch (currentStmt->type) {
-  case LET_STATEMENT:
-    processLetStatement(currentStmt);
-    break;
-
-  case RETURN_STATEMENT:
-    printf("Return statement %s\n",
-           tokenTypeToString(currentStmt->as.returnStmt->type));
-    break;
-
-  case EXPR_STATEMENT:
-    processExprStatement(currentStmt);
-    break;
-
-  default:
-    fprintf(stderr, "Unhandled statement type\n");
-    break;
-  }
-}
-
-// Function to process LET_STATEMENT
-static void processLetStatement(Stmt *currentStmt) {
-  printf("let statement\n");
-
-  Expr *expr = currentStmt->as.letStmt->expr;
-  // Ensure nested pointers are valid before accessing
-  if (currentStmt->as.letStmt && currentStmt->as.letStmt->expr &&
-      currentStmt->as.letStmt->expr->as.identifier &&
-      currentStmt->as.letStmt->expr->as.identifier->value) {
-
-    switch (expr->as.identifier->value->type) {
-    case VAL_NUMBER:
-      printf("val: %f", expr->as.value->as.number);
-      break;
-
-    case VAL_STRING:
-      printf("let expr value: %s\n", expr->as.identifier->value->as.string->pointer);
-      break;
-
-    default:
-      printf("Unknown type\n");
-      break;
-    }
-  } else {
-    fprintf(stderr, "Invalid pointer in LET_STATEMENT\n");
-  }
-}
-
-// Function to process EXPR_STATEMENT
-static void processExprStatement(Stmt *currentStmt) {
-  printf("expr;\n");
-
-  // Ensure expr and identifier pointers are valid
-  if (currentStmt->as.exprStmt && currentStmt->as.exprStmt->expr &&
-      currentStmt->as.exprStmt->expr->as.identifier &&
-      currentStmt->as.exprStmt->expr->as.identifier->value) {
-
-    char *write = (char *)currentStmt->as.exprStmt->expr->as.identifier->value;
-    printf("%s\n", write);
-  } else {
-    fprintf(stderr, "Invalid pointer in EXPR_STATEMENT\n");
   }
 }
 

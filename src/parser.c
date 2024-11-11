@@ -22,10 +22,10 @@ typedef enum {
 typedef Expr *(*ParseFn)(Parser *p);
 typedef Parser p;
 
-static ParseFn *getPrefixRule(TokenType ttype); // Forward declaration
-static Expr *createIdentifierExpr(Identifier *identifier);
-static Expr *createNumberExpression(Value *number);
-Expr *parseExpression(Parser *p, Precedece prec);
+static ParseFn *get_prefix_rule(TokenType ttype); // Forward declaration
+static Expr *create_identifier_expr(Identifier *identifier);
+static Expr *create_number_expr(Value *number);
+Expr *parse_exp(Parser *p, Precedece prec);
 
 typedef struct {
   ParseFn prefix;
@@ -37,7 +37,7 @@ void advance(Parser *p) {
   p->pt = nextToken(p->l);
 }
 
-Parser newParser(Lexer *l) {
+Parser new_parser(Lexer *l) {
   Parser p = {0};
   p.l = l;
 
@@ -50,7 +50,7 @@ Parser newParser(Lexer *l) {
 
 bool isLineBreak(Parser *p) { return *p->ct.literal == '\n'; }
 
-void consumeSemiColonAndNewline(Parser *p) {
+void consume_new_line_and_semi_colon(Parser *p) {
   if (p->ct.type == TOKEN_SEMICOLON) {
     advance(p);
     if (isLineBreak(p))
@@ -83,7 +83,7 @@ void freeParserErrors(Parser *p) {
   }
 }
 
-bool expectPeekToken(Parser *p, TokenType ttype) {
+bool expect_peek_token(Parser *p, TokenType ttype) {
   if (p->pt.type == ttype) {
     advance(p);
     return true;
@@ -128,10 +128,10 @@ Expr *parse_identifier_expr(Parser *p) {
 
   advance(p);
 
-  return createIdentifierExpr(identifier);
+  return create_identifier_expr(identifier);
 }
 
-Expr *createIdentifierExpr(Identifier *identifier) {
+Expr *create_identifier_expr(Identifier *identifier) {
   Expr *expr = malloc(sizeof(Expr));
   HANDLE_ALLOC_FAILURE(expr,
                        "Failed allocating memory for identifierLiteral \n.");
@@ -140,7 +140,7 @@ Expr *createIdentifierExpr(Identifier *identifier) {
   return expr;
 }
 
-Expr *createNumberExpression(Value *number) {
+Expr *create_number_expr(Value *number) {
   assert(number != NULL); // Ensure number is not NULL
   Expr *expr = malloc(sizeof(Expr));
   HANDLE_ALLOC_FAILURE(expr, "Failed allocating memory for IntegerLiteral \n.");
@@ -149,7 +149,7 @@ Expr *createNumberExpression(Value *number) {
   return expr;
 }
 
-Expr *parseNumber(Parser *p) {
+Expr *parse_number(Parser *p) {
   assert(p->ct.type == TOKEN_INT);
 
   Expr *numberExp = malloc(sizeof(Expr));
@@ -157,15 +157,15 @@ Expr *parseNumber(Parser *p) {
                        "Failed allocating memory for identifierLiteral \n.");
 
   Value *value = createNumberValue(p->ct.literal);
-  Expr *expr = createNumberExpression(value);
+  Expr *expr = create_number_expr(value);
   advance(p);
-  consumeSemiColonAndNewline(p);
+  consume_new_line_and_semi_colon(p);
 
   assert(expr->as.value != NULL);
   return expr;
 }
 
-Expr *parsePrefixExpression(Parser *p) {
+Expr *parse_prefix_exp(Parser *p) {
   Expr *expr = malloc(sizeof(Expr));
   HANDLE_ALLOC_FAILURE(expr,
                        "Failed to allocate Expr in parsePrefixExpression\n");
@@ -180,41 +180,41 @@ Expr *parsePrefixExpression(Parser *p) {
 
   advance(p);
 
-  pre->right = parseExpression(p, PREFIX);
+  pre->right = parse_exp(p, PREFIX);
   expr->as.prefix = pre;
   expr->type = PREFIX_EXPR;
 
   return expr;
 }
 
-Expr *parseExpression(Parser *p, Precedece prec) {
+Expr *parse_exp(Parser *p, Precedece prec) {
 
-  ParseFn prefixRule = *getPrefixRule(p->ct.type);
+  ParseFn prefixRule = *get_prefix_rule(p->ct.type);
   Expr *leftExpr = prefixRule(p);
 
   return leftExpr;
 }
 
 PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
-                   [TOKEN_INT] = {parseNumber, LOWEST},
-                   [TOKEN_BANG] = {parsePrefixExpression, LOWEST},
-                   [TOKEN_MINUS] = {parsePrefixExpression, LOWEST}
+                   [TOKEN_INT] = {parse_number, LOWEST},
+                   [TOKEN_BANG] = {parse_prefix_exp, LOWEST},
+                   [TOKEN_MINUS] = {parse_prefix_exp, LOWEST}
 
 };
 
-static ParseFn *getPrefixRule(TokenType ttype) { return &pr[ttype].prefix; }
+static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
 
-///////////////////////////
+//------------------------------------------------------------------
 // Parse statements
-// ///////////////////
+//------------------------------------------------------------------
 
-LetStmt *parseLetStatement(Parser *p) {
+LetStmt *parse_let_statement(Parser *p) {
   LetStmt *letStmt = malloc(sizeof(LetStmt));
 
   assert(p->ct.type == TOKEN_LET);
 
   // Look at ttype and consume token
-  if (!expectPeekToken(p, TOKEN_IDENTIFIER)) {
+  if (!expect_peek_token(p, TOKEN_IDENTIFIER)) {
     // TODO: consume until ;  so we can continue parsing and reporting erros.
     // There was a chapter in Crafting Interpreters - Clox that discussed
     // somehting similar. Look it up.
@@ -232,21 +232,21 @@ LetStmt *parseLetStatement(Parser *p) {
   }
 
   else {
-    Expr *expr = parseExpression(p, LOWEST);
+    Expr *expr = parse_exp(p, LOWEST);
     assert(expr != NULL);
     letStmt->expr = expr;
   }
 
-  consumeSemiColonAndNewline(p);
+  consume_new_line_and_semi_colon(p);
   return letStmt;
 }
 
-ReturnStatement *parseReturnStatement(Parser *p) {
+ReturnStatement *parse_return_statement(Parser *p) {
   ReturnStatement *returnStatement = malloc(sizeof(ReturnStatement));
   HANDLE_ALLOC_FAILURE(returnStatement,
                        "Memory allocation failed for ReturnStatement\n");
 
-  expectPeekToken(p, TOKEN_RETURN);
+  expect_peek_token(p, TOKEN_RETURN);
 
   assert(returnStatement != NULL);
 
@@ -255,25 +255,25 @@ ReturnStatement *parseReturnStatement(Parser *p) {
     advance(p);
   }
 
-  consumeSemiColonAndNewline(p);
+  consume_new_line_and_semi_colon(p);
   return returnStatement;
 }
 
-ExprStatement *parseExpressionStatement(Parser *p) {
+ExprStatement *parse_expression_statement(Parser *p) {
   ExprStatement *stmt = malloc(sizeof(ExprStatement));
   stmt->expr = malloc(sizeof(Expr));
 
   HANDLE_ALLOC_FAILURE(stmt->expr, "Failed to alocate memory for ExprStatement")
 
-  Expr *expr = parseExpression(p, LOWEST);
+  Expr *expr = parse_exp(p, LOWEST);
 
   stmt->expr = expr;
 
-  consumeSemiColonAndNewline(p);
+  consume_new_line_and_semi_colon(p);
   return stmt;
 }
 
-Stmt *parseStmt(Parser *p) {
+Stmt *parse_statement(Parser *p) {
 
   Stmt *stmt = malloc(sizeof(Stmt));
 
@@ -281,7 +281,7 @@ Stmt *parseStmt(Parser *p) {
 
   switch (p->ct.type) {
   case TOKEN_LET: {
-    LetStmt *letStmt = parseLetStatement(p);
+    LetStmt *letStmt = parse_let_statement(p);
     if (letStmt != NULL) {
       stmt->type = LET_STATEMENT;
       stmt->as.letStmt = letStmt;
@@ -294,7 +294,7 @@ Stmt *parseStmt(Parser *p) {
 
   case TOKEN_RETURN: {
     assert(p->ct.type == TOKEN_RETURN);
-    ReturnStatement *returnStatement = parseReturnStatement(p);
+    ReturnStatement *returnStatement = parse_return_statement(p);
     if (returnStatement != NULL) {
       stmt->type = RETURN_STATEMENT;
       stmt->as.returnStmt = returnStatement;
@@ -306,7 +306,7 @@ Stmt *parseStmt(Parser *p) {
   }
 
   default: {
-    ExprStatement *exprStmt = parseExpressionStatement(p);
+    ExprStatement *exprStmt = parse_expression_statement(p);
     if (stmt != NULL) {
       stmt->type = EXPR_STATEMENT;
       stmt->as.exprStmt = exprStmt;
@@ -322,10 +322,10 @@ Stmt *parseStmt(Parser *p) {
 }
 
 // TODO: convert program to a dynamic array of AST nodes
-Program parseProgram(Parser *p) {
+Program parse_program(Parser *p) {
   Program prog = createProgram();
   while (p->pt.type != TOKEN_EOF) {
-    Stmt *stmt = parseStmt(p);
+    Stmt *stmt = parse_statement(p);
     pushtStmt(&prog, stmt);
   }
 
