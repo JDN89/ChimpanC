@@ -120,6 +120,7 @@ void test_parse_expressions() {
 
   Stmt *current = program.head;
   int letIndex = 0;
+  int identifierIndex = 0;
   int numberIndex = 0;
 
   while (current != NULL) {
@@ -135,7 +136,8 @@ void test_parse_expressions() {
 
       assert(strcmp(current->as.exprStmt->expr->as.identifier->value->as.string
                         ->pointer,
-                    identifiers[letIndex]) == 0);
+                    identifiers[identifierIndex]) == 0);
+      identifierIndex++;
     }
 
     else if (current->type == RETURN_STATEMENT) {
@@ -158,9 +160,9 @@ void test_parse_expressions() {
 }
 
 int main() {
-  /*test_parser_error_during_parse_let_statement();*/
-  /*test_parse_let_statement();*/
-  /*test_parse_integer_literal();*/
-  /*test_parse_return_statement();*/
+  test_parser_error_during_parse_let_statement();
+  test_parse_let_statement();
+  test_parse_integer_literal();
+  test_parse_return_statement();
   test_parse_expressions();
 }

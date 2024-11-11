@@ -267,6 +267,7 @@ ExprStatement *parseExpressionStatement(Parser *p) {
 
   stmt->expr = expr;
 
+  consumeSemiColonAndNewline(p);
   return stmt;
 }
 
