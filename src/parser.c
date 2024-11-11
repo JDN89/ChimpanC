@@ -5,12 +5,13 @@
 #include "value.h"
 #include <assert.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 typedef enum {
-  LOWEST,
+  LOWEST = 0,
   EQUALS,
   LESSGREATER,
   SUM,
@@ -31,6 +32,11 @@ typedef struct {
   ParseFn prefix;
   Precedece precedence;
 } PrefixRule;
+
+typedef struct {
+  ParseFn prefix;
+  Precedece precedence;
+} Infix_Rule;
 
 void advance(Parser *p) {
   p->ct = p->pt;
@@ -203,12 +209,17 @@ Expr *parse_exp(Parser *p, Precedece prec) {
 PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
                    [TOKEN_INT] = {parse_number, LOWEST},
                    [TOKEN_BANG] = {parse_prefix_exp, LOWEST},
-                   [TOKEN_MINUS] = {parse_prefix_exp, LOWEST}
+                   [TOKEN_MINUS] = {parse_prefix_exp, LOWEST}};
 
-};
+static Infix_Rule ir[] = {
+    [TOKEN_EQ] = {NULL, EQUALS},      [TOKEN_NOT_EQ] = {NULL, EQUALS},
+    [TOKEN_LT] = {NULL, LESSGREATER}, [TOKEN_GT] = {NULL, LESSGREATER},
+    [TOKEN_PLUS] = {NULL, SUM},       [TOKEN_MINUS] = {NULL, SUM},
+    [TOKEN_SLASH] = {NULL, PRODUCT},  [TOKEN_ASTERISK] = {NULL, PRODUCT}};
 
 static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
 
+uint8_t peek_precedence(TokenType ttype) {return ir[ttype].precedence;}
 //------------------------------------------------------------------
 // Parse statements
 //------------------------------------------------------------------

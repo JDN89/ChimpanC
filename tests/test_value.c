@@ -21,7 +21,7 @@ void test_parse_string_value() {
     i++;
   }
 
-  printf("Create string value - SUCCESS! \n");
+  printf("Create string value - PASSED! \n");
 }
 
 void test_parse_number_value() {
@@ -40,7 +40,7 @@ void test_parse_number_value() {
     i++;
   }
 
-  printf("Create number Value - SUCCESS! \n");
+  printf("Create number Value - PASSED! \n");
 }
 
 int main() {

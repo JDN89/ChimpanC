@@ -118,7 +118,7 @@ void print_errors(Parser *parser) {
     for (int i = 0; i < parser->errorCount; i++) {
       printf("Error %d: %s\n", i + 1, parser->errors[i]);
     }
-    printf("Report parse error - SUCCESS!\n");
+    printf("Report parse error - PASSED!\n");
   } else {
     printf("Report parser error - FAILED!\n");
   }

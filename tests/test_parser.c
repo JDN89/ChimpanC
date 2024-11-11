@@ -21,7 +21,7 @@ void test_parser_error_during_parse_let_statement() {
     for (int i = 0; i < parser.errorCount; i++) {
       printf("Error %d: %s\n", i + 1, parser.errors[i]);
     }
-    printf("Report parse error - SUCCESS!\n");
+    printf("Report parse error - PASSED!\n");
   } else {
     printf("Report parser error - FAILED!\n");
   }
@@ -56,7 +56,7 @@ void test_parse_let_statement() {
     i++;
   }
 
-  printf("Parse let statement - SUCCESS! \n");
+  printf("Parse let statement - PASSED! \n");
 }
 
 //----------------------------------------------------
@@ -85,7 +85,7 @@ void test_parse_integer_literal() {
     i++;
   }
 
-  printf("Parse numbers - SUCCESS! \n");
+  printf("Parse numbers - PASSED! \n");
 }
 
 //----------------------------------------------------
@@ -109,7 +109,7 @@ void test_parse_return_statement() {
     current = current->next;
   }
 
-  printf("Parse return statement - SUCCESS! \n");
+  printf("Parse return statement - PASSED! \n");
 }
 
 //----------------------------------------------------
@@ -167,7 +167,7 @@ void test_parse_expressions() {
     current = current->next;
   }
 
-  printf("Test expressions - SUCCESS! \n");
+  printf("Test expressions - PASSED! \n");
 }
 
 void test_parse_infix_expressions() {
@@ -199,7 +199,7 @@ void test_parse_infix_expressions() {
       for (int i = 0; i < parser.errorCount; i++) {
         printf("Error %d: %s\n", i + 1, parser.errors[i]);
       }
-      printf("Report parse error - SUCCESS!\n");
+      printf("Report parse error - PASSED!\n");
     } else {
       printf("No parser errors to repport!\n");
     }
@@ -210,11 +210,29 @@ void test_parse_infix_expressions() {
   }
 }
 
+void test_peek_precedence() {
+
+  typedef struct {
+    TokenType tt;
+    uint8_t prec;
+  } Test_Cases;
+
+  Test_Cases cases[2] = {{TOKEN_PLUS, 3}, {TOKEN_IF, 0}};
+
+  for (int i = 0; i < 2; i++) {
+    assert(peek_precedence(cases[i].tt) == cases[i].prec);
+  }
+
+  printf("Test peekprecedence PASSED!\n");
+}
+
+
 int main() {
-  /*test_parser_error_during_parse_let_statement();*/
-  /*test_parse_let_statement();*/
-  /*test_parse_integer_literal();*/
-  /*test_parse_return_statement();*/
-  /*test_parse_expressions();*/
-  test_parse_infix_expressions();
+  test_parser_error_during_parse_let_statement();
+  test_parse_let_statement();
+  test_parse_integer_literal();
+  test_parse_return_statement();
+  test_parse_expressions();
+  /*test_parse_infix_expressions();*/
+  test_peek_precedence();
 }
