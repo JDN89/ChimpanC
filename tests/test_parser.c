@@ -1,6 +1,8 @@
 #include "../src/lexer.h"
 #include "../src/parser.h"
 #include "test_helper_functions.h"
+#include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -167,6 +169,29 @@ void test_parse_expressions() {
   }
 
   printf("Test expressions - SUCCESS! \n");
+}
+
+void test_parse_infix_expressions() {
+
+  typedef struct {
+    char *input;
+    double left_value;
+    char operator[3];
+    double right_value;
+  } Infix_Test;
+
+  Infix_Test test[8] = {
+      {"5 + 5;", 5, "+", 5},   {"5 - 5;", 5, "-", 5},   {"5 * 5;", 5, "*", 5},
+      {"5 / 5;", 5, "/", 5},   {"5 > 5;", 5, ">", 5},   {"5 < 5;", 5, "<", 5},
+      {"5 == 5;", 5, "==", 5}, {"5 != 5;", 5, "!=", 5},
+  };
+
+  for (uint8_t i = 0; i < 8; i++) {
+
+    Lexer l = init_lexer(test[0].input);
+    Parser parser = new_parser(&l);
+    Program program = parse_program(&parser);
+  }
 }
 
 int main() {
