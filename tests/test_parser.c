@@ -217,7 +217,12 @@ void test_peek_precedence() {
     uint8_t prec;
   } Test_Cases;
 
-  Test_Cases cases[2] = {{TOKEN_PLUS, 3}, {TOKEN_IF, 0}};
+  Test_Cases cases[11] = {
+      {TOKEN_PLUS, 3},     {TOKEN_IF, 0},    {TOKEN_EQ, 1},   {TOKEN_NOT_EQ, 1},
+      {TOKEN_LT, 2},       {TOKEN_GT, 2},    {TOKEN_PLUS, 3}, {TOKEN_MINUS, 3},
+      {TOKEN_ASTERISK, 4}, {TOKEN_SLASH, 4}, {TOKEN_BANG, 0},
+
+  };
 
   for (int i = 0; i < 2; i++) {
     assert(peek_precedence(cases[i].tt) == cases[i].prec);
@@ -225,7 +230,6 @@ void test_peek_precedence() {
 
   printf("Test peekprecedence PASSED!\n");
 }
-
 
 int main() {
   test_parser_error_during_parse_let_statement();
