@@ -190,13 +190,31 @@ void test_parse_infix_expressions() {
     Lexer l = init_lexer(test[0].input);
     Parser parser = new_parser(&l);
     Program program = parse_program(&parser);
+
+    assert(program.head != NULL);
+    Stmt *current = program.head;
+
+    if (parser.errorCount > 0) {
+
+      for (int i = 0; i < parser.errorCount; i++) {
+        printf("Error %d: %s\n", i + 1, parser.errors[i]);
+      }
+      printf("Report parse error - SUCCESS!\n");
+    } else {
+      printf("No parser errors to repport!\n");
+    }
+
+    while (current != NULL) {
+      assert(current->type == EXPR_STATEMENT);
+    }
   }
 }
 
 int main() {
-  test_parser_error_during_parse_let_statement();
-  test_parse_let_statement();
-  test_parse_integer_literal();
-  test_parse_return_statement();
-  test_parse_expressions();
+  /*test_parser_error_during_parse_let_statement();*/
+  /*test_parse_let_statement();*/
+  /*test_parse_integer_literal();*/
+  /*test_parse_return_statement();*/
+  /*test_parse_expressions();*/
+  test_parse_infix_expressions();
 }

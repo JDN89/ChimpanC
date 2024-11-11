@@ -190,6 +190,11 @@ Expr *parse_prefix_exp(Parser *p) {
 Expr *parse_exp(Parser *p, Precedece prec) {
 
   ParseFn prefixRule = *get_prefix_rule(p->ct.type);
+  if (prefixRule == NULL) {
+    registerParserError(p, "No prefix rule registered for ");
+    return NULL;
+  }
+
   Expr *leftExpr = prefixRule(p);
 
   return leftExpr;

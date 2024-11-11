@@ -111,3 +111,15 @@ void print_statement(Stmt *stmt) {
     break;
   }
 }
+
+void print_errors(Parser *parser) {
+  if (parser->errorCount > 0) {
+
+    for (int i = 0; i < parser->errorCount; i++) {
+      printf("Error %d: %s\n", i + 1, parser->errors[i]);
+    }
+    printf("Report parse error - SUCCESS!\n");
+  } else {
+    printf("Report parser error - FAILED!\n");
+  }
+}

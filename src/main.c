@@ -8,10 +8,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-static void processStatement(Stmt *currentStmt);
 static void repl();
-static void processLetStatement(Stmt *currentStmt);
-static void processExprStatement(Stmt *currentStmt);
 
 // TODO: create repl h and c file
 static void repl() {
@@ -29,17 +26,16 @@ static void repl() {
     Parser p = new_parser(&l);
     Program program = parse_program(&p);
 
-    // Process each statement in the program
+    if (p.errorCount > 0) {
+      print_errors(&p);
+      freeParserErrors(&p);
+    }
+
+    // Print statements
     for (Stmt *currentStmt = program.head; currentStmt != NULL;
          currentStmt = currentStmt->next) {
       assert(currentStmt != NULL); // Ensure statement is valid
       print_statement(currentStmt);
-      /*processStatement(currentStmt);*/
-    }
-
-    // Free resources after processing
-    if (p.errorCount > 0) {
-      freeParserErrors(&p);
     }
 
     freeProgram(&program);

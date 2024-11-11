@@ -42,6 +42,11 @@ void freeIdentifier(Identifier *identifier) {
 
 void freePrefixExpr(PrefixExpr *pre) { freeExpr(pre->right); }
 
+void free_infix_expression(Infix_Expression *infix) {
+  freeExpr(infix->left);
+  freeExpr(infix->right);
+}
+
 void freeExpr(Expr *expr) {
   printf("in free expression!");
   assert(expr != NULL);
@@ -49,7 +54,7 @@ void freeExpr(Expr *expr) {
   if (expr != NULL) {
     switch (expr->type) {
 
-      //TODO: remove identiferExpr and free_identifier in let statement
+      // TODO: remove identiferExpr and free_identifier in let statement
     case IDENTIFIER_EXPR: {
       freeIdentifier(expr->as.identifier);
       break;
@@ -62,6 +67,9 @@ void freeExpr(Expr *expr) {
       freePrefixExpr(expr->as.prefix);
       break;
     }
+    case INFIX_EXPR:
+      free_infix_expression(expr->as.infix);
+      break;
     }
 
     free(expr);
