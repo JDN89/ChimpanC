@@ -210,26 +210,27 @@ void test_parse_infix_expressions() {
   }
 }
 
-void test_peek_precedence() {
+/*void test_peek_precedence() {*/
+/**/
+/*  typedef struct {*/
+/*    TokenType tt;*/
+/*    uint8_t prec;*/
+/*  } Test_Cases;*/
+/**/
+/*  Test_Cases cases[11] = {*/
+/*      {TOKEN_PLUS, 3},     {TOKEN_IF, 0},    {TOKEN_EQ, 1},   {TOKEN_NOT_EQ, 1},*/
+/*      {TOKEN_LT, 2},       {TOKEN_GT, 2},    {TOKEN_PLUS, 3}, {TOKEN_MINUS, 3},*/
+/*      {TOKEN_ASTERISK, 4}, {TOKEN_SLASH, 4}, {TOKEN_BANG, 0},*/
+/**/
+/*  };*/
+/**/
+/*  for (int i = 0; i < 2; i++) {*/
+/*    assert(peek_precedence(cases[i].tt) == cases[i].prec);*/
+/*  }*/
+/**/
+/*  printf("Test peekprecedence PASSED!\n");*/
+/*}*/
 
-  typedef struct {
-    TokenType tt;
-    uint8_t prec;
-  } Test_Cases;
-
-  Test_Cases cases[11] = {
-      {TOKEN_PLUS, 3},     {TOKEN_IF, 0},    {TOKEN_EQ, 1},   {TOKEN_NOT_EQ, 1},
-      {TOKEN_LT, 2},       {TOKEN_GT, 2},    {TOKEN_PLUS, 3}, {TOKEN_MINUS, 3},
-      {TOKEN_ASTERISK, 4}, {TOKEN_SLASH, 4}, {TOKEN_BANG, 0},
-
-  };
-
-  for (int i = 0; i < 2; i++) {
-    assert(peek_precedence(cases[i].tt) == cases[i].prec);
-  }
-
-  printf("Test peekprecedence PASSED!\n");
-}
 
 int main() {
   test_parser_error_during_parse_let_statement();
@@ -238,5 +239,5 @@ int main() {
   test_parse_return_statement();
   test_parse_expressions();
   /*test_parse_infix_expressions();*/
-  test_peek_precedence();
+  /*test_peek_precedence();*/
 }

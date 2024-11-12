@@ -23,6 +23,6 @@ void advance(Parser *p);
 
 void freeParserErrors(Parser *p);
 
-uint8_t peek_precedence(TokenType ttype);
+uint8_t peek_precedence(Parser *p);
 
 #endif

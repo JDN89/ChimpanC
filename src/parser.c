@@ -24,6 +24,8 @@ typedef Expr *(*ParseFn)(Parser *p);
 typedef Parser p;
 
 static ParseFn *get_prefix_rule(TokenType ttype); // Forward declaration
+static ParseFn *get_infix_rule(TokenType ttype);  // Forward declaration
+static uint8_t cur_precedence(Parser *p);
 static Expr *create_identifier_expr(Identifier *identifier);
 static Expr *create_number_expr(Value *number);
 Expr *parse_exp(Parser *p, Precedece prec);
@@ -193,6 +195,33 @@ Expr *parse_prefix_exp(Parser *p) {
   return expr;
 }
 
+Expr *parse_prefix_expression(Parser *p, Expr *left) {
+
+  Expr *expr = malloc(sizeof(Expr));
+  HANDLE_ALLOC_FAILURE(expr,
+                       "Failed to allocate Expr in parsePrefixExpression\n");
+
+  Infix_Expression *infix = malloc(sizeof(Infix_Expression));
+
+  HANDLE_ALLOC_FAILURE(infix,
+                       "Failed to allocate Expr in parsePrefixExpression\n");
+
+  // TODO: think of the best way to get the current value if else branch for op
+  // values seems good for now.
+  if (p->ct.type == TOKEN_PLUS) {
+    strcpy(infix->op, "+");
+  }
+  infix->left = left;
+  Precedece pre = cur_precedence(p);
+  advance(p);
+  Expr *right = parse_exp(p, pre);
+  infix->right = right;
+
+  expr->type = INFIX_EXPR;
+  expr->as.infix = infix;
+  return expr;
+}
+
 Expr *parse_exp(Parser *p, Precedece prec) {
 
   ParseFn prefixRule = *get_prefix_rule(p->ct.type);
@@ -211,15 +240,18 @@ PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
                    [TOKEN_BANG] = {parse_prefix_exp, LOWEST},
                    [TOKEN_MINUS] = {parse_prefix_exp, LOWEST}};
 
+static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
+
 static Infix_Rule ir[] = {
     [TOKEN_EQ] = {NULL, EQUALS},      [TOKEN_NOT_EQ] = {NULL, EQUALS},
     [TOKEN_LT] = {NULL, LESSGREATER}, [TOKEN_GT] = {NULL, LESSGREATER},
     [TOKEN_PLUS] = {NULL, SUM},       [TOKEN_MINUS] = {NULL, SUM},
     [TOKEN_SLASH] = {NULL, PRODUCT},  [TOKEN_ASTERISK] = {NULL, PRODUCT}};
 
-static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
+static ParseFn *get_infix_rule(TokenType ttype) { return &pr[ttype].prefix; }
 
-uint8_t peek_precedence(TokenType ttype) {return ir[ttype].precedence;}
+uint8_t peek_precedence(Parser *p) { return ir[p->pt.type].precedence; }
+uint8_t cur_precedence(Parser *p) { return ir[p->ct.type].precedence; }
 //------------------------------------------------------------------
 // Parse statements
 //------------------------------------------------------------------
