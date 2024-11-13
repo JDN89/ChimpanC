@@ -35,13 +35,13 @@ The goal is to also read "Writing a Compiler in Go", create a C version of the b
 ### Simplified Pratt parising call stack (raw brain dump)
 Prat parsing: as long as the next operator in the expression is higher you keep recursivly calling parse_infix_expression with the allready parsed first operand as an argument. The first operand becomes the left node of the infxi expression and the right node is the result of calling parse_expression with the precedence of the current op as argument. In parse expression you parse the next operand and if there is another operator with a __higher__ precedence you recursivley call infix expression again ... once you return from the while loop and you sart unwinding the call stack the infix nodes get constructed with left op as the result from the allready parsed expression and the right op being the result of the recursive calls.
 
-       +
-      / \
-     +   d
-    / \
-   a   *
-      / \
-     b   c
+        +
+       / \
+      +   d
+     / \
+    a   *
+       / \
+      b   c
 
 
 
