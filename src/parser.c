@@ -21,10 +21,11 @@ typedef enum {
 } Precedece;
 
 typedef Expr *(*ParseFn)(Parser *p);
+typedef Expr *(*Parse_Infix_Fn)(Parser *p, Expr *expr);
 typedef Parser p;
 
-static ParseFn *get_prefix_rule(TokenType ttype); // Forward declaration
-static ParseFn *get_infix_rule(TokenType ttype);  // Forward declaration
+static ParseFn *get_prefix_rule(TokenType ttype);       // Forward declaration
+static Parse_Infix_Fn *get_infix_rule(TokenType ttype); // Forward declaration
 static uint8_t cur_precedence(Parser *p);
 static Expr *create_identifier_expr(Identifier *identifier);
 static Expr *create_number_expr(Value *number);
@@ -36,7 +37,7 @@ typedef struct {
 } PrefixRule;
 
 typedef struct {
-  ParseFn prefix;
+  Parse_Infix_Fn infix;
   Precedece precedence;
 } Infix_Rule;
 
@@ -195,7 +196,7 @@ Expr *parse_prefix_exp(Parser *p) {
   return expr;
 }
 
-Expr *parse_prefix_expression(Parser *p, Expr *left) {
+Expr *parse_infix_Expression(Parser *p, Expr *left) {
 
   Expr *expr = malloc(sizeof(Expr));
   HANDLE_ALLOC_FAILURE(expr,
@@ -232,6 +233,15 @@ Expr *parse_exp(Parser *p, Precedece prec) {
 
   Expr *leftExpr = prefixRule(p);
 
+  while (p->pt.type != TOKEN_SEMICOLON && prec < peek_precedence(p)) {
+    Parse_Infix_Fn infix_rule = *get_infix_rule(p->pt.type);
+    if (infix_rule == NULL) {
+      return leftExpr;
+    }
+    advance(p);
+    leftExpr = infix_rule(p, leftExpr);
+  }
+
   return leftExpr;
 }
 
@@ -242,13 +252,18 @@ PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
 
 static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
 
-static Infix_Rule ir[] = {
-    [TOKEN_EQ] = {NULL, EQUALS},      [TOKEN_NOT_EQ] = {NULL, EQUALS},
-    [TOKEN_LT] = {NULL, LESSGREATER}, [TOKEN_GT] = {NULL, LESSGREATER},
-    [TOKEN_PLUS] = {NULL, SUM},       [TOKEN_MINUS] = {NULL, SUM},
-    [TOKEN_SLASH] = {NULL, PRODUCT},  [TOKEN_ASTERISK] = {NULL, PRODUCT}};
+static Infix_Rule ir[] = {[TOKEN_EQ] = {parse_infix_Expression, EQUALS},
+                          [TOKEN_NOT_EQ] = {parse_infix_Expression, EQUALS},
+                          [TOKEN_LT] = {parse_infix_Expression, LESSGREATER},
+                          [TOKEN_GT] = {parse_infix_Expression, LESSGREATER},
+                          [TOKEN_PLUS] = {parse_infix_Expression, SUM},
+                          [TOKEN_MINUS] = {parse_infix_Expression, SUM},
+                          [TOKEN_SLASH] = {parse_infix_Expression, PRODUCT},
+                          [TOKEN_ASTERISK] = {parse_infix_Expression, PRODUCT}};
 
-static ParseFn *get_infix_rule(TokenType ttype) { return &pr[ttype].prefix; }
+static Parse_Infix_Fn *get_infix_rule(TokenType ttype) {
+  return &ir[ttype].infix;
+}
 
 uint8_t peek_precedence(Parser *p) { return ir[p->pt.type].precedence; }
 uint8_t cur_precedence(Parser *p) { return ir[p->ct.type].precedence; }
