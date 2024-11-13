@@ -31,3 +31,49 @@ The goal is to also read "Writing a Compiler in Go", create a C version of the b
 ### Sources
 [Crafting Interpreters - Robert Nystrom](https://craftinginterpreters.com/) \
 [Writing an Interpreter in Go](https://interpreterbook.com/)
+
+### Simplified Pratt parising call stack (raw brain dump)
+Prat parsing: as long as the next operator in the expression is higher you keep recursivly calling parse_infix_expression with the allready parsed first operand as an argument. The first operand becomes the left node of the infxi expression and the right node is the result of calling parse_expression with the precedence of the current op as argument. In parse expression you parse the next operand and if there is another operator with a __higher__ precedence you recursivley call infix expression again ... once you return from the while loop and you sart unwinding the call stack the infix nodes get constructed with left op as the result from the allready parsed expression and the right op being the result of the recursive calls.
+
+       +
+      / \
+     +   d
+    / \
+   a   *
+      / \
+     b   c
+
+
+
+Input: a + b * c + d
+
+Initial Call to parse_exp(p, LOWEST)
+
+Left: a
+Operator: +
+
+call infix (left a, SUM)
+
+Right: Result of parse_exp(p, SUM)
+First Recursive Call to parse_exp(p, SUM)
+
+Left: b
+Operator: *
+
+Call infix (left b, operator)
+
+Right: Result of parse_exp(p, PRODUCT)
+Second Recursive Call to parse_exp(p, PRODUCT)
+
+Right Operand: c
+Return: This call returns c, completing b * c
+__Returning to First parse_exp(p, LOWEST)__ Call
+
+Left: b * c (constructed as the subtree)
+Operator: +
+Call infix ( a + (b*c)), SUM)
+Right: Result of parse_exp(p, SUM) to handle d
+Final Call to parse_exp(p, SUM)
+
+Right Operand: d
+Return: This call returns d, completing the right operand for the second +
