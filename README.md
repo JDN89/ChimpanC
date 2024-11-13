@@ -47,33 +47,40 @@ Prat parsing: as long as the next operator in the expression is higher you keep 
 
 Input: a + b * c + d
 
-Initial Call to parse_exp(p, LOWEST)
+Initial Call to parse_exp(p, LOWEST)  
 
-Left: a
-Operator: +
+Left: a  
+Operator: +  
 
-call infix (left a, SUM)
+call infix (left a, SUM)  
 
-Right: Result of parse_exp(p, SUM)
-First Recursive Call to parse_exp(p, SUM)
+Right: Result of parse_exp(p, SUM)  
 
-Left: b
-Operator: *
 
-Call infix (left b, operator)
+__First__ Recursive Call to parse_exp(p, SUM)  
+Left: b  
+Operator: *  
 
-Right: Result of parse_exp(p, PRODUCT)
-Second Recursive Call to parse_exp(p, PRODUCT)
+Call infix (left b, operator)  
 
-Right Operand: c
-Return: This call returns c, completing b * c
-__Returning to First parse_exp(p, LOWEST)__ Call
+Right: Result of parse_exp(p, PRODUCT)  
 
-Left: b * c (constructed as the subtree)
-Operator: +
-Call infix ( a + (b*c)), SUM)
-Right: Result of parse_exp(p, SUM) to handle d
-Final Call to parse_exp(p, SUM)
 
-Right Operand: d
-Return: This call returns d, completing the right operand for the second +
+__Second__ Recursive Call to parse_exp(p, PRODUCT)  
+
+Right Operand: c  
+Return: This call returns c, completing b * c  
+__Returning to First parse_exp(p, LOWEST)__ Call  
+
+Left: b * c  
+Operator: +  
+
+Call infix ( a + (b*c)), SUM)  
+
+Right: Result of parse_exp(p, SUM) to handle d  
+
+
+__Final__ Call to parse_exp(p, SUM)  
+
+Right Operand: d  
+Return: This call returns d, completing the right operand for the second +  
