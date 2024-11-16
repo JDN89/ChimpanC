@@ -166,12 +166,12 @@ Expr *parse_number(Parser *p) {
                        "Failed allocating memory for identifierLiteral \n.");
 
   Value *value = createNumberValue(p->ct.literal);
-  Expr *expr = create_number_expr(value);
+  numberExp = create_number_expr(value);
   advance(p);
   consume_new_line_and_semi_colon(p);
 
-  assert(expr->as.value != NULL);
-  return expr;
+  assert(numberExp->as.value != NULL);
+  return numberExp;
 }
 
 Expr *parse_prefix_exp(Parser *p) {
