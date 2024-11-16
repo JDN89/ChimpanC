@@ -168,7 +168,6 @@ Expr *parse_number(Parser *p) {
   Value *value = createNumberValue(p->ct.literal);
   numberExp = create_number_expr(value);
   advance(p);
-  consume_new_line_and_semi_colon(p);
 
   assert(numberExp->as.value != NULL);
   return numberExp;
@@ -233,6 +232,9 @@ Expr *parse_exp(Parser *p, Precedece prec) {
 
   Expr *leftExpr = prefixRule(p);
 
+  // BUG: peek prec doesn't work because I allready advance in parse number ->
+  // remove advance in parse number and advance in the parse_expression_...
+  // instead
   while (p->pt.type != TOKEN_SEMICOLON && prec < peek_precedence(p)) {
     Parse_Infix_Fn infix_rule = *get_infix_rule(p->pt.type);
     if (infix_rule == NULL) {
