@@ -170,19 +170,29 @@ void test_parse_expressions() {
   printf("Test expressions - PASSED! \n");
 }
 
-void test_parse_infix_expressions() {
+// TODO: Create a helper funciton write_to_buffer.h
+// init
+// append
+// free
+// buffer - size,capacity,data *char
+// instead of printing the values we append to the buffer -> convert print
+// value? in main we can just print the buffer and free the buffer then.
 
+void test_parse_infix_expressions() {
   typedef struct {
     char *input;
-    double left_value;
-    char operator[3];
-    double right_value;
+    char *output;
+    /*double left_value;*/
+    /*char operator[3];*/
+    /*double right_value;*/
   } Infix_Test;
 
   Infix_Test test[8] = {
-      {"5 + 5;", 5, "+", 5},   {"5 - 5;", 5, "-", 5},   {"5 * 5;", 5, "*", 5},
-      {"5 / 5;", 5, "/", 5},   {"5 > 5;", 5, ">", 5},   {"5 < 5;", 5, "<", 5},
-      {"5 == 5;", 5, "==", 5}, {"5 != 5;", 5, "!=", 5},
+      {"5+5", "(5+5)"} /*{"5 + 5;", 5, "+", 5},   {"5 - 5;", 5, "-", 5},   {"5 *
+                          5;", 5, "*", 5},*/
+      /*{"5 / 5;", 5, "/", 5},   {"5 > 5;", 5, ">", 5},   {"5 < 5;", 5, "<",
+         5},*/
+      /*{"5 == 5;", 5, "==", 5}, {"5 != 5;", 5, "!=", 5},*/
   };
 
   for (uint8_t i = 0; i < 8; i++) {
@@ -205,7 +215,7 @@ void test_parse_infix_expressions() {
     }
 
     while (current != NULL) {
-      assert(current->type == EXPR_STATEMENT);
+      assert(strcmp(test[i].output, print_statement(program.head)) == 0);
     }
   }
 }
@@ -218,8 +228,10 @@ void test_parse_infix_expressions() {
 /*  } Test_Cases;*/
 /**/
 /*  Test_Cases cases[11] = {*/
-/*      {TOKEN_PLUS, 3},     {TOKEN_IF, 0},    {TOKEN_EQ, 1},   {TOKEN_NOT_EQ, 1},*/
-/*      {TOKEN_LT, 2},       {TOKEN_GT, 2},    {TOKEN_PLUS, 3}, {TOKEN_MINUS, 3},*/
+/*      {TOKEN_PLUS, 3},     {TOKEN_IF, 0},    {TOKEN_EQ, 1},   {TOKEN_NOT_EQ,
+ * 1},*/
+/*      {TOKEN_LT, 2},       {TOKEN_GT, 2},    {TOKEN_PLUS, 3}, {TOKEN_MINUS,
+ * 3},*/
 /*      {TOKEN_ASTERISK, 4}, {TOKEN_SLASH, 4}, {TOKEN_BANG, 0},*/
 /**/
 /*  };*/
@@ -231,13 +243,12 @@ void test_parse_infix_expressions() {
 /*  printf("Test peekprecedence PASSED!\n");*/
 /*}*/
 
-
 int main() {
   test_parser_error_during_parse_let_statement();
   test_parse_let_statement();
   test_parse_integer_literal();
   test_parse_return_statement();
   test_parse_expressions();
-  /*test_parse_infix_expressions();*/
+  test_parse_infix_expressions();
   /*test_peek_precedence();*/
 }
