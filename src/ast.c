@@ -48,7 +48,6 @@ void free_infix_expression(Infix_Expression *infix) {
 }
 
 void freeExpr(Expr *expr) {
-  printf("in free expression!");
   assert(expr != NULL);
 
   if (expr != NULL) {
@@ -142,5 +141,4 @@ void freeProgram(Program *prog) {
   prog->head = NULL;
   prog->tail = NULL;
   prog->length = 0;
-  printf("Program freed!! \n");
 }

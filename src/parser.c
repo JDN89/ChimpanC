@@ -209,7 +209,28 @@ Expr *parse_infix_expression(Parser *p, Expr *left) {
   // values seems good for now.
   if (p->ct.type == TOKEN_PLUS) {
     strcpy(infix->op, "+");
+  } else if (p->ct.type == TOKEN_EQ) {
+    strcpy(infix->op, "==");
+  } else if (p->ct.type == TOKEN_NOT_EQ) {
+    strcpy(infix->op, "!=");
+  } else if (p->ct.type == TOKEN_ASSIGN) {
+    strcpy(infix->op, "=");
+  } else if (p->ct.type == TOKEN_MINUS) {
+    strcpy(infix->op, "-");
+  } else if (p->ct.type == TOKEN_BANG) {
+    strcpy(infix->op, "!");
+  } else if (p->ct.type == TOKEN_ASTERISK) {
+    strcpy(infix->op, "*");
+  } else if (p->ct.type == TOKEN_SLASH) {
+    strcpy(infix->op, "/");
+  } else if (p->ct.type == TOKEN_LT) {
+    strcpy(infix->op, "<");
+  } else if (p->ct.type == TOKEN_GT) {
+    strcpy(infix->op, ">");
+  } else {
+    registerParserError(p, "Operator not supported");
   }
+
   infix->left = left;
   Precedece pre = cur_precedence(p);
   advance(p);

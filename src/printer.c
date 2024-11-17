@@ -7,7 +7,7 @@
 
 void print_expression(Expr *ex);
 
-void print_number(double num) { printf("NUMBER - %f \n", num); }
+void print_number(double num) { printf("%f", num); }
 void print_string(ObjString *str) { printf("String - %s \n", str->pointer); }
 
 void print_identifier_name(Identifier *identifier) {
@@ -48,11 +48,11 @@ void print_prefix_expression(PrefixExpr *pre) {
 }
 
 void print_infix_expression(Infix_Expression *ex) {
-  printf("( ");
+  printf("(");
   print_expression(ex->left);
   printf(" %s ", ex->op);
   print_expression(ex->right);
-  printf(" ) \n");
+  printf(")");
 }
 
 void print_expression(Expr *ex) {
