@@ -167,7 +167,6 @@ Expr *parse_number(Parser *p) {
 
   Value *value = createNumberValue(p->ct.literal);
   numberExp = create_number_expr(value);
-  advance(p);
 
   assert(numberExp->as.value != NULL);
   return numberExp;
@@ -195,7 +194,7 @@ Expr *parse_prefix_exp(Parser *p) {
   return expr;
 }
 
-Expr *parse_infix_Expression(Parser *p, Expr *left) {
+Expr *parse_infix_expression(Parser *p, Expr *left) {
 
   Expr *expr = malloc(sizeof(Expr));
   HANDLE_ALLOC_FAILURE(expr,
@@ -219,6 +218,7 @@ Expr *parse_infix_Expression(Parser *p, Expr *left) {
 
   expr->type = INFIX_EXPR;
   expr->as.infix = infix;
+  advance(p);
   return expr;
 }
 
@@ -254,14 +254,14 @@ PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
 
 static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
 
-static Infix_Rule ir[] = {[TOKEN_EQ] = {parse_infix_Expression, EQUALS},
-                          [TOKEN_NOT_EQ] = {parse_infix_Expression, EQUALS},
-                          [TOKEN_LT] = {parse_infix_Expression, LESSGREATER},
-                          [TOKEN_GT] = {parse_infix_Expression, LESSGREATER},
-                          [TOKEN_PLUS] = {parse_infix_Expression, SUM},
-                          [TOKEN_MINUS] = {parse_infix_Expression, SUM},
-                          [TOKEN_SLASH] = {parse_infix_Expression, PRODUCT},
-                          [TOKEN_ASTERISK] = {parse_infix_Expression, PRODUCT}};
+static Infix_Rule ir[] = {[TOKEN_EQ] = {parse_infix_expression, EQUALS},
+                          [TOKEN_NOT_EQ] = {parse_infix_expression, EQUALS},
+                          [TOKEN_LT] = {parse_infix_expression, LESSGREATER},
+                          [TOKEN_GT] = {parse_infix_expression, LESSGREATER},
+                          [TOKEN_PLUS] = {parse_infix_expression, SUM},
+                          [TOKEN_MINUS] = {parse_infix_expression, SUM},
+                          [TOKEN_SLASH] = {parse_infix_expression, PRODUCT},
+                          [TOKEN_ASTERISK] = {parse_infix_expression, PRODUCT}};
 
 static Parse_Infix_Fn *get_infix_rule(TokenType ttype) {
   return &ir[ttype].infix;
