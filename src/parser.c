@@ -232,9 +232,6 @@ Expr *parse_exp(Parser *p, Precedece prec) {
 
   Expr *leftExpr = prefixRule(p);
 
-  // BUG: peek prec doesn't work because I allready advance in parse number ->
-  // remove advance in parse number and advance in the parse_expression_...
-  // instead
   while (p->pt.type != TOKEN_SEMICOLON && prec < peek_precedence(p)) {
     Parse_Infix_Fn infix_rule = *get_infix_rule(p->pt.type);
     if (infix_rule == NULL) {
@@ -243,6 +240,8 @@ Expr *parse_exp(Parser *p, Precedece prec) {
     advance(p);
     leftExpr = infix_rule(p, leftExpr);
   }
+
+  advance(p);
 
   return leftExpr;
 }
