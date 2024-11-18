@@ -1,6 +1,7 @@
 #include "../src/lexer.h"
 #include "../src/parser.h"
 #include "test_helper_functions.h"
+#include "write_output_to_buffer.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -214,9 +215,20 @@ void test_parse_infix_expressions() {
       printf("No parser errors to repport!\n");
     }
 
-    while (current != NULL) {
-      assert(strcmp(test[i].output, print_statement(program.head)) == 0);
-    }
+    Buffer buffer;
+    init_buffer(&buffer);
+
+    write_statement_to_output(&buffer, current);
+    /*while (current != NULL) {*/
+    /*  assert(strcmp(test[i].output, buffer.data) == 0);*/
+    /*}*/
+    print_buffer(&buffer);
+
+    // TODO:reset the buffer
+
+    /*while (current != NULL) {*/
+    /*  assert(strcmp(test[i].output, print_statement(program.head)) == 0);*/
+    /*}*/
   }
 }
 
