@@ -20,7 +20,7 @@ void test_parser_error_during_parse_let_statement() {
   if (parser.errorCount > 0) {
 
     for (int i = 0; i < parser.errorCount; i++) {
-      printf("Error %d: %s\n", i + 1, parser.errors[i]);
+      printf("Error %d: %s", i + 1, parser.errors[i]);
     }
     printf("Report parse error - PASSED!\n");
   } else {
@@ -180,80 +180,52 @@ void test_parse_expressions() {
 // value? in main we can just print the buffer and free the buffer then.
 
 void test_parse_infix_expressions() {
+#define INFIX_TEST_CASE_COUNT 8
   typedef struct {
     char *input;
     char *output;
-    /*double left_value;*/
-    /*char operator[3];*/
-    /*double right_value;*/
   } Infix_Test;
 
-  Infix_Test test[8] = {
-      {"5+5", "(5+5)"} /*{"5 + 5;", 5, "+", 5},   {"5 - 5;", 5, "-", 5},   {"5 *
-                          5;", 5, "*", 5},*/
-      /*{"5 / 5;", 5, "/", 5},   {"5 > 5;", 5, ">", 5},   {"5 < 5;", 5, "<",
-         5},*/
-      /*{"5 == 5;", 5, "==", 5}, {"5 != 5;", 5, "!=", 5},*/
+  Infix_Test test[INFIX_TEST_CASE_COUNT] = {
+      {"5+5", "(5+5)"},    {"5-5;", "(5-5)"},  {"5*5", "(5*5)"},
+      {"5/5;", "(5/5)"},   {"5>5;", "(5>5)"},  {"5<5;", "(5<5)"},
+      {"5==5;", "(5==5)"}, {"5!=5;", "(5!=5)"}
+
   };
 
-  for (uint8_t i = 0; i < 8; i++) {
+  for (uint8_t i = 0; i < INFIX_TEST_CASE_COUNT; i++) {
+    // DEBUG INFO
+    /*printf("Test Case #%d\n", i + 1);*/
+    /*printf("Input   : %s\n", test[i].input);*/
+    /*printf("Expected: %s\n", test[i].output);*/
 
-    Lexer l = init_lexer(test[0].input);
+    Lexer l = init_lexer(test[i].input);
     Parser parser = new_parser(&l);
     Program program = parse_program(&parser);
 
-    assert(program.head != NULL);
-    Stmt *current = program.head;
-
     if (parser.errorCount > 0) {
-
-      for (int i = 0; i < parser.errorCount; i++) {
-        printf("Error %d: %s\n", i + 1, parser.errors[i]);
+      for (int j = 0; j < parser.errorCount; j++) {
+        printf("Error %d: %s\n", j + 1, parser.errors[j]);
       }
-      printf("Report parse error - PASSED!\n");
-    } else {
-      printf("No parser errors to repport!\n");
     }
 
     Buffer buffer;
     init_buffer(&buffer);
 
-    write_statement_to_output(&buffer, current);
-    /*while (current != NULL) {*/
-    /*  assert(strcmp(test[i].output, buffer.data) == 0);*/
-    /*}*/
-    print_buffer(&buffer);
+    Stmt *current = program.head;
+    while (current != NULL) {
+      write_statement_to_output(&buffer, current);
+      // DEBUG INFO
+      /*printf("Parsed expression  : %s\n", buffer.data);*/
 
-    // TODO:reset the buffer
-
-    /*while (current != NULL) {*/
-    /*  assert(strcmp(test[i].output, print_statement(program.head)) == 0);*/
-    /*}*/
+      assert(strcmp(test[i].output, buffer.data) == 0); // Debug if this fails
+      reset_buffer(&buffer);
+      current = current->next;
+    }
+    freeProgram(&program);
   }
+  printf("parse infix statements - PASSED!\n");
 }
-
-/*void test_peek_precedence() {*/
-/**/
-/*  typedef struct {*/
-/*    TokenType tt;*/
-/*    uint8_t prec;*/
-/*  } Test_Cases;*/
-/**/
-/*  Test_Cases cases[11] = {*/
-/*      {TOKEN_PLUS, 3},     {TOKEN_IF, 0},    {TOKEN_EQ, 1},   {TOKEN_NOT_EQ,
- * 1},*/
-/*      {TOKEN_LT, 2},       {TOKEN_GT, 2},    {TOKEN_PLUS, 3}, {TOKEN_MINUS,
- * 3},*/
-/*      {TOKEN_ASTERISK, 4}, {TOKEN_SLASH, 4}, {TOKEN_BANG, 0},*/
-/**/
-/*  };*/
-/**/
-/*  for (int i = 0; i < 2; i++) {*/
-/*    assert(peek_precedence(cases[i].tt) == cases[i].prec);*/
-/*  }*/
-/**/
-/*  printf("Test peekprecedence PASSED!\n");*/
-/*}*/
 
 int main() {
   test_parser_error_during_parse_let_statement();
@@ -262,5 +234,6 @@ int main() {
   test_parse_return_statement();
   test_parse_expressions();
   test_parse_infix_expressions();
-  /*test_peek_precedence();*/
+  printf("\n");
+  return 0;
 }

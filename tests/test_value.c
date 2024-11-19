@@ -46,4 +46,6 @@ void test_parse_number_value() {
 int main() {
   test_parse_string_value();
   test_parse_number_value();
+  printf("\n");
+  return 0;
 }

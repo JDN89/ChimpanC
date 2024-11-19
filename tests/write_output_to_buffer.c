@@ -12,6 +12,11 @@ void init_buffer(Buffer *buffer) {
   buffer->capacity = sizeof(buffer->data);
 }
 
+void reset_buffer(Buffer *buffer) {
+  buffer->size = 0;
+  memset(buffer->data, 0, sizeof(buffer->data));
+}
+
 void append_to_buffer(Buffer *buffer, char *source) {
   assert(buffer != NULL);
 

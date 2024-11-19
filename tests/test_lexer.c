@@ -15,7 +15,6 @@ void bang_test() {
 
   Lexer lexer = init_lexer(source);
 
-  // TODO: expand test and source code
   TokenType expected_types[] = {TOKEN_NOT_EQ, TOKEN_SEMICOLON, TOKEN_EQ,
                                 TOKEN_EOF};
   const char *expected_literals[] = {"!=", ";", "==", "\0"};
@@ -50,7 +49,6 @@ void test_monkey_source() {
 
   Lexer lexer = init_lexer(source);
 
-  // TODO: expand test and source code
   TokenType expected_types[] = {
       TOKEN_LET,        TOKEN_IDENTIFIER, TOKEN_ASSIGN,     TOKEN_INT,
       TOKEN_SEMICOLON,  TOKEN_LET,        TOKEN_IDENTIFIER, TOKEN_ASSIGN,
@@ -95,7 +93,6 @@ void test_monkey_source() {
 
 int main() {
   test_monkey_source();
-
-  printf("All tests passed.\n");
+  printf("\n");
   return 0;
 }

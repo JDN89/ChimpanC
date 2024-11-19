@@ -14,7 +14,7 @@ typedef struct {
 Buffer *write_statement(Stmt *stmt);
 
 void init_buffer(Buffer *buffer);
-void free_buffer(Buffer *buffer);
+void reset_buffer(Buffer *buffer);
 void append_to_buffer(Buffer *buffer, char *source);
 void print_buffer(Buffer *buffer) ;
 void write_statement_to_output(Buffer *buffer, Stmt *stmt) ;
