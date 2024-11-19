@@ -180,18 +180,16 @@ void test_parse_expressions() {
 // value? in main we can just print the buffer and free the buffer then.
 
 void test_parse_infix_expressions() {
-#define INFIX_TEST_CASE_COUNT 8
+#define INFIX_TEST_CASE_COUNT 9
   typedef struct {
     char *input;
     char *output;
   } Infix_Test;
 
   Infix_Test test[INFIX_TEST_CASE_COUNT] = {
-      {"5+5", "(5+5)"},    {"5-5;", "(5-5)"},  {"5*5", "(5*5)"},
-      {"5/5;", "(5/5)"},   {"5>5;", "(5>5)"},  {"5<5;", "(5<5)"},
-      {"5==5;", "(5==5)"}, {"5!=5;", "(5!=5)"}
-
-  };
+      {"5+5", "(5+5)"},    {"5-5;", "(5-5)"},   {"5*5", "(5*5)"},
+      {"5/5;", "(5/5)"},   {"5>5;", "(5>5)"},   {"5<5;", "(5<5)"},
+      {"5==5;", "(5==5)"}, {"5!=5;", "(5!=5)"}, {"5+5*5", "(5+(5*5))"}};
 
   for (uint8_t i = 0; i < INFIX_TEST_CASE_COUNT; i++) {
     // DEBUG INFO
