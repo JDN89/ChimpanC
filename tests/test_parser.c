@@ -171,31 +171,26 @@ void test_parse_expressions() {
   printf("Test expressions - PASSED! \n");
 }
 
-// TODO: Create a helper funciton write_to_buffer.h
-// init
-// append
-// free
-// buffer - size,capacity,data *char
-// instead of printing the values we append to the buffer -> convert print
-// value? in main we can just print the buffer and free the buffer then.
-
 void test_parse_infix_expressions() {
-#define INFIX_TEST_CASE_COUNT 9
+#define INFIX_TEST_CASE_COUNT 10
   typedef struct {
     char *input;
     char *output;
   } Infix_Test;
 
   Infix_Test test[INFIX_TEST_CASE_COUNT] = {
-      {"5+5", "(5+5)"},    {"5-5;", "(5-5)"},   {"5*5", "(5*5)"},
-      {"5/5;", "(5/5)"},   {"5>5;", "(5>5)"},   {"5<5;", "(5<5)"},
-      {"5==5;", "(5==5)"}, {"5!=5;", "(5!=5)"}, {"5+5*5", "(5+(5*5))"}};
+      {"5+5", "(5+5)"},      {"5-5;", "(5-5)"},   {"5*5", "(5*5)"},
+      {"5/5;", "(5/5)"},     {"5>5;", "(5>5)"},   {"5<5;", "(5<5)"},
+      {"5==5;", "(5==5)"},   {"5!=5;", "(5!=5)"}, {"5+5*5", "(5+(5*5))"},
+      {"5+5-5", "((5+5)-5)"}
+
+  };
 
   for (uint8_t i = 0; i < INFIX_TEST_CASE_COUNT; i++) {
     // DEBUG INFO
-    /*printf("Test Case #%d\n", i + 1);*/
-    /*printf("Input   : %s\n", test[i].input);*/
-    /*printf("Expected: %s\n", test[i].output);*/
+    printf("Test Case #%d\n", i + 1);
+    printf("Input   : %s\n", test[i].input);
+    printf("Expected: %s\n", test[i].output);
 
     Lexer l = init_lexer(test[i].input);
     Parser parser = new_parser(&l);
@@ -214,7 +209,7 @@ void test_parse_infix_expressions() {
     while (current != NULL) {
       write_statement_to_output(&buffer, current);
       // DEBUG INFO
-      /*printf("Parsed expression  : %s\n", buffer.data);*/
+      printf("Parsed expression  : %s\n", buffer.data);
 
       assert(strcmp(test[i].output, buffer.data) == 0); // Debug if this fails
       reset_buffer(&buffer);
