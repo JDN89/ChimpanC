@@ -262,7 +262,7 @@ Expr *parse_exp(Parser *p, Precedece prec) {
     leftExpr = infix_rule(p, leftExpr);
   }
 
-  advance(p);
+  /*advance(p);*/
 
   return leftExpr;
 }
