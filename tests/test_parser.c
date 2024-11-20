@@ -179,12 +179,13 @@ void test_parse_infix_expressions() {
   } Infix_Test;
 
   Infix_Test test[INFIX_TEST_CASE_COUNT] = {
+      // TOKENS I CAN PARSE??
+      /*{"5+5*5", "(5+(5*5))"}, {"5+5-5", "((5+5)-5)"}, {"5+5", "(5+5)"},*/
+      /*{"5*5", "(5*5)"}, */
 
-      {"5+5*5", "(5+(5*5))"},
-      {"5+5-5", "((5+5)-5)"}, {"5+5", "(5+5)"},    {"5-5;", "(5-5)"},
-      {"5*5", "(5*5)"},       {"5/5;", "(5/5)"},   {"5>5;", "(5>5)"},
-      {"5<5;", "(5<5)"},      {"5==5;", "(5==5)"}, {"5!=5;", "(5!=5)"},
-
+      // BUG:TOKENS I CAN'T parse??reason?
+      {"5==5;", "(5==5)"}, {"5!=5;", "(5!=5)"}, {"5-5;", "(5-5)"},
+      {"5/5;", "(5/5)"},   {"5>5;", "(5>5)"},   {"5<5;", "(5<5)"},
   };
 
   for (uint8_t i = 0; i < INFIX_TEST_CASE_COUNT; i++) {
@@ -212,8 +213,7 @@ void test_parse_infix_expressions() {
       // DEBUG INFO
       printf("Parsed expression  : %s\n", buffer.data);
 
-      /*assert(strcmp(test[i].output, buffer.data) == 0); // Debug if this
-       * fails*/
+      assert(strcmp(test[i].output, buffer.data) == 0); // Debug if this
       reset_buffer(&buffer);
       current = current->next;
     }
