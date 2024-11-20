@@ -239,7 +239,6 @@ Expr *parse_infix_expression(Parser *p, Expr *left) {
 
   expr->type = INFIX_EXPR;
   expr->as.infix = infix;
-  advance(p);
   return expr;
 }
 

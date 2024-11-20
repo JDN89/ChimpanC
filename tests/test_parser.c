@@ -172,7 +172,7 @@ void test_parse_expressions() {
 }
 
 void test_parse_infix_expressions() {
-#define INFIX_TEST_CASE_COUNT 1
+#define INFIX_TEST_CASE_COUNT 10
   typedef struct {
     char *input;
     char *output;
@@ -180,22 +180,10 @@ void test_parse_infix_expressions() {
 
   Infix_Test test[INFIX_TEST_CASE_COUNT] = {
 
-      // BUG: somehow the expression gets parsed and pushed into 2 different
-      // statements. Why do we leave the the loop in parse_expression without
-      // continuing to parse once we return and call with lowest prec?
-      //(5+5) and (-5)
-      // Test Case #1
-      /*Input   : 5+5-5*/
-      /*Expected: ((5+5)-5)*/
-      /*Parsed expression  : (5+5)*/
-      /*Parsed expression  : -5*/
-      /*parse infix statements - PASSED!*/
-
-      {"5+5-5", "((5+5)-5)"}
-      /*{"5+5", "(5+5)"},      {"5-5;", "(5-5)"},   {"5*5", "(5*5)"},*/
-      /*{"5/5;", "(5/5)"},     {"5>5;", "(5>5)"},   {"5<5;", "(5<5)"},*/
-      /*{"5==5;", "(5==5)"},   {"5!=5;", "(5!=5)"}, {"5+5*5", "(5+(5*5))"},*/
-      /*{"5+5-5", "((5+5)-5)"}*/
+      {"5+5*5", "(5+(5*5))"},
+      {"5+5-5", "((5+5)-5)"}, {"5+5", "(5+5)"},    {"5-5;", "(5-5)"},
+      {"5*5", "(5*5)"},       {"5/5;", "(5/5)"},   {"5>5;", "(5>5)"},
+      {"5<5;", "(5<5)"},      {"5==5;", "(5==5)"}, {"5!=5;", "(5!=5)"},
 
   };
 
