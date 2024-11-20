@@ -261,7 +261,8 @@ Expr *parse_exp(Parser *p, Precedece prec) {
     leftExpr = infix_rule(p, leftExpr);
   }
 
-  /*advance(p);*/
+  // BUG: commenting this fixed (5+5)-5 but breaks the other parsing tests!!
+  advance(p);
 
   return leftExpr;
 }
