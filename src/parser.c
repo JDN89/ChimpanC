@@ -262,7 +262,6 @@ Expr *parse_exp(Parser *p, Precedece prec) {
   }
 
   // BUG: commenting this fixed (5+5)-5 but breaks the other parsing tests!!
-  advance(p);
 
   return leftExpr;
 }
@@ -322,6 +321,9 @@ LetStmt *parse_let_statement(Parser *p) {
     letStmt->expr = expr;
   }
 
+  if (p->ct.type == TOKEN_SEMICOLON) {
+    advance(p);
+  }
   consume_new_line_and_semi_colon(p);
   return letStmt;
 }
@@ -351,6 +353,9 @@ ExprStatement *parse_expression_statement(Parser *p) {
   HANDLE_ALLOC_FAILURE(stmt->expr, "Failed to alocate memory for ExprStatement")
 
   Expr *expr = parse_exp(p, LOWEST);
+  if (p->pt.type == TOKEN_SEMICOLON) {
+    advance(p);
+  }
 
   stmt->expr = expr;
 

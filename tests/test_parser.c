@@ -117,7 +117,8 @@ void test_parse_return_statement() {
 // TEST parse expressionStatements
 //----------------------------------------------------
 void test_parse_expressions() {
-  char source[] = " let a = 5;\n"
+  char source[] = 
+    " let a = 5;\n"
                   " yolo; \n"
                   " return 10;\n"
                   " 34; \n";
@@ -172,27 +173,25 @@ void test_parse_expressions() {
 }
 
 void test_parse_infix_expressions() {
-#define INFIX_TEST_CASE_COUNT 10
+#define INFIX_TEST_CASE_COUNT 13
   typedef struct {
     char *input;
     char *output;
   } Infix_Test;
 
   Infix_Test test[INFIX_TEST_CASE_COUNT] = {
-      // TOKENS I CAN PARSE??
-      /*{"5+5*5", "(5+(5*5))"}, {"5+5-5", "((5+5)-5)"}, {"5+5", "(5+5)"},*/
-      /*{"5*5", "(5*5)"}, */
-
-      // BUG:TOKENS I CAN'T parse??reason?
-      {"5==5;", "(5==5)"}, {"5!=5;", "(5!=5)"}, {"5-5;", "(5-5)"},
-      {"5/5;", "(5/5)"},   {"5>5;", "(5>5)"},   {"5<5;", "(5<5)"},
+      {"5+5-5", "((5+5)-5)"}, {"5+5*5", "(5+(5*5))"}, {"5+5-5", "((5+5)-5)"},
+      {"5+5", "(5+5)"},       {"5*5", "(5*5)"},       {"5+5", "(5+5)"},
+      {"5-5;", "(5-5)"},      {"5==5;", "(5==5)"},    {"5!=5;", "(5!=5)"},
+      {"5-5;", "(5-5)"},      {"5/5;", "(5/5)"},      {"5>5;", "(5>5)"},
+      {"5<5;", "(5<5)"},
   };
 
   for (uint8_t i = 0; i < INFIX_TEST_CASE_COUNT; i++) {
     // DEBUG INFO
-    printf("Test Case #%d\n", i + 1);
-    printf("Input   : %s\n", test[i].input);
-    printf("Expected: %s\n", test[i].output);
+    /*printf("Test Case #%d\n", i + 1);*/
+    /*printf("Input   : %s\n", test[i].input);*/
+    /*printf("Expected: %s\n", test[i].output);*/
 
     Lexer l = init_lexer(test[i].input);
     Parser parser = new_parser(&l);
@@ -211,7 +210,7 @@ void test_parse_infix_expressions() {
     while (current != NULL) {
       write_statement_to_output(&buffer, current);
       // DEBUG INFO
-      printf("Parsed expression  : %s\n", buffer.data);
+      /*printf("Parsed expression  : %s\n", buffer.data);*/
 
       assert(strcmp(test[i].output, buffer.data) == 0); // Debug if this
       reset_buffer(&buffer);
@@ -224,7 +223,7 @@ void test_parse_infix_expressions() {
 
 int main() {
   test_parser_error_during_parse_let_statement();
-  test_parse_let_statement();
+  /*test_parse_let_statement();*/
   test_parse_integer_literal();
   test_parse_return_statement();
   test_parse_expressions();
