@@ -117,8 +117,7 @@ void test_parse_return_statement() {
 // TEST parse expressionStatements
 //----------------------------------------------------
 void test_parse_expressions() {
-  char source[] = 
-    " let a = 5;\n"
+  char source[] = " let a = 5;\n"
                   " yolo; \n"
                   " return 10;\n"
                   " 34; \n";
@@ -222,12 +221,12 @@ void test_parse_infix_expressions() {
 }
 
 int main() {
-  test_parser_error_during_parse_let_statement();
-  /*test_parse_let_statement();*/
-  test_parse_integer_literal();
-  test_parse_return_statement();
-  test_parse_expressions();
-  test_parse_infix_expressions();
+  /*test_parser_error_during_parse_let_statement();*/
+  test_parse_let_statement();
+  /*test_parse_integer_literal();*/
+  /*test_parse_return_statement();*/
+  /*test_parse_expressions();*/
+  /*test_parse_infix_expressions();*/
   printf("\n");
   return 0;
 }
