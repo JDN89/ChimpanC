@@ -40,7 +40,7 @@ void freeIdentifier(Identifier *identifier) {
   }
 }
 
-void freePrefixExpr(PrefixExpr *pre) { freeExpr(pre->right); }
+void freePrefix_Expression(PrefixExpr *pre) { freeExpr(pre->right); }
 
 void free_infix_expression(Infix_Expression *infix) {
   freeExpr(infix->left);
@@ -63,7 +63,7 @@ void freeExpr(Expr *expr) {
       break;
     }
     case PREFIX_EXPR: {
-      freePrefixExpr(expr->as.prefix);
+      freePrefix_Expression(expr->as.prefix);
       break;
     }
     case INFIX_EXPR:
