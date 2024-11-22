@@ -261,7 +261,6 @@ Expr *parse_exp(Parser *p, Precedece prec) {
     leftExpr = infix_rule(p, leftExpr);
   }
 
-
   return leftExpr;
 }
 
@@ -320,10 +319,6 @@ LetStmt *parse_let_statement(Parser *p) {
     letStmt->expr = expr;
   }
 
-  if (p->ct.type == TOKEN_SEMICOLON) {
-    advance(p);
-  }
-  consume_new_line_and_semi_colon(p);
   return letStmt;
 }
 
@@ -374,6 +369,10 @@ Stmt *parse_statement(Parser *p) {
     if (letStmt != NULL) {
       stmt->type = LET_STATEMENT;
       stmt->as.letStmt = letStmt;
+      if (p->pt.type == TOKEN_SEMICOLON) {
+        advance(p);
+      }
+      consume_new_line_and_semi_colon(p);
     } else {
       free(stmt);
       return NULL;
@@ -387,6 +386,9 @@ Stmt *parse_statement(Parser *p) {
     if (returnStatement != NULL) {
       stmt->type = RETURN_STATEMENT;
       stmt->as.returnStmt = returnStatement;
+      if (p->pt.type == TOKEN_SEMICOLON) {
+        advance(p);
+      }
     } else {
       free(stmt);
       return NULL;

@@ -1,6 +1,6 @@
 # Compiler settings
-CC = clang -std=c2x
-CFLAGS = -Wall -Wextra -g -Isrc
+CC = clang 
+CFLAGS = -Wall -Wextra -g -Isrc -std=c2x
 
 # Source files for the main program
 SOURCES = src/main.c src/lexer.c src/parser.c src/ast.c src/value.c src/printer.c
