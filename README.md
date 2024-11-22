@@ -2,13 +2,6 @@
 A C implementation based on "Writing an Interpreter in Go" by Thorsten Ball.
 
 ## TODO
-BUG: >> 1+2-3;
-(1.000000 + 2.000000)>> 
->> 1+2*3
-(1.000000 + (2.000000 * 3.000000))>> 
->> 1-2
-(1.000000 - 2.000000)>> 1-2+3
-(1.000000 - 2.000000)>> 
 
 - start renaming methods and struct names. Use Pascal_Case and snake_case. I find this easier to read 
 - call free() also in tests!
