@@ -28,7 +28,7 @@ static void repl() {
 
     if (p.errorCount > 0) {
       print_errors(&p);
-      freeParserErrors(&p);
+      free_parser_errors(&p);
     }
 
     // Print statements

@@ -29,7 +29,7 @@ struct Value {
   } as;
 };
 
-Value *createStringValue(int length, const char *source);
+Value *create_string_value(int length, const char *source);
 void freeValue(Value *val);
 Value *createNumberValue(const char *source);
 

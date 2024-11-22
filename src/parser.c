@@ -34,7 +34,7 @@ Expr *parse_exp(Parser *p, Precedece prec);
 typedef struct {
   ParseFn prefix;
   Precedece precedence;
-} PrefixRule;
+} Prefix_Rule;
 
 typedef struct {
   Parse_Infix_Fn infix;
@@ -74,15 +74,15 @@ void peekError(Parser *p, char *expected, char *got) {
   p->errors[p->errorCount - 1] = msg;
 }
 
-void registerParserError(Parser *p, char *message) {
+void register_parser_error(Parser *p, char *message) {
   char *msg = malloc(256 * sizeof(char));
   snprintf(msg, 256, "%s  -  TOKEN_TYPE: %s \n", message,
-           tokenTypeToString(p->ct.type));
+           token_type_to_string(p->ct.type));
   p->errorCount++;
   p->errors[p->errorCount - 1] = msg;
 }
 
-void freeParserErrors(Parser *p) {
+void free_parser_errors(Parser *p) {
   for (int i = 0; i < +p->errorCount; i++) {
     if (p->errors[i] != NULL) {
       printf("%s", p->errors[i]);
@@ -97,16 +97,16 @@ bool expect_peek_token(Parser *p, TokenType ttype) {
     advance(p);
     return true;
   } else
-    peekError(p, tokenTypeToString(ttype), tokenTypeToString(p->pt.type));
+    peekError(p, token_type_to_string(ttype), token_type_to_string(p->pt.type));
   return false;
 }
 
-bool expectCurrentToken(Parser *p, TokenType ttype) {
+bool expect_current_token(Parser *p, TokenType ttype) {
   if (p->ct.type == ttype) {
     advance(p);
     return true;
   } else
-    peekError(p, tokenTypeToString(ttype), tokenTypeToString(p->pt.type));
+    peekError(p, token_type_to_string(ttype), token_type_to_string(p->pt.type));
   return false;
 }
 
@@ -116,7 +116,7 @@ Identifier *parse_identifier(Parser *p) {
   HANDLE_ALLOC_FAILURE(identifier,
                        "Failed allocating memory for Identifier \n.");
 
-  Value *value = createStringValue(p->ct.length, p->ct.literal);
+  Value *value = create_string_value(p->ct.length, p->ct.literal);
 
   identifier->value = value;
 
@@ -131,7 +131,7 @@ Expr *parse_identifier_expr(Parser *p) {
   HANDLE_ALLOC_FAILURE(identifier,
                        "Failed allocating memory for Identifier \n.");
 
-  Value *value = createStringValue(p->ct.length, p->ct.literal);
+  Value *value = create_string_value(p->ct.length, p->ct.literal);
 
   identifier->value = value;
 
@@ -175,11 +175,11 @@ Expr *parse_number(Parser *p) {
 Expr *parse_prefix_exp(Parser *p) {
   Expr *expr = malloc(sizeof(Expr));
   HANDLE_ALLOC_FAILURE(expr,
-                       "Failed to allocate Expr in parsePrefixExpression\n");
+                       "Failed to allocate Expr in parse_prefix_expression\n");
 
   PrefixExpr *pre = malloc(sizeof(PrefixExpr));
   HANDLE_ALLOC_FAILURE(
-      expr, "Failed to allocate PrefixExpr in parsePrefixExpression\n");
+      expr, "Failed to allocate PrefixExpr in parse_prefix_expression\n");
 
   assert(p->ct.literal[0] == '!' || p->ct.literal[0] == '-');
 
@@ -228,7 +228,7 @@ Expr *parse_infix_expression(Parser *p, Expr *left) {
   } else if (p->ct.type == TOKEN_GT) {
     strcpy(infix->op, ">");
   } else {
-    registerParserError(p, "Operator not supported");
+    register_parser_error(p, "Operator not supported");
   }
 
   infix->left = left;
@@ -246,7 +246,7 @@ Expr *parse_exp(Parser *p, Precedece prec) {
 
   ParseFn prefixRule = *get_prefix_rule(p->ct.type);
   if (prefixRule == NULL) {
-    registerParserError(p, "No prefix rule registered for ");
+    register_parser_error(p, "No prefix rule registered for ");
     return NULL;
   }
 
@@ -264,7 +264,7 @@ Expr *parse_exp(Parser *p, Precedece prec) {
   return leftExpr;
 }
 
-PrefixRule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
+Prefix_Rule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
                    [TOKEN_INT] = {parse_number, LOWEST},
                    [TOKEN_BANG] = {parse_prefix_exp, LOWEST},
                    [TOKEN_MINUS] = {parse_prefix_exp, LOWEST}};
@@ -304,7 +304,7 @@ LetStmt *parse_let_statement(Parser *p) {
 
   letStmt->name = parse_identifier(p);
 
-  if (!expectCurrentToken(p, TOKEN_ASSIGN)) {
+  if (!expect_current_token(p, TOKEN_ASSIGN)) {
     // TODO: consume until ;  so we can continue parsing and reporting erros.
     // There was a chapter in Crafting Interpreters - Clox that discussed
     // somehting similar. Look it up.

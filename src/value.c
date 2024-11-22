@@ -25,7 +25,7 @@ ObjString *createLiteralSubstring(int length, const char *source) {
   return obj;
 }
 
-Value *createStringValue(int length, const char *source) {
+Value *create_string_value(int length, const char *source) {
   Value *value = malloc(sizeof(Value));
   HANDLE_ALLOC_FAILURE(value,
                        "Failed to allocate memory for Value in value.c \n");

@@ -3,7 +3,7 @@
 #include <string.h>
 
 // HELPER METHOD for printing enum values of TokenType
-char *tokenTypeToString(TokenType type) {
+char *token_type_to_string(TokenType type) {
   switch (type) {
   case TOKEN_ILLEGAL:
     return "TOKEN_ILLEGAL";

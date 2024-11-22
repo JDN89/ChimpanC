@@ -12,7 +12,7 @@ void test_parse_string_value() {
   int i = 0;
   while (i < 3) {
 
-    Value *val = createStringValue(lengthOfStringLiteral[i], source[i]);
+    Value *val = create_string_value(lengthOfStringLiteral[i], source[i]);
     assert(val->type == VAL_STRING);
     assert(strcmp(expectedLiterals[i], val->as.string->pointer) == 0);
     assert(lengthOfStringLiteral[i] == val->as.string->length);

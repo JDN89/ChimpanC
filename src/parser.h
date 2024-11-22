@@ -21,7 +21,7 @@ Program parse_program(Parser *p);
 
 void advance(Parser *p);
 
-void freeParserErrors(Parser *p);
+void free_parser_errors(Parser *p);
 
 uint8_t peek_precedence(Parser *p);
 

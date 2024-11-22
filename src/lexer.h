@@ -67,6 +67,6 @@ typedef struct {
 Lexer init_lexer(char *source);
 Token nextToken(Lexer *lexer);
 
-char *tokenTypeToString(TokenType type);
+char *token_type_to_string(TokenType type);
 
 #endif

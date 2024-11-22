@@ -10,8 +10,8 @@ void check_token(int position, Token token, TokenType expected_type,
   if (token.type != expected_type) {
     fprintf(stderr,
             "Error at token position %d: Expected token type %s, but got %s\n",
-            position, tokenTypeToString(expected_type),
-            tokenTypeToString(token.type));
+            position, token_type_to_string(expected_type),
+            token_type_to_string(token.type));
     assert(token.type == expected_type);
   }
 
