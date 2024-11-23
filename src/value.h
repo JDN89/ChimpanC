@@ -1,6 +1,7 @@
 #ifndef VALUE_H
 #define VALUE_H
 
+#include <stddef.h>
 typedef struct Value Value;
 
 typedef enum {
@@ -17,7 +18,7 @@ typedef enum {
 #define AS_CSTRING(value) ((value).as.string->pointer)
 
 typedef struct {
-  int length;
+  size_t length;
   char *pointer;
 } ObjString;
 
@@ -29,7 +30,7 @@ struct Value {
   } as;
 };
 
-Value *create_string_value(int length, const char *source);
+Value *create_string_value(size_t length, const char *source);
 void freeValue(Value *val);
 Value *createNumberValue(const char *source);
 

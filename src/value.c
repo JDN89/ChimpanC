@@ -9,7 +9,7 @@
 
 static void freeString(ObjString *obj);
 
-ObjString *createLiteralSubstring(int length, const char *source) {
+ObjString *createLiteralSubstring(size_t length, const char *source) {
   ObjString *obj = malloc(sizeof(ObjString));
   HANDLE_ALLOC_FAILURE(obj, "Failed to allocate ObjString in value.c \n");
 
@@ -25,7 +25,7 @@ ObjString *createLiteralSubstring(int length, const char *source) {
   return obj;
 }
 
-Value *create_string_value(int length, const char *source) {
+Value *create_string_value(size_t length, const char *source) {
   Value *value = malloc(sizeof(Value));
   HANDLE_ALLOC_FAILURE(value,
                        "Failed to allocate memory for Value in value.c \n");

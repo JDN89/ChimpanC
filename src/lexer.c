@@ -53,7 +53,7 @@ char *token_type_to_string(TokenType type) {
     return "else";
   case TOKEN_TRUE:
     return "true";
-    case TOKEN_RETURN:
+  case TOKEN_RETURN:
     return "TOKEN_RETURN";
   default:
     return "TOKEN_UNKNOWN";
@@ -86,7 +86,11 @@ static char peek(Lexer *lexer) { return lexer->current[0]; }
 static Token makeToken(TokenType type, Lexer *lexer) {
   Token token;
   token.type = type;
-  token.length = lexer->current - lexer->start;
+  if (lexer->current >= lexer->start) {
+    token.length = (size_t)(lexer->current - lexer->start);
+  } else {
+    token.length = 0;
+  }
 
   token.literal = lexer->start;
   return token;
@@ -109,9 +113,9 @@ static void skipWhitespace(Lexer *lexer) {
 }
 
 // NOTE: in case of let is lexer.start 'l' and lexer .current points now at 'e'
-static TokenType matchKeywordOrIdentifier(Lexer *lexer, char *word, size_t length,
-                                          TokenType type) {
-  if (lexer->current - lexer->start == length) {
+static TokenType matchKeywordOrIdentifier(Lexer *lexer, char *word,
+                                          size_t length, TokenType type) {
+  if ((size_t)(lexer->current - lexer->start) == length) {
     bool isKeyWord = memcmp(word, lexer->start, length) == 0;
     if (isKeyWord) {
       return type;

@@ -5,7 +5,7 @@
 
 void test_parse_string_value() {
   char *source[3] = {"hello you.\n Yes you!", "dikke tetten.", "yo4"};
-  int lengthOfStringLiteral[] = {5, 9, 3};
+  size_t lengthOfStringLiteral[] = {5, 9, 3};
 
   char *expectedLiterals[] = {"hello", "dikke tet", "yo4"};
 
