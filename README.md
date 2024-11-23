@@ -1,12 +1,23 @@
 # ChimpanC
 A C implementation based on "Writing an Interpreter in Go" by Thorsten Ball.
 
+## Compile and run
+```mkdir build && cd build``` \
+```cmake ..``` \
+```make``` \
+```make test``` \ 
+``` make test_lexer``` \
+```make clean```
+
+## Sources
+[Crafting Interpreters - Robert Nystrom](https://craftinginterpreters.com/) \
+[Writing an Interpreter in Go](https://interpreterbook.com/)
+
 ## TODO
 
 - start renaming methods and struct names. Use Pascal_Case and snake_case. I find this easier to read 
 - call free() also in tests!
 - use Valgrind to look for memory leaks
-- replace MAKEFILE with [Cmake](https://cmake.org/getting-started/)
 - clean up code after parser chapter before continuing to the interpreter part and see that all allocated objects are properly freed! See if there is a library tool that helps detecting unfreed memory.
 - Read [tigerbeetle](https://github.com/tigerbeetle/tigerbeetle/blob/main/docs/TIGER_STYLE.md) -> Assert more in your code!
 - Fuzzy test the lexer and parser and see where the program crashes. Pump random text into it!
@@ -19,14 +30,6 @@ A C implementation based on "Writing an Interpreter in Go" by Thorsten Ball.
     - Do I need to create a literal for all the tokenTypes? -> LET will always be let?
     - Do I even need to store a pointer? can't I just store the starting position of the thing in the source code and then callculate the offset of the start of the identifier, literal, number and the start of the next token?
         - int instead of pointer allready saves 4 bytes!
-
-### Compile
-```Run the following command to produce ./chimp executable -> make ``` \
-```Run the following command to produce ./test_parser executable -> make test_parser ``` 
-
-### Sources
-[Crafting Interpreters - Robert Nystrom](https://craftinginterpreters.com/) \
-[Writing an Interpreter in Go](https://interpreterbook.com/)
 
 ### Simplified Pratt parising call stack (raw brain dump)
 Prat parsing: as long as the next operator in the expression is higher you keep recursivly calling parse_infix_expression with the allready parsed first operand as an argument. The first operand becomes the left node of the infxi expression and the right node is the result of calling parse_expression with the precedence of the current op as argument. In parse expression you parse the next operand and if there is another operator with a __higher__ precedence you recursivley call infix expression again ... once you return from the while loop and you sart unwinding the call stack the infix nodes get constructed with left op as the result from the allready parsed expression and the right op being the result of the recursive calls.
