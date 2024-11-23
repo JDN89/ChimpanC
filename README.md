@@ -3,7 +3,7 @@ A C implementation based on "Writing an Interpreter in Go" by Thorsten Ball.
 
 ## Compile and run
 
-You need minimum cmake version 3.28.3 
+You need cmake version 3.28.3 at minimum.
 
 ```mkdir build && cd build``` \
 ```cmake ..``` \
