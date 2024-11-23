@@ -9,7 +9,7 @@ You need minimum cmake version 3.28.3
 ```cmake ..``` \
 ```make``` \
 ```./chimp``` \
-```make test``` \ 
+```make test``` \
 ```make test_lexer``` \
 ```make test_parser``` \
 ```make test_value``` \
