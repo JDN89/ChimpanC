@@ -42,13 +42,23 @@ static void repl() {
   }
 }
 
-int main(int argc, const char *argv[]) {
+int main(int argc, char *argv[]) {
   printf("Hello!  This is the Monkey programming language!\n");
   printf("Feel free to type in commands\n");
 
   if (argc == 1) {
     repl();
+  } else if (argc == 2) {
+    const char *file_name = argv[1];
+    printf("Loading file: %s \n", file_name);
+    FILE *file = fopen(file_name, "r");
+    if (!file) {
+      perror("Failed opening file: %s");
+      EXIT_FAILURE;
+    }
+    fclose(file);
+    return 1;
   }
 
-  return 0;
+  return 1;
 }

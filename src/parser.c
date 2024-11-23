@@ -55,7 +55,7 @@ Parser new_parser(Lexer *l) {
   advance(&p);
   /*p.errorCount = 0;*/
   return p;
-};
+}
 
 bool isLineBreak(Parser *p) { return *p->ct.literal == '\n'; }
 

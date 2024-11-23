@@ -5,6 +5,7 @@
 // conflict with EOF defined in <stdio.h>. That's why we have to prepend them
 // with Token_
 
+#include <stddef.h>
 typedef enum {
   TOKEN_ILLEGAL,
   TOKEN_EOF,
@@ -54,7 +55,7 @@ typedef enum {
   // how can I meassure the performance and document it
 typedef struct {
   TokenType type;
-  int length;
+  size_t  length;
   const char
       *literal; // pointer to the literal value. Better to pass pointer to the
 } Token;

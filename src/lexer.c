@@ -65,7 +65,7 @@ Lexer init_lexer(char *source) {
   l.start = source;
   l.current = source;
   return l;
-};
+}
 
 static bool isAtEnd(Lexer *lexer) { return *lexer->current == '\0'; }
 
@@ -109,7 +109,7 @@ static void skipWhitespace(Lexer *lexer) {
 }
 
 // NOTE: in case of let is lexer.start 'l' and lexer .current points now at 'e'
-static TokenType matchKeywordOrIdentifier(Lexer *lexer, char *word, int length,
+static TokenType matchKeywordOrIdentifier(Lexer *lexer, char *word, size_t length,
                                           TokenType type) {
   if (lexer->current - lexer->start == length) {
     bool isKeyWord = memcmp(word, lexer->start, length) == 0;
