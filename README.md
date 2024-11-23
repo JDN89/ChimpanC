@@ -2,11 +2,17 @@
 A C implementation based on "Writing an Interpreter in Go" by Thorsten Ball.
 
 ## Compile and run
+
+You need minimum cmake version 3.28.3 
+
 ```mkdir build && cd build``` \
 ```cmake ..``` \
 ```make``` \
+```./chimp``` \
 ```make test``` \ 
-``` make test_lexer``` \
+```make test_lexer``` \
+```make test_parser``` \
+```make test_value``` \
 ```make clean```
 
 ## Sources
