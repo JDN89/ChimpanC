@@ -1,19 +1,24 @@
 #ifndef VALUE_H
 #define VALUE_H
 
+#include <stdbool.h>
 #include <stddef.h>
 typedef struct Value Value;
 
 typedef enum {
   VAL_NUMBER,
   VAL_STRING,
+  VAL_BOOL,
 } ValueType;
 
-#define IS_NUMBER(value) ((value).type == NUMBER_VAL)
+#define IS_NUMBER(value) ((value).type == VAL_NUMBER)
 #define AS_NUMBER(value) ((value).as.number)
 #define NUMBER(value) ((Value){VAL_NUMBER, {.number = value}})
 
-#define IS_STRING(value) ((value).type == STRING_VAL)
+#define BOOLEAN(value) ((Value){VAL_BOOL, {.boolean = value}})
+#define IS_BOOLEAN(value) ((value).type == VAL_BOOL)
+
+#define IS_STRING(value) ((value).type == VAL_STRING)
 #define AS_STRING(value) ((value).as.string)
 #define AS_CSTRING(value) ((value).as.string->pointer)
 
@@ -25,6 +30,7 @@ typedef struct {
 struct Value {
   ValueType type;
   union {
+    bool boolean;
     double number;
     ObjString *string;
   } as;
