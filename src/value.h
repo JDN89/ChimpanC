@@ -15,8 +15,9 @@ typedef enum {
 #define AS_NUMBER(value) ((value).as.number)
 #define NUMBER(value) ((Value){VAL_NUMBER, {.number = value}})
 
-#define BOOLEAN(value) ((Value){VAL_BOOL, {.boolean = value}})
 #define IS_BOOLEAN(value) ((value).type == VAL_BOOL)
+#define AS_BOOLEAN(value) ((value).as.boolean)
+#define BOOLEAN(value) ((Value){VAL_BOOL, {.boolean = value}})
 
 #define IS_STRING(value) ((value).type == VAL_STRING)
 #define AS_STRING(value) ((value).as.string)

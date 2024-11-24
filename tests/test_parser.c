@@ -10,12 +10,11 @@
 bool test_value(Expr *expr, Value expected) {
   switch (expr->as.value->type) {
   case VAL_NUMBER:
-    return expr->as.value->as.number == expected.as.number;
+    return expr->as.value->as.number == AS_NUMBER(expected);
   case VAL_STRING:
-    return strcmp(expr->as.value->as.string->pointer,
-                  expected.as.string->pointer) == 0;
+    return strcmp(AS_CSTRING(*expr->as.value), AS_CSTRING(expected)) == 0;
   case VAL_BOOL:
-    return expr->as.value->as.boolean == expected.as.boolean;
+    return AS_BOOLEAN(*expr->as.value) == AS_BOOLEAN(expected);
   }
   return false;
 }
