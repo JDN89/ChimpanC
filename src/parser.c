@@ -173,7 +173,7 @@ Expr *parse_number(Parser *p) {
 }
 
 Expr *parse_boolean(Parser *p) {
-  assert(p->ct.type == TOKEN_TRUE | p->ct.type == TOKEN_FALSE);
+  assert((p->ct.type == TOKEN_TRUE) | (p->ct.type == TOKEN_FALSE));
 
   Expr *bool_expression = malloc(sizeof(Expr));
   HANDLE_ALLOC_FAILURE(bool_expression,
@@ -286,7 +286,8 @@ Prefix_Rule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
                     [TOKEN_INT] = {parse_number, LOWEST},
                     [TOKEN_BANG] = {parse_prefix_exp, LOWEST},
                     [TOKEN_MINUS] = {parse_prefix_exp, LOWEST},
-                    [TOKEN_TRUE] = {parse_boolean, LOWEST}};
+                    [TOKEN_TRUE] = {parse_boolean, LOWEST},
+                    [TOKEN_FALSE] = {parse_boolean, LOWEST}};
 
 static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
 

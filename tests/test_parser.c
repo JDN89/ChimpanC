@@ -131,11 +131,6 @@ void test_parse_integer_literal() {
 //----------------------------------------------------
 // TEST parse return statements
 //----------------------------------------------------
-// BUG: The parser keeps reporting errors when I parse return statements -> same
-// with test_parse_expressions. Why does the test pass if the parser  reports
-// bugs!!! -> immediatly fail the test if the parser contains errors! Expand the
-// test, because clearly there is something failing that we are currently not
-// testing!
 void test_parse_return_statement() {
 
   char source[] = " return yolo  ; \n"
@@ -169,11 +164,13 @@ void test_parse_expressions() {
   char source[] = " let a = 5;\n"
                   " yolo; \n"
                   " return 10;\n"
-                  " 34; \n";
+                  " 34; \n"
+                  "true; \n"
+                  "false; \n";
 
   const char *let_statement_identifiers[] = {"a"};
   const char *identifiers[] = {"yolo"};
-  int64_t numbers[] = {10, 34};
+  Value values[] = {NUMBER(10), NUMBER(34), BOOLEAN(true), BOOLEAN(false)};
 
   Lexer l = init_lexer(source);
   Parser parser = new_parser(&l);
@@ -182,7 +179,7 @@ void test_parse_expressions() {
   Stmt *current = program.head;
   int letIndex = 0;
   int identifierIndex = 0;
-  int numberIndex = 0;
+  int values_index = 0;
 
   if (check_errors(&parser, "Test parse expression statements")) {
     printf("Parse expression statement - FAILED! \n");
@@ -210,14 +207,12 @@ void test_parse_expressions() {
       // Test return statement
       assert(current->type == RETURN_STATEMENT);
       assert(current->as.returnStmt->type == TOKEN_RETURN);
-      numberIndex++;
+      values_index++;
     } else if (current->type == EXPR_STATEMENT) {
       // Test expression statement
       assert(current->type == EXPR_STATEMENT);
-      assert(current->as.exprStmt->expr->type == NUMBER_EXPR);
-      assert(current->as.exprStmt->expr->as.value->as.number ==
-             numbers[numberIndex]);
-      numberIndex++;
+      test_value(current->as.exprStmt->expr, values[values_index]);
+      values_index++;
     }
     current = current->next;
   }
