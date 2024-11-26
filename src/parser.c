@@ -265,9 +265,9 @@ Expr *parse_exp(Parser *p, Precedece prec) {
 }
 
 Prefix_Rule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
-                   [TOKEN_INT] = {parse_number, LOWEST},
-                   [TOKEN_BANG] = {parse_prefix_exp, LOWEST},
-                   [TOKEN_MINUS] = {parse_prefix_exp, LOWEST}};
+                    [TOKEN_INT] = {parse_number, LOWEST},
+                    [TOKEN_BANG] = {parse_prefix_exp, LOWEST},
+                    [TOKEN_MINUS] = {parse_prefix_exp, LOWEST}};
 
 static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
 
@@ -327,7 +327,7 @@ ReturnStatement *parse_return_statement(Parser *p) {
   HANDLE_ALLOC_FAILURE(returnStatement,
                        "Memory allocation failed for ReturnStatement\n");
 
-  expect_peek_token(p, TOKEN_RETURN);
+  expect_current_token(p, TOKEN_RETURN);
 
   assert(returnStatement != NULL);
 

@@ -19,7 +19,18 @@ bool test_value(Expr *expr, Value expected) {
   return false;
 }
 
-void check_errors(Parser *parser, const char *test_name) {
+bool check_errors(Parser *parser, const char *test_name) {
+  if (parser->errorCount > 0) {
+    printf("Errors in test: %s - ", test_name);
+    for (int i = 0; i < parser->errorCount; i++) {
+      printf("Error %d: %s", i + 1, parser->errors[i]);
+    }
+    return true;
+  }
+  return false;
+}
+
+void print_erros(Parser *parser, const char *test_name) {
   if (parser->errorCount > 0) {
     printf("Errors in test: %s - ", test_name);
 
@@ -42,7 +53,7 @@ void test_parser_error_during_parse_let_statement() {
   parse_program(&parser);
 
   // THEN:
-  check_errors(&parser, "test_parser_errors");
+  print_erros(&parser, "test_parser_errors");
 }
 
 //----------------------------------------------------
@@ -66,7 +77,10 @@ void test_parse_let_statement() {
   Stmt *current = program.head;
   int i = 0;
 
-  check_errors(&parser, "Test parse Let statements");
+  if (check_errors(&parser, "Test parse Let statements")) {
+    printf("Parse let statement - FAILED! \n");
+    return;
+  }
 
   while (current != NULL) {
     assert(current->type == LET_STATEMENT);
@@ -98,7 +112,10 @@ void test_parse_integer_literal() {
   Stmt *current = program.head;
   int i = 0;
 
-  check_errors(&parser, "Test parse integer literals");
+  if (check_errors(&parser, "Test parse integers")) {
+    printf("Parse numbers - FAILED! \n");
+    return;
+  }
 
   while (current != NULL) {
     assert(current->type == EXPR_STATEMENT);
@@ -131,7 +148,10 @@ void test_parse_return_statement() {
 
   Stmt *current = program.head;
 
-  check_errors(&parser, "Test parse return statements");
+  if (check_errors(&parser, "Test parse return statements")) {
+    printf("Parse return statement - FAILED! \n");
+    return;
+  }
 
   while (current != NULL) {
     assert(current->type == RETURN_STATEMENT);
@@ -164,7 +184,11 @@ void test_parse_expressions() {
   int identifierIndex = 0;
   int numberIndex = 0;
 
-  check_errors(&parser, "Test parse expression statements");
+  if (check_errors(&parser, "Test parse expression statements")) {
+    printf("Parse expression statement - FAILED! \n");
+    return;
+  }
+
   while (current != NULL) {
     if (current->type == LET_STATEMENT) {
       // Test let statement
@@ -252,7 +276,7 @@ void test_parse_infix_expressions() {
 
 int main() {
   test_parser_error_during_parse_let_statement();
-  /*test_parse_let_statement();*/
+  test_parse_let_statement();
   test_parse_integer_literal();
   test_parse_return_statement();
   test_parse_expressions();
