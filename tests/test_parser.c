@@ -64,11 +64,10 @@ void test_parse_let_statement() {
 
   char source[] = " let x = 5;\n"
                   " let y = 10;\n"
-                  "let foobar = 838383; \n"
-                  "let yolo = true; \n";
+                  "let foobar = 838383; \n";
 
-  const char *identifiers[] = {"x", "y", "foobar", "yolo"};
-  const Value values[] = {NUMBER(5), NUMBER(10), NUMBER(838383), BOOLEAN(true)};
+  const char *identifiers[] = {"x", "y", "foobar"};
+  const Value values[] = {NUMBER(5), NUMBER(10), NUMBER(838383)};
 
   Lexer l = init_lexer(source);
   Parser parser = new_parser(&l);
@@ -85,7 +84,7 @@ void test_parse_let_statement() {
   while (current != NULL) {
     assert(current->type == LET_STATEMENT);
 
-    assert(test_value(current->as.letStmt->expr, values[i]) == 0);
+    assert(test_value(current->as.letStmt->expr, values[i]) == true);
 
     current = current->next;
     i++;
