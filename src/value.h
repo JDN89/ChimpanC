@@ -40,5 +40,6 @@ struct Value {
 Value *create_string_value(size_t length, const char *source);
 void freeValue(Value *val);
 Value *createNumberValue(const char *source);
+Value *create_boolean_value(bool val);
 
 #endif

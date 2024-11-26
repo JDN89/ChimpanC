@@ -21,6 +21,7 @@ typedef enum {
 typedef enum {
   IDENTIFIER_EXPR = 0,
   NUMBER_EXPR,
+  BOOLEAN_EXPR,
   PREFIX_EXPR,
   INFIX_EXPR,
 } ExprType;

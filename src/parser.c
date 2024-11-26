@@ -172,6 +172,24 @@ Expr *parse_number(Parser *p) {
   return numberExp;
 }
 
+Expr *parse_boolean(Parser *p) {
+  assert(p->ct.type == TOKEN_TRUE | p->ct.type == TOKEN_FALSE);
+
+  Expr *bool_expression = malloc(sizeof(Expr));
+  HANDLE_ALLOC_FAILURE(bool_expression,
+                       "Failed allocating memory for bool_expression \n.");
+
+  bool_expression->type = BOOLEAN_EXPR;
+  if (p->ct.type == TOKEN_TRUE) {
+    Value *value = create_boolean_value(true);
+    bool_expression->as.value = value;
+    return bool_expression;
+  }
+  Value *value = create_boolean_value(false);
+  bool_expression->as.value = value;
+  return bool_expression;
+}
+
 Expr *parse_prefix_exp(Parser *p) {
   Expr *expr = malloc(sizeof(Expr));
   HANDLE_ALLOC_FAILURE(expr,
@@ -267,7 +285,8 @@ Expr *parse_exp(Parser *p, Precedece prec) {
 Prefix_Rule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
                     [TOKEN_INT] = {parse_number, LOWEST},
                     [TOKEN_BANG] = {parse_prefix_exp, LOWEST},
-                    [TOKEN_MINUS] = {parse_prefix_exp, LOWEST}};
+                    [TOKEN_MINUS] = {parse_prefix_exp, LOWEST},
+                    [TOKEN_TRUE] = {parse_boolean, LOWEST}};
 
 static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
 

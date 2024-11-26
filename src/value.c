@@ -3,6 +3,7 @@
 
 #include <alloca.h>
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,6 +46,13 @@ Value *createNumberValue(const char *source) {
   double number = strtod(source, NULL);
 
   *value = NUMBER(number);
+  return value;
+}
+
+Value *create_boolean_value(bool val) {
+  Value *value = malloc(sizeof(Value));
+  HANDLE_ALLOC_FAILURE(value, "Failed to allocate memory for Value");
+  *value = BOOLEAN(val);
   return value;
 }
 
