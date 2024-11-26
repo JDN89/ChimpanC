@@ -69,6 +69,8 @@ void freeExpr(Expr *expr) {
     case INFIX_EXPR:
       free_infix_expression(expr->as.infix);
       break;
+    case BOOLEAN_EXPR:
+      freeValue(expr->as.value);
     }
 
     free(expr);

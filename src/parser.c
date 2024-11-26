@@ -347,12 +347,17 @@ ReturnStatement *parse_return_statement(Parser *p) {
   HANDLE_ALLOC_FAILURE(returnStatement,
                        "Memory allocation failed for ReturnStatement\n");
 
+  returnStatement->expr = malloc(sizeof(Expr));
   expect_current_token(p, TOKEN_RETURN);
 
   assert(returnStatement != NULL);
 
   returnStatement->type = TOKEN_RETURN;
-  while (p->ct.type != TOKEN_SEMICOLON) {
+  if (p->ct.type != TOKEN_SEMICOLON) {
+    returnStatement->expr = parse_exp(p, LOWEST);
+  }
+
+  if (p->pt.type == TOKEN_SEMICOLON) {
     advance(p);
   }
 
@@ -406,9 +411,6 @@ Stmt *parse_statement(Parser *p) {
     if (returnStatement != NULL) {
       stmt->type = RETURN_STATEMENT;
       stmt->as.returnStmt = returnStatement;
-      if (p->pt.type == TOKEN_SEMICOLON) {
-        advance(p);
-      }
     } else {
       free(stmt);
       return NULL;

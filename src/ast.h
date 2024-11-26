@@ -61,6 +61,7 @@ typedef struct {
 
 typedef struct {
   TokenType type;
+  Expr *expr;
 } ReturnStatement;
 
 typedef struct {

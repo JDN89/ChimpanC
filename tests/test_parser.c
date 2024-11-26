@@ -248,7 +248,7 @@ void test_parse_expressions() {
     current = current->next;
   }
 
-  printf("Test expressions - PASSED! \n");
+  printf("Test parse expression statements - PASSED! \n");
 }
 
 void test_parse_infix_expressions() {
