@@ -76,8 +76,8 @@ void peekError(Parser *p, char *expected, char *got) {
 
 void register_parser_error(Parser *p, char *message) {
   char *msg = malloc(256 * sizeof(char));
-  snprintf(msg, 256, "%s  -  TOKEN_TYPE: %s \n", message,
-           token_type_to_string(p->ct.type));
+  snprintf(msg, 256, "%s  -  TOKEN_TYPE: %s - LITERAL: %s \n", message,
+           token_type_to_string(p->ct.type), p->ct.literal);
   p->errorCount++;
   p->errors[p->errorCount - 1] = msg;
 }

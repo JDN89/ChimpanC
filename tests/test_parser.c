@@ -158,6 +158,36 @@ void test_parse_return_statement() {
 }
 
 //----------------------------------------------------
+// TEST parse values
+//----------------------------------------------------
+void test_parse_values() {
+  char source[] = "34 ; \n"
+                  "true ;\n";
+
+  Value values[] = {NUMBER(34), BOOLEAN(true)};
+
+  Lexer l = init_lexer(source);
+  Parser parser = new_parser(&l);
+  Program program = parse_program(&parser);
+
+  Stmt *current = program.head;
+  int values_index = 0;
+
+  if (check_errors(&parser, "Test parse expression statements")) {
+    printf("Parse expression statement - FAILED! \n");
+    return;
+  }
+  while (current != NULL) {
+
+    assert(current->type == EXPR_STATEMENT);
+    test_value(current->as.exprStmt->expr, values[values_index]);
+    values_index++;
+    current = current->next;
+  }
+  printf("Test parsing values - PASSED!");
+}
+
+//----------------------------------------------------
 // TEST parse expressionStatements
 //----------------------------------------------------
 void test_parse_expressions() {
@@ -165,8 +195,8 @@ void test_parse_expressions() {
                   " yolo; \n"
                   " return 10;\n"
                   " 34; \n"
-                  "true; \n"
-                  "false; \n";
+                  " true; \n"
+                  " false; \n";
 
   const char *let_statement_identifiers[] = {"a"};
   const char *identifiers[] = {"yolo"};
@@ -211,7 +241,8 @@ void test_parse_expressions() {
     } else if (current->type == EXPR_STATEMENT) {
       // Test expression statement
       assert(current->type == EXPR_STATEMENT);
-      test_value(current->as.exprStmt->expr, values[values_index]);
+      assert(test_value(current->as.exprStmt->expr, values[values_index]) ==
+             true);
       values_index++;
     }
     current = current->next;
@@ -276,6 +307,7 @@ int main() {
   test_parse_return_statement();
   test_parse_expressions();
   test_parse_infix_expressions();
+  test_parse_values();
   printf("\n");
   return 0;
 }
