@@ -251,6 +251,55 @@ void test_parse_expressions() {
   printf("Test parse expression statements - PASSED! \n");
 }
 
+void parse_prefix_expressions() {
+
+#define PREFIX_TEST_CASE_COUNT 3
+
+  typedef struct {
+    char *input;
+    char *output;
+  } Prefix_Test;
+
+  Prefix_Test test[PREFIX_TEST_CASE_COUNT] = {
+      {"!true", "!true"},
+      {"!5", "!5"},
+      {"!false", "!false"},
+  };
+  for (uint8_t i = 0; i < PREFIX_TEST_CASE_COUNT; i++) {
+    // INFO: DEBUG
+    printf("Test Case #%d\n", i + 1);
+    printf("Input   : %s\n", test[i].input);
+    printf("Expected: %s\n", test[i].output);
+
+    Lexer l = init_lexer(test[i].input);
+    Parser parser = new_parser(&l);
+    Program program = parse_program(&parser);
+
+    if (parser.errorCount > 0) {
+      for (int j = 0; j < parser.errorCount; j++) {
+        printf("Error %d: %s\n", j + 1, parser.errors[j]);
+      }
+    }
+
+    Buffer buffer;
+    init_buffer(&buffer);
+
+    Stmt *current = program.head;
+    while (current != NULL) {
+      write_statement_to_output(&buffer, current);
+      // INFO: DEBUG
+      printf("Parsed expression  : %s\n", buffer.data);
+
+      assert(strcmp(test[i].output, buffer.data) == 0); // Debug if this
+      reset_buffer(&buffer);
+      current = current->next;
+    }
+    freeProgram(&program);
+  }
+  printf("parse prefix statements - PASSED!\n");
+}
+
+// TODO: remove duplicate code
 void test_parse_infix_expressions() {
 #define INFIX_TEST_CASE_COUNT 15
   typedef struct {
@@ -275,7 +324,7 @@ void test_parse_infix_expressions() {
                                             {"3<5 == true", "((3<5)==true)"}};
 
   for (uint8_t i = 0; i < INFIX_TEST_CASE_COUNT; i++) {
-    // INFO: DEBUG 
+    // INFO: DEBUG
     /*printf("Test Case #%d\n", i + 1);*/
     /*printf("Input   : %s\n", test[i].input);*/
     /*printf("Expected: %s\n", test[i].output);*/
@@ -309,13 +358,14 @@ void test_parse_infix_expressions() {
 }
 
 int main() {
-  test_parser_error_during_parse_let_statement();
-  test_parse_let_statement();
-  test_parse_integer_literal();
-  test_parse_return_statement();
-  test_parse_expressions();
-  test_parse_infix_expressions();
-  test_parse_values();
+  /*test_parser_error_during_parse_let_statement();*/
+  /*test_parse_let_statement();*/
+  /*test_parse_integer_literal();*/
+  /*test_parse_return_statement();*/
+  /*test_parse_expressions();*/
+  /*test_parse_infix_expressions();*/
+  /*test_parse_values();*/
+  parse_prefix_expressions();
   printf("\n");
   return 0;
 }

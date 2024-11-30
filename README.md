@@ -21,8 +21,7 @@ You need cmake version 3.28.3 at minimum.
 
 ## TODO
 
-- FIX BUG -> parse return statements
-- TDD -> setup test voor parsing boolean values and see where in the parser we are encountingering errors.
+- FIX BUG -> parse prefix expressions test outputs weird characters, starting from second second test case.
 
 - start renaming methods and struct names. Use Pascal_Case and snake_case. I find this easier to read 
 - call free() also in tests!
