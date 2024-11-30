@@ -1,6 +1,7 @@
 #include "write_output_to_buffer.h"
 
 #include <assert.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,6 +43,14 @@ void print_number(Buffer *buffer, double num) {
   append_to_buffer(buffer, temp);
 }
 
+void print_boolean(Buffer *buffer, bool boolean) {
+  if (boolean == true) {
+    append_to_buffer(buffer, "true");
+  } else {
+    append_to_buffer(buffer, "false");
+  }
+}
+
 void print_string(ObjString *str) { printf("String - %s \n", str->pointer); }
 
 void print_identifier_name(Buffer *buffer, Identifier *identifier) {
@@ -55,6 +64,9 @@ void print_identifier_name(Buffer *buffer, Identifier *identifier) {
   case VAL_STRING:
     assert(identifier->value->as.string != NULL);
     print_string(identifier->value->as.string);
+    break;
+  case VAL_BOOL:
+    print_boolean(buffer, identifier->value->as.boolean);
     break;
   }
 }
@@ -71,6 +83,9 @@ void print_value(Buffer *buffer, Value *val) {
   case VAL_STRING:
     assert(val->as.string != NULL);
     print_string(val->as.string);
+   case VAL_BOOL:
+    print_boolean(buffer, val->as.boolean);
+    break;
     break;
   }
 }
@@ -110,6 +125,10 @@ void print_expression(Buffer *buffer, Expr *ex) {
   case INFIX_EXPR: {
     print_infix_expression(buffer, ex->as.infix);
   } break;
+  case BOOLEAN_EXPR:
+      assert(ex->as.value->type == VAL_BOOL);
+      print_value(buffer, ex->as.value);
+    break;
   }
 }
 
