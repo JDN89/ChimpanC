@@ -275,10 +275,10 @@ void test_parse_infix_expressions() {
                                             {"3<5 == true", "((3<5)==true)"}};
 
   for (uint8_t i = 0; i < INFIX_TEST_CASE_COUNT; i++) {
-    // DEBUG INFO
-    printf("Test Case #%d\n", i + 1);
-    printf("Input   : %s\n", test[i].input);
-    printf("Expected: %s\n", test[i].output);
+    // INFO: DEBUG 
+    /*printf("Test Case #%d\n", i + 1);*/
+    /*printf("Input   : %s\n", test[i].input);*/
+    /*printf("Expected: %s\n", test[i].output);*/
 
     Lexer l = init_lexer(test[i].input);
     Parser parser = new_parser(&l);
@@ -296,8 +296,8 @@ void test_parse_infix_expressions() {
     Stmt *current = program.head;
     while (current != NULL) {
       write_statement_to_output(&buffer, current);
-      // DEBUG INFO
-      printf("Parsed expression  : %s\n", buffer.data);
+      // INFO: DEBUG
+      /*printf("Parsed expression  : %s\n", buffer.data);*/
 
       assert(strcmp(test[i].output, buffer.data) == 0); // Debug if this
       reset_buffer(&buffer);

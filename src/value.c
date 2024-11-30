@@ -78,6 +78,8 @@ void freeValue(Value *val) {
     freeString(val->as.string);
     break;
   }
+    case VAL_BOOL:
+    break;
   default:
     fprintf(stderr, "Unhandled freeValue type \n");
     break; // Optional, for completeness
