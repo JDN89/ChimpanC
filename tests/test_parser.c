@@ -184,7 +184,7 @@ void test_parse_values() {
     values_index++;
     current = current->next;
   }
-  printf("Test parsing values - PASSED!");
+  printf("Test parsing values - PASSED! \n");
 }
 
 //----------------------------------------------------
@@ -253,23 +253,20 @@ void test_parse_expressions() {
 
 void parse_prefix_expressions() {
 
-#define PREFIX_TEST_CASE_COUNT 3
+#define PREFIX_TEST_CASE_COUNT 4
 
   typedef struct {
     char *input;
-    char *output;
+    char expected_op;
+    Value expected_value;
   } Prefix_Test;
 
-  Prefix_Test test[PREFIX_TEST_CASE_COUNT] = {
-      {"!true", "!true"},
-      {"!5", "!5"},
-      {"!false", "!false"},
-  };
+  Prefix_Test test[PREFIX_TEST_CASE_COUNT] = {{"!true", '!', BOOLEAN(true)},
+                                              {"!5", '!', NUMBER(5)},
+                                              {"!false", '!', BOOLEAN(false)},
+                                              {"-5", '-', NUMBER(5)}};
+
   for (uint8_t i = 0; i < PREFIX_TEST_CASE_COUNT; i++) {
-    // INFO: DEBUG
-    printf("Test Case #%d\n", i + 1);
-    printf("Input   : %s\n", test[i].input);
-    printf("Expected: %s\n", test[i].output);
 
     Lexer l = init_lexer(test[i].input);
     Parser parser = new_parser(&l);
@@ -281,17 +278,13 @@ void parse_prefix_expressions() {
       }
     }
 
-    Buffer buffer;
-    init_buffer(&buffer);
-
     Stmt *current = program.head;
     while (current != NULL) {
-      write_statement_to_output(&buffer, current);
-      // INFO: DEBUG
-      printf("Parsed expression  : %s\n", buffer.data);
+      assert(current->as.exprStmt->expr->as.prefix->op ==
+             current->as.exprStmt->expr->as.prefix->op);
+      assert(test_value(current->as.exprStmt->expr->as.prefix->right,
+                        test[i].expected_value));
 
-      assert(strcmp(test[i].output, buffer.data) == 0); // Debug if this
-      reset_buffer(&buffer);
       current = current->next;
     }
     freeProgram(&program);
@@ -358,13 +351,13 @@ void test_parse_infix_expressions() {
 }
 
 int main() {
-  /*test_parser_error_during_parse_let_statement();*/
-  /*test_parse_let_statement();*/
-  /*test_parse_integer_literal();*/
-  /*test_parse_return_statement();*/
-  /*test_parse_expressions();*/
-  /*test_parse_infix_expressions();*/
-  /*test_parse_values();*/
+  test_parser_error_during_parse_let_statement();
+  test_parse_let_statement();
+  test_parse_integer_literal();
+  test_parse_return_statement();
+  test_parse_expressions();
+  test_parse_infix_expressions();
+  test_parse_values();
   parse_prefix_expressions();
   printf("\n");
   return 0;
