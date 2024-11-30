@@ -21,7 +21,17 @@ You need cmake version 3.28.3 at minimum.
 
 ## TODO
 
-- FIX BUG -> parse prefix expressions test outputs weird characters, starting from second second test case.
+- FIX BUG -> parse prefix expressions test outputs weird characters,Test Case #1
+
+``` 
+Input   : !false
+Expected: !false
+Parsed expression  : !false
+Test Case #2
+Input   : !5
+Expected: !5
+Parsed expression  : !|5 starting from second second test case.
+```
 
 - start renaming methods and struct names. Use Pascal_Case and snake_case. I find this easier to read 
 - call free() also in tests!
