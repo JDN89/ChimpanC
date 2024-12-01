@@ -260,6 +260,21 @@ Expr *parse_infix_expression(Parser *p, Expr *left) {
   return expr;
 }
 
+Expr *parse_grouped_expression(Parser *p) {
+  advance(p);
+
+  Expr *expr = malloc(sizeof(Expr));
+  assert(expr != NULL);
+
+  expr = parse_exp(p, LOWEST);
+
+  if (!expect_peek_token(p, TOKEN_RPAREN)) {
+    register_parser_error(
+        p, "Expected peek token to be } in parse grouped expression");
+  }
+  return expr;
+}
+
 Expr *parse_exp(Parser *p, Precedece prec) {
 
   ParseFn prefixRule = *get_prefix_rule(p->ct.type);
@@ -287,7 +302,8 @@ Prefix_Rule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
                     [TOKEN_BANG] = {parse_prefix_exp, LOWEST},
                     [TOKEN_MINUS] = {parse_prefix_exp, LOWEST},
                     [TOKEN_TRUE] = {parse_boolean, LOWEST},
-                    [TOKEN_FALSE] = {parse_boolean, LOWEST}};
+                    [TOKEN_FALSE] = {parse_boolean, LOWEST},
+                    [TOKEN_LPAREN] = {parse_grouped_expression, LOWEST}};
 
 static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
 
