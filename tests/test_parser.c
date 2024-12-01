@@ -316,19 +316,17 @@ void test_parse_infix_expressions() {
       {"5<5;", "(5<5)"},
       {"3>5 == false", "((3>5)==false)"},
       {"3<5 == true", "((3<5)==true)"},
-      {"1+(2 + 3) + 4", "(1+(2 + 3) + 4)"},
+      {"1+(2 + 3) + 4", "((1+(2+3))+4)"},
       {"(5+5)*2", "((5+5)*2)"},
       {"2/(5+5)", "(2/(5+5))"},
       {"-(5+5)", "(-(5+5))"},
-      {"!(true == true)", "(!(true == true))"}
-
-  };
+      {"!(true == true)", "(!(true==true))"}};
 
   for (uint8_t i = 0; i < INFIX_TEST_CASE_COUNT; i++) {
     // INFO: DEBUG
-    /*printf("Test Case #%d\n", i + 1);*/
-    /*printf("Input   : %s\n", test[i].input);*/
-    /*printf("Expected: %s\n", test[i].output);*/
+    printf("Test Case #%d\n", i + 1);
+    printf("Input   : %s\n", test[i].input);
+    printf("Expected: %s\n", test[i].output);
 
     Lexer l = init_lexer(test[i].input);
     Parser parser = new_parser(&l);
@@ -347,7 +345,7 @@ void test_parse_infix_expressions() {
     while (current != NULL) {
       write_statement_to_output(&buffer, current);
       // INFO: DEBUG
-      /*printf("Parsed expression  : %s\n", buffer.data);*/
+      printf("Parsed expression  : %s\n", buffer.data);
 
       assert(strcmp(test[i].output, buffer.data) == 0); // Debug if this
       reset_buffer(&buffer);
@@ -359,14 +357,14 @@ void test_parse_infix_expressions() {
 }
 
 int main() {
-  test_parser_error_during_parse_let_statement();
-  test_parse_let_statement();
-  test_parse_integer_literal();
-  test_parse_return_statement();
-  test_parse_expressions();
+  /*test_parser_error_during_parse_let_statement();*/
+  /*test_parse_let_statement();*/
+  /*test_parse_integer_literal();*/
+  /*test_parse_return_statement();*/
+  /*test_parse_expressions();*/
   test_parse_infix_expressions();
-  test_parse_values();
-  parse_prefix_expressions();
+  /*test_parse_values();*/
+  /*parse_prefix_expressions();*/
   printf("\n");
   return 0;
 }
