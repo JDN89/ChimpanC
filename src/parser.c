@@ -200,8 +200,11 @@ Expr *parse_prefix_exp(Parser *p) {
       expr, "Failed to allocate PrefixExpr in parse_prefix_expression\n");
 
   assert(p->ct.literal[0] == '!' || p->ct.literal[0] == '-');
-
-  pre->op = p->ct.literal[0];
+  if (p->ct.type == TOKEN_MINUS) {
+    pre->op = '-';
+  } else {
+    pre->op = '!';
+  }
 
   advance(p);
 

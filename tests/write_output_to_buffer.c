@@ -18,7 +18,20 @@ void reset_buffer(Buffer *buffer) {
   memset(buffer->data, 0, sizeof(buffer->data));
 }
 
-void append_to_buffer(Buffer *buffer, char *source) {
+void append_char_to_buffer(Buffer *buffer, char ch) {
+  assert(buffer != NULL);
+
+  if (buffer->size + 1 > buffer->capacity) {
+    fprintf(stderr, "Error: Buffer overflow detected\n");
+    exit(EXIT_FAILURE); // Exit or handle the error gracefully.
+  }
+
+  buffer->data[buffer->size] = ch;
+  buffer->size++;
+  buffer->data[buffer->size] = '\0'; // Null-terminate.
+}
+
+void append_string_to_buffer(Buffer *buffer, char *source) {
   assert(buffer != NULL);
 
   size_t len = strlen(source);
@@ -40,14 +53,14 @@ void print_number(Buffer *buffer, double num) {
 
   char temp[64]; // Large enough for most double representations
   snprintf(temp, sizeof(temp), "%g", num); // convert number to string
-  append_to_buffer(buffer, temp);
+  append_string_to_buffer(buffer, temp);
 }
 
 void print_boolean(Buffer *buffer, bool boolean) {
   if (boolean == true) {
-    append_to_buffer(buffer, "true");
+    append_string_to_buffer(buffer, "true");
   } else {
-    append_to_buffer(buffer, "false");
+    append_string_to_buffer(buffer, "false");
   }
 }
 
@@ -83,7 +96,7 @@ void print_value(Buffer *buffer, Value *val) {
   case VAL_STRING:
     assert(val->as.string != NULL);
     print_string(val->as.string);
-   case VAL_BOOL:
+  case VAL_BOOL:
     print_boolean(buffer, val->as.boolean);
     break;
     break;
@@ -91,17 +104,20 @@ void print_value(Buffer *buffer, Value *val) {
 }
 
 void print_prefix_expression(Buffer *buffer, PrefixExpr *pre) {
-  append_to_buffer(buffer, &pre->op);
+  append_string_to_buffer(buffer, "(");
+  // BUG: found the bug -> we where passing this as an adress
+  append_char_to_buffer(buffer, pre->op);
   print_expression(buffer, pre->right);
+  append_string_to_buffer(buffer, ")");
 }
 
 void print_infix_expression(Buffer *buffer, Infix_Expression *ex) {
-  append_to_buffer(buffer, "(");
+  append_string_to_buffer(buffer, "(");
   print_expression(buffer, ex->left);
 
-  append_to_buffer(buffer, ex->op);
+  append_string_to_buffer(buffer, ex->op);
   print_expression(buffer, ex->right);
-  append_to_buffer(buffer, ")");
+  append_string_to_buffer(buffer, ")");
 }
 
 void print_expression(Buffer *buffer, Expr *ex) {
@@ -126,8 +142,8 @@ void print_expression(Buffer *buffer, Expr *ex) {
     print_infix_expression(buffer, ex->as.infix);
   } break;
   case BOOLEAN_EXPR:
-      assert(ex->as.value->type == VAL_BOOL);
-      print_value(buffer, ex->as.value);
+    assert(ex->as.value->type == VAL_BOOL);
+    print_value(buffer, ex->as.value);
     break;
   }
 }
