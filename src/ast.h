@@ -11,11 +11,14 @@
 #define CREATE_STMT_LET(stmt) ((Stmt){LET_STATEMENT, as.letStmt = &stmt})
 
 typedef struct Expr Expr;
+typedef struct Stmt Stmt;
+typedef struct Block_Statement Block_Statement;
 
 typedef enum {
   LET_STATEMENT = 0,
   RETURN_STATEMENT,
   EXPR_STATEMENT,
+  BLOCK_STATEMENT,
 } StatementType;
 
 typedef enum {
@@ -24,6 +27,7 @@ typedef enum {
   BOOLEAN_EXPR,
   PREFIX_EXPR,
   INFIX_EXPR,
+  IF_EXPR
 } ExprType;
 
 typedef struct {
@@ -41,15 +45,23 @@ typedef struct {
   Expr *right;
 } Infix_Expression;
 
-struct Expr {
+typedef struct {
+  Token token;
+  Expr *condition;
+  Block_Statement *consequence;
+  Block_Statement *alternative;
+} If_Expression;
+
+typedef struct Expr {
   ExprType type;
   union {
     Identifier *identifier;
     Value *value;
     PrefixExpr *prefix;
     Infix_Expression *infix;
+    If_Expression *if_expression;
   } as;
-};
+} Expr;
 
 // WARNING: Not sure if I should wrap value in an Identifier struct?
 // TODO: -> we add idetifier here and remove it from EXPR union
@@ -68,6 +80,13 @@ typedef struct {
   Expr *expr;
 } ExprStatement;
 
+typedef struct Block_Statement {
+  Token token;
+  size_t count;
+  size_t capacity;
+  Stmt *statements;
+} Block_Statement;
+
 // NOTE: wrapper for type and pointer to impl of specific statment
 typedef struct Stmt {
   StatementType type;
@@ -75,6 +94,7 @@ typedef struct Stmt {
     LetStmt *letStmt;
     ReturnStatement *returnStmt;
     ExprStatement *exprStmt;
+    Block_Statement *block_statement;
   } as;
   struct Stmt *next;
 } Stmt;
@@ -91,5 +111,8 @@ void pushtStmt(Program *program, Stmt *stmt);
 Stmt *popStmt(Program *program);
 void freeProgram(Program *prog);
 void freeIdentifier(Identifier *identifier);
+void create_block_statement(Block_Statement *block_statement);
+void write_block_statement(Block_Statement *block, Stmt *statement);
+void free_block_statement(Block_Statement *block, Stmt *statement);
 
 #endif

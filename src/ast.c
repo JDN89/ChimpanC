@@ -1,6 +1,7 @@
 #include "ast.h"
 #include "value.h"
 #include <assert.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,6 +13,7 @@ Program createProgram() {
   return program;
 }
 
+// TODO: turn into dynamic array and see if this goes Vrooom
 void pushtStmt(Program *program, Stmt *stmt) {
   assert(program != NULL && stmt != NULL); // Safety check for NULL pointers
 
@@ -127,6 +129,27 @@ void freeStmt(Stmt *stmt) {
   }
 
   free(stmt); // Free the statement itself
+}
+
+void create_block_statement(Block_Statement *block) {
+  block->count = 0;
+  block->capacity = 0;
+  block->statements = NULL;
+}
+void write_block_statement(Block_Statement *block, Stmt *statement) {
+  // TODO: IMPLEMENT
+
+  // if capacity is same as count we need to resize
+  if (block->capacity == block->count) {
+    // default value is 8
+    // use realloc
+    size_t new_capacity = block->capacity == 0 ? 8 : block->capacity * 2;
+  }
+  return;
+}
+void free_block_statement(Block_Statement *block, Stmt *statement) {
+  //use free statements because we write the statements with realloc
+
 }
 
 void freeProgram(Program *prog) {
