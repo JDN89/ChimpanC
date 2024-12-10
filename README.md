@@ -22,7 +22,7 @@ You need cmake version 3.28.3 at minimum.
 ## TODO
 
 - fix test -> didn't rename globaly
-- implement unimplemted switches in printer.c -> see todos
+- implement @jan todo tasks
 - start renaming methods and struct names. Use Pascal_Case and snake_case. I find this easier to read 
 - call free() also in tests!
 - use Valgrind to look for memory leaks

@@ -87,23 +87,21 @@ void print_identifier_name(Buffer *buffer, Identifier *identifier) {
 void print_value(Buffer *buffer, Value *val) {
   assert(val != NULL);
   switch (val->type) {
-  case VAL_NUMBER: {
+  case VAL_NUMBER:
     assert(val->as.number != 0);
     print_number(buffer, val->as.number);
     break;
-  }
-
   case VAL_STRING:
     assert(val->as.string != NULL);
     print_string(val->as.string);
+    break;
   case VAL_BOOL:
     print_boolean(buffer, val->as.boolean);
-    break;
     break;
   }
 }
 
-void print_prefix_expression(Buffer *buffer, PrefixExpr *pre) {
+void print_prefix_expression(Buffer *buffer, Prefix_Expression *pre) {
   append_string_to_buffer(buffer, "(");
   // BUG: found the bug -> we where passing this as an adress
   append_char_to_buffer(buffer, pre->op);
@@ -145,10 +143,13 @@ void print_expression(Buffer *buffer, Expr *ex) {
     assert(ex->as.value->type == VAL_BOOL);
     print_value(buffer, ex->as.value);
     break;
+  case IF_EXPR:
+    //@Jan TODO
+    break;
   }
 }
 
-void print_let_statement(Buffer *buffer, LetStmt *st) {
+void print_let_statement(Buffer *buffer, Let_Statement *st) {
   assert(st != NULL);
   assert(st->name != NULL);
   print_identifier_name(buffer, st->name);
@@ -156,7 +157,7 @@ void print_let_statement(Buffer *buffer, LetStmt *st) {
   print_expression(buffer, st->expr);
 }
 
-void print_expression_statement(Buffer *buffer, ExprStatement *st) {
+void print_expression_statement(Buffer *buffer, Expression_Statement *st) {
   assert(st != NULL);
   assert(st->expr != NULL);
   print_expression(buffer, st->expr);
@@ -179,6 +180,9 @@ void write_statement_to_output(Buffer *buffer, Stmt *stmt) {
 
   case EXPR_STATEMENT:
     print_expression_statement(buffer, stmt->as.exprStmt);
+    break;
+    //@Jan Todo
+  case BLOCK_STATEMENT:
     break;
   }
 }
