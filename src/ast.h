@@ -19,7 +19,7 @@ typedef enum {
   RETURN_STATEMENT,
   EXPR_STATEMENT,
   BLOCK_STATEMENT,
-} StatementType;
+} Statement_Type;
 
 typedef enum {
   IDENTIFIER_EXPR = 0,
@@ -28,7 +28,7 @@ typedef enum {
   PREFIX_EXPR,
   INFIX_EXPR,
   IF_EXPR
-} ExprType;
+} Expression_Type;
 
 typedef struct {
   Value *value;
@@ -37,7 +37,7 @@ typedef struct {
 typedef struct {
   char op;
   Expr *right;
-} PrefixExpr;
+} Prefix_Expression;
 
 typedef struct {
   Expr *left;
@@ -53,11 +53,11 @@ typedef struct {
 } If_Expression;
 
 typedef struct Expr {
-  ExprType type;
+  Expression_Type type;
   union {
     Identifier *identifier;
     Value *value;
-    PrefixExpr *prefix;
+    Prefix_Expression *prefix;
     Infix_Expression *infix;
     If_Expression *if_expression;
   } as;
@@ -69,16 +69,16 @@ typedef struct {
   TokenType token; // token.Ident
   Identifier *name;
   Expr *expr;
-} LetStmt;
+} Let_Statement;
 
 typedef struct {
   TokenType type;
   Expr *expr;
-} ReturnStatement;
+} Return_Statement;
 
 typedef struct {
   Expr *expr;
-} ExprStatement;
+} Expression_Statement;
 
 typedef struct Block_Statement {
   Token token;
@@ -89,11 +89,11 @@ typedef struct Block_Statement {
 
 // NOTE: wrapper for type and pointer to impl of specific statment
 typedef struct Stmt {
-  StatementType type;
+  Statement_Type type;
   union {
-    LetStmt *letStmt;
-    ReturnStatement *returnStmt;
-    ExprStatement *exprStmt;
+    Let_Statement *letStmt;
+    Return_Statement *returnStmt;
+    Expression_Statement *exprStmt;
     Block_Statement *block_statement;
   } as;
   struct Stmt *next;
@@ -105,14 +105,13 @@ typedef struct {
   size_t length;
 } Program;
 
-LetStmt *createLetStmt(Token token);
+Let_Statement *createLetStmt(Token token);
 Program createProgram();
-void pushtStmt(Program *program, Stmt *stmt);
-Stmt *popStmt(Program *program);
+void push_statement(Program *program, Stmt *stmt);
 void freeProgram(Program *prog);
 void freeIdentifier(Identifier *identifier);
 void create_block_statement(Block_Statement *block_statement);
 void write_block_statement(Block_Statement *block, Stmt *statement);
-void free_block_statement(Block_Statement *block, Stmt *statement);
+void free_block_statement(Block_Statement *block);
 
 #endif

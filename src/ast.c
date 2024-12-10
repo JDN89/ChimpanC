@@ -14,7 +14,7 @@ Program createProgram() {
 }
 
 // TODO: turn into dynamic array and see if this goes Vrooom
-void pushtStmt(Program *program, Stmt *stmt) {
+void push_statement(Program *program, Stmt *stmt) {
   assert(program != NULL && stmt != NULL); // Safety check for NULL pointers
 
   // Initialize the `next` pointer of the new `stmt` to NULL
@@ -42,11 +42,16 @@ void freeIdentifier(Identifier *identifier) {
   }
 }
 
-void freePrefix_Expression(PrefixExpr *pre) { freeExpr(pre->right); }
+void freePrefix_Expression(Prefix_Expression *pre) { freeExpr(pre->right); }
 
 void free_infix_expression(Infix_Expression *infix) {
   freeExpr(infix->left);
   freeExpr(infix->right);
+}
+void free_if_expression(If_Expression *exp) {
+  freeExpr(exp->condition);
+  free_block_statement(exp->alternative);
+  free_block_statement(exp->consequence);
 }
 
 void freeExpr(Expr *expr) {
@@ -73,31 +78,35 @@ void freeExpr(Expr *expr) {
       break;
     case BOOLEAN_EXPR:
       freeValue(expr->as.value);
+      break;
+    case IF_EXPR:
+      free_if_expression(expr->as.if_expression);
+      break;
     }
 
     free(expr);
   }
 }
 
-void freeLetStmt(LetStmt *stmt) {
+void freeLetStmt(Let_Statement *stmt) {
+  assert(stmt != NULL);
   if (stmt != NULL) {
-
     freeExpr(stmt->expr);
-    assert(stmt != NULL);
     free(stmt);
   }
 }
 
-void freeReturnStatement(ReturnStatement *stmt) {
+void freeReturnStatement(Return_Statement *stmt) {
   assert(stmt != NULL);
   // TODO: finish function ones we add expressions to return statement
   if (stmt != NULL) {
+    freeExpr(stmt->expr);
     free(stmt);
   }
   return;
 }
 
-void freeExprStatement(ExprStatement *stmt) {
+void freeExprStatement(Expression_Statement *stmt) {
   assert(stmt != NULL);
   if (stmt != NULL) {
     freeExpr(stmt->expr);
@@ -123,6 +132,10 @@ void freeStmt(Stmt *stmt) {
         stmt->as.exprStmt); // Free the expression statement structure
     break;
 
+  case BLOCK_STATEMENT:
+    free_block_statement(stmt->as.block_statement);
+    break;
+
   default:
     fprintf(stderr, "Unknown statement type to free.\n");
     break;
@@ -137,19 +150,37 @@ void create_block_statement(Block_Statement *block) {
   block->statements = NULL;
 }
 void write_block_statement(Block_Statement *block, Stmt *statement) {
-  // TODO: IMPLEMENT
-
-  // if capacity is same as count we need to resize
-  if (block->capacity == block->count) {
-    // default value is 8
-    // use realloc
-    size_t new_capacity = block->capacity == 0 ? 8 : block->capacity * 2;
+  if (!block || !statement) {
+    fprintf(stderr, "Invalid input to write_block_statement.\n");
+    return;
   }
-  return;
-}
-void free_block_statement(Block_Statement *block, Stmt *statement) {
-  //use free statements because we write the statements with realloc
 
+  // Resize if capacity is same as count
+  if (block->capacity == block->count) {
+    size_t new_capacity = block->capacity == 0 ? 8 : block->capacity * 2;
+    Stmt *new_statements =
+        realloc(block->statements, new_capacity * sizeof(Stmt));
+    if (!new_statements) {
+      fprintf(stderr, "Memory allocation failed.\n");
+      exit(EXIT_FAILURE); // Exit on memory allocation failure
+    }
+
+    block->statements = new_statements;
+    block->capacity = new_capacity;
+  }
+
+  // Add the new statement and increment the count
+  block->statements[block->count] = *statement;
+  block->count++;
+}
+
+void free_block_statement(Block_Statement *block) {
+  for (size_t i = 0; i < block->count; i++) {
+    freeStmt(&block->statements[i]);
+  }
+  block->count = 0;
+  block->capacity = 0;
+  free(block->statements);
 }
 
 void freeProgram(Program *prog) {
@@ -157,11 +188,7 @@ void freeProgram(Program *prog) {
   while (current != NULL) {
     Stmt *next = current->next;
     freeStmt(current); // Free the current statement
-    if (current != NULL) {
-      current = next; // Move to the next statement
-    } else {
-      break;
-    }
+    current = next;    // Move to the next statement
   }
   prog->head = NULL;
   prog->tail = NULL;

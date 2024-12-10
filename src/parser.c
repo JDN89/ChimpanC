@@ -195,7 +195,7 @@ Expr *parse_prefix_exp(Parser *p) {
   HANDLE_ALLOC_FAILURE(expr,
                        "Failed to allocate Expr in parse_prefix_expression\n");
 
-  PrefixExpr *pre = malloc(sizeof(PrefixExpr));
+  Prefix_Expression *pre = malloc(sizeof(Prefix_Expression));
   HANDLE_ALLOC_FAILURE(
       expr, "Failed to allocate PrefixExpr in parse_prefix_expression\n");
 
@@ -329,8 +329,8 @@ uint8_t cur_precedence(Parser *p) { return ir[p->ct.type].precedence; }
 // Parse statements
 //------------------------------------------------------------------
 
-LetStmt *parse_let_statement(Parser *p) {
-  LetStmt *letStmt = malloc(sizeof(LetStmt));
+Let_Statement *parse_let_statement(Parser *p) {
+  Let_Statement *letStmt = malloc(sizeof(Let_Statement));
 
   assert(p->ct.type == TOKEN_LET);
 
@@ -361,8 +361,8 @@ LetStmt *parse_let_statement(Parser *p) {
   return letStmt;
 }
 
-ReturnStatement *parse_return_statement(Parser *p) {
-  ReturnStatement *returnStatement = malloc(sizeof(ReturnStatement));
+Return_Statement *parse_return_statement(Parser *p) {
+  Return_Statement *returnStatement = malloc(sizeof(Return_Statement));
   HANDLE_ALLOC_FAILURE(returnStatement,
                        "Memory allocation failed for ReturnStatement\n");
 
@@ -384,8 +384,8 @@ ReturnStatement *parse_return_statement(Parser *p) {
   return returnStatement;
 }
 
-ExprStatement *parse_expression_statement(Parser *p) {
-  ExprStatement *stmt = malloc(sizeof(ExprStatement));
+Expression_Statement *parse_expression_statement(Parser *p) {
+  Expression_Statement *stmt = malloc(sizeof(Expression_Statement));
   stmt->expr = malloc(sizeof(Expr));
 
   HANDLE_ALLOC_FAILURE(stmt->expr, "Failed to alocate memory for ExprStatement")
@@ -409,7 +409,7 @@ Stmt *parse_statement(Parser *p) {
 
   switch (p->ct.type) {
   case TOKEN_LET: {
-    LetStmt *letStmt = parse_let_statement(p);
+    Let_Statement *letStmt = parse_let_statement(p);
     if (letStmt != NULL) {
       stmt->type = LET_STATEMENT;
       stmt->as.letStmt = letStmt;
@@ -426,7 +426,7 @@ Stmt *parse_statement(Parser *p) {
 
   case TOKEN_RETURN: {
     assert(p->ct.type == TOKEN_RETURN);
-    ReturnStatement *returnStatement = parse_return_statement(p);
+    Return_Statement *returnStatement = parse_return_statement(p);
     if (returnStatement != NULL) {
       stmt->type = RETURN_STATEMENT;
       stmt->as.returnStmt = returnStatement;
@@ -438,7 +438,7 @@ Stmt *parse_statement(Parser *p) {
   }
 
   default: {
-    ExprStatement *exprStmt = parse_expression_statement(p);
+    Expression_Statement *exprStmt = parse_expression_statement(p);
     if (stmt != NULL) {
       stmt->type = EXPR_STATEMENT;
       stmt->as.exprStmt = exprStmt;
@@ -458,7 +458,7 @@ Program parse_program(Parser *p) {
   Program prog = createProgram();
   while (p->pt.type != TOKEN_EOF) {
     Stmt *stmt = parse_statement(p);
-    pushtStmt(&prog, stmt);
+    push_statement(&prog, stmt);
   }
 
   return prog;

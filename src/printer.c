@@ -22,6 +22,9 @@ void print_identifier_name(Identifier *identifier) {
     assert(identifier->value->as.string != NULL);
     print_string(identifier->value->as.string);
     break;
+  case VAL_BOOL:
+    //@Jan TODO:implement
+    break;
   }
 }
 
@@ -38,10 +41,13 @@ void print_value(Value *val) {
     assert(val->as.string != NULL);
     print_string(val->as.string);
     break;
+  case VAL_BOOL:
+    //@Jan TODO:implement
+    break;
   }
 }
 
-void print_prefix_expression(PrefixExpr *pre) {
+void print_prefix_expression(Prefix_Expression *pre) {
   printf("prefix -- %c", pre->op);
   assert(pre->right != NULL);
   print_expression(pre->right);
@@ -76,10 +82,14 @@ void print_expression(Expr *ex) {
   case INFIX_EXPR: {
     print_infix_expression(ex->as.infix);
   } break;
+    //@Jan TODO implement
+  case BOOLEAN_EXPR:
+  case IF_EXPR:
+    break;
   }
 }
 
-void print_let_statement(LetStmt *st) {
+void print_let_statement(Let_Statement *st) {
   assert(st != NULL);
   assert(st->name != NULL);
   print_identifier_name(st->name);
@@ -87,7 +97,7 @@ void print_let_statement(LetStmt *st) {
   print_expression(st->expr);
 }
 
-void print_expression_statement(ExprStatement *st) {
+void print_expression_statement(Expression_Statement *st) {
   assert(st != NULL);
   assert(st->expr != NULL);
   print_expression(st->expr);
@@ -108,6 +118,9 @@ void print_statement(Stmt *stmt) {
 
   case EXPR_STATEMENT:
     print_expression_statement(stmt->as.exprStmt);
+    break;
+    //@Jan Todo implement
+  case BLOCK_STATEMENT:
     break;
   }
 }
