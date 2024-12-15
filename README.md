@@ -21,7 +21,7 @@ You need cmake version 3.28.3 at minimum.
 
 ## TODO
 
-- fix test -> didn't rename globaly
+- debug parse if expression -> test is failing but why?
 - implement @jan todo tasks
 - start renaming methods and struct names. Use Pascal_Case and snake_case. I find this easier to read 
 - call free() also in tests!

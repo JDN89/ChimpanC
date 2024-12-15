@@ -2,7 +2,6 @@
 #include "../src/parser.h"
 #include "test_helper_functions.h"
 #include "write_output_to_buffer.h"
-#include <cassert>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -375,8 +374,9 @@ void test_parse_if_statement() {
   Stmt *current = program.head;
   int i = 0;
 
-  if (check_errors(&parser, "Test parse Let statements")) {
-    printf("Parse let statement - FAILED! \n");
+  if (check_errors(&parser, "Test parse if statements")) {
+    print_erros(&parser, "parse if statement");
+    printf("Parse if statement - FAILED! \n");
     return;
   }
 
