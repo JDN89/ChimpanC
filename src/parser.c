@@ -29,6 +29,8 @@ static Parse_Infix_Fn *get_infix_rule(TokenType ttype); // Forward declaration
 static uint8_t cur_precedence(Parser *p);
 static Expr *create_identifier_expr(Identifier *identifier);
 static Expr *create_number_expr(Value *number);
+static Block_Statement *parse_block_statement(Parser *p);
+static Stmt *parse_statement(Parser *p);
 Expr *parse_exp(Parser *p, Precedece prec);
 
 typedef struct {
@@ -90,6 +92,14 @@ void free_parser_errors(Parser *p) {
       p->errors[i] = NULL;
     }
   }
+}
+
+bool is_cur_token(Parser *p, TokenType ttype) {
+  if (p->ct.type == ttype) {
+    advance(p);
+    return true;
+  } else
+    return false;
 }
 
 bool expect_peek_token(Parser *p, TokenType ttype) {
@@ -278,6 +288,26 @@ Expr *parse_grouped_expression(Parser *p) {
   return expr;
 }
 
+Expr *parse_if_expression(Parser *p) {
+  Expr *expr = malloc(sizeof(Expr));
+  HANDLE_ALLOC_FAILURE(expr, "Failed to allocate memory for if_expression\n");
+  expr->type = IF_EXPR;
+  if (!expect_peek_token(p, TOKEN_LPAREN)) {
+    return NULL;
+  }
+  advance(p);
+  expr->as.if_expression->condition = parse_exp(p, LOWEST);
+  if (!expect_peek_token(p, TOKEN_RPAREN)) {
+    return NULL;
+  }
+  if (!expect_peek_token(p, TOKEN_LBRACE)) {
+    return NULL;
+  }
+  expr->as.if_expression->consequence = parse_block_statement(p);
+
+  return expr;
+}
+
 Expr *parse_exp(Parser *p, Precedece prec) {
 
   ParseFn prefixRule = *get_prefix_rule(p->ct.type);
@@ -306,7 +336,8 @@ Prefix_Rule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
                     [TOKEN_MINUS] = {parse_prefix_exp, LOWEST},
                     [TOKEN_TRUE] = {parse_boolean, LOWEST},
                     [TOKEN_FALSE] = {parse_boolean, LOWEST},
-                    [TOKEN_LPAREN] = {parse_grouped_expression, LOWEST}};
+                    [TOKEN_LPAREN] = {parse_grouped_expression, LOWEST},
+                    [TOKEN_IF] = {parse_if_expression, LOWEST}};
 
 static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
 
@@ -325,9 +356,31 @@ static Parse_Infix_Fn *get_infix_rule(TokenType ttype) {
 
 uint8_t peek_precedence(Parser *p) { return ir[p->pt.type].precedence; }
 uint8_t cur_precedence(Parser *p) { return ir[p->ct.type].precedence; }
+
 //------------------------------------------------------------------
 // Parse statements
 //------------------------------------------------------------------
+
+Block_Statement *parse_block_statement(Parser *p) {
+
+  Block_Statement *block = malloc(sizeof(Block_Statement));
+  if (block == NULL) {
+    HANDLE_ALLOC_FAILURE(block,
+                         "Failed to allocate memory for block_statement\n");
+  }
+  create_block_statement(block);
+
+  advance(p);
+  while (!is_cur_token(p, TOKEN_RBRACE) && is_cur_token(p, TOKEN_EOF)) {
+    Stmt *statement = parse_statement(p);
+    if (statement != NULL) {
+      write_block_statement(block, statement);
+    }
+    advance(p);
+  }
+
+  return block;
+}
 
 Let_Statement *parse_let_statement(Parser *p) {
   Let_Statement *letStmt = malloc(sizeof(Let_Statement));

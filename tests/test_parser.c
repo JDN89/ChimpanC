@@ -2,6 +2,7 @@
 #include "../src/parser.h"
 #include "test_helper_functions.h"
 #include "write_output_to_buffer.h"
+#include <cassert>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -356,6 +357,37 @@ void test_parse_infix_expressions() {
   printf("parse infix statements - PASSED!\n");
 }
 
+void test_parse_if_statement() {
+
+  char source[] = " if(x==5)\n"
+                  "{let t = 10; \n}";
+
+  const char *identifiers[] = {"x", "t"};
+  const Value values[] = {
+      NUMBER(5),
+      NUMBER(10),
+  };
+
+  Lexer l = init_lexer(source);
+  Parser parser = new_parser(&l);
+  Program program = parse_program(&parser);
+
+  Stmt *current = program.head;
+  int i = 0;
+
+  if (check_errors(&parser, "Test parse Let statements")) {
+    printf("Parse let statement - FAILED! \n");
+    return;
+  }
+
+  assert(current->type == EXPR_STATEMENT);
+  assert(current->as.exprStmt->expr->type == IF_EXPR);
+  If_Expression *if_e = current->as.exprStmt->expr->as.if_expression;
+  assert(test_value(if_e->condition, values[0]));
+
+  printf("Parse if statement - PASSED! \n");
+}
+
 int main() {
   test_parser_error_during_parse_let_statement();
   test_parse_let_statement();
@@ -365,6 +397,7 @@ int main() {
   test_parse_infix_expressions();
   test_parse_values();
   parse_prefix_expressions();
+  test_parse_if_statement();
   printf("\n");
   return 0;
 }
