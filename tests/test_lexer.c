@@ -11,13 +11,14 @@
 // TESTS
 
 void bang_test() {
-  char source[] = "!= ; ==\0";
+  char source[] = "if(x==5)\0";
 
   Lexer lexer = init_lexer(source);
 
-  TokenType expected_types[] = {TOKEN_NOT_EQ, TOKEN_SEMICOLON, TOKEN_EQ,
+  TokenType expected_types[] = {TOKEN_IF, TOKEN_LPAREN, TOKEN_IDENTIFIER,
+                                TOKEN_EQ, TOKEN_INT,    TOKEN_RPAREN,
                                 TOKEN_EOF};
-  const char *expected_literals[] = {"!=", ";", "==", "\0"};
+  const char *expected_literals[] = {"if", "(", "x", "==", "5", ")", "\0 "};
 
   int num_tokens = sizeof(expected_types) / sizeof(TokenType);
 
@@ -27,7 +28,7 @@ void bang_test() {
                 strlen(expected_literals[i]));
     lexer.start = lexer.current;
   }
-  printf("Bang my bug");
+  printf("Bang my bug - PASSED \n");
 }
 
 void test_monkey_source() {
@@ -88,10 +89,11 @@ void test_monkey_source() {
                 strlen(expected_literals[i]));
     lexer.start = lexer.current;
   }
-  printf("Return to monk source test passed. \n");
+  printf("Return to monk - PASSED. \n");
 }
 
 int main() {
+  bang_test();
   test_monkey_source();
   printf("\n");
   return 0;
