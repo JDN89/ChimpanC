@@ -145,8 +145,6 @@ Expr *parse_identifier_expr(Parser *p) {
 
   identifier->value = value;
 
-  advance(p);
-
   return create_identifier_expr(identifier);
 }
 
@@ -293,16 +291,31 @@ Expr *parse_if_expression(Parser *p) {
   HANDLE_ALLOC_FAILURE(expr, "Failed to allocate memory for if_expression\n");
   expr->type = IF_EXPR;
   if (!expect_peek_token(p, TOKEN_LPAREN)) {
+    free(expr);
     return NULL;
   }
+
   advance(p);
-  expr->as.if_expression->condition = parse_exp(p, LOWEST);
+
+  Expr *condition = parse_exp(p, LOWEST);
+  if (!condition) { // Check for parsing failure
+    free(expr);     // Clean up before returning
+    return NULL;
+  }
+
+  If_Expression *if_expression = malloc(sizeof(If_Expression));
+  HANDLE_ALLOC_FAILURE(if_expression,
+                       "Failed to allocate memory for If_Expression\n");
+  if_expression->condition = condition;
+  expr->as.if_expression = if_expression;
+
   if (!expect_peek_token(p, TOKEN_RPAREN)) {
     return NULL;
   }
   if (!expect_peek_token(p, TOKEN_LBRACE)) {
     return NULL;
   }
+
   expr->as.if_expression->consequence = parse_block_statement(p);
 
   return expr;
