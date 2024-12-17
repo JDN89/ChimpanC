@@ -7,14 +7,15 @@
 #include <stdio.h>
 #include <string.h>
 
-bool test_value(Expr *expr, Value expected) {
-  switch (expr->as.value->type) {
+bool test_value(Value parsed, Value expected) {
+  switch (parsed.type) {
   case VAL_NUMBER:
-    return expr->as.value->as.number == AS_NUMBER(expected);
+    printf("number -%f \n", parsed.as.number);
+    return parsed.as.number == AS_NUMBER(expected);
   case VAL_STRING:
-    return strcmp(AS_CSTRING(*expr->as.value), AS_CSTRING(expected)) == 0;
+    return strcmp(AS_CSTRING(parsed), AS_CSTRING(expected)) == 0;
   case VAL_BOOL:
-    return AS_BOOLEAN(*expr->as.value) == AS_BOOLEAN(expected);
+    return AS_BOOLEAN(parsed) == AS_BOOLEAN(expected);
   }
   return false;
 }
@@ -85,7 +86,7 @@ void test_parse_let_statement() {
   while (current != NULL) {
     assert(current->type == LET_STATEMENT);
 
-    assert(test_value(current->as.letStmt->expr, values[i]) == true);
+    assert(test_value(*current->as.letStmt->expr->as.value, values[i]) == true);
 
     current = current->next;
     i++;
@@ -180,7 +181,7 @@ void test_parse_values() {
   while (current != NULL) {
 
     assert(current->type == EXPR_STATEMENT);
-    test_value(current->as.exprStmt->expr, values[values_index]);
+    test_value(*current->as.exprStmt->expr->as.value, values[values_index]);
     values_index++;
     current = current->next;
   }
@@ -241,8 +242,8 @@ void test_parse_expressions() {
     } else if (current->type == EXPR_STATEMENT) {
       // Test expression statement
       assert(current->type == EXPR_STATEMENT);
-      assert(test_value(current->as.exprStmt->expr, values[values_index]) ==
-             true);
+      assert(test_value(*current->as.exprStmt->expr->as.value,
+                        values[values_index]) == true);
       values_index++;
     }
     current = current->next;
@@ -282,7 +283,7 @@ void parse_prefix_expressions() {
     while (current != NULL) {
       assert(current->as.exprStmt->expr->as.prefix->op ==
              current->as.exprStmt->expr->as.prefix->op);
-      assert(test_value(current->as.exprStmt->expr->as.prefix->right,
+      assert(test_value(*current->as.exprStmt->expr->as.prefix->right->as.value,
                         test[i].expected_value));
 
       current = current->next;
@@ -383,20 +384,21 @@ void test_parse_if_statement() {
   assert(current->type == EXPR_STATEMENT);
   assert(current->as.exprStmt->expr->type == IF_EXPR);
   If_Expression *if_e = current->as.exprStmt->expr->as.if_expression;
-  assert(test_value(if_e->condition, values[0]));
+  assert(if_e->condition->as.infix->right->as.value->as.number ==
+         values[0].as.number);
 
   printf("Parse if statement - PASSED! \n");
 }
 
 int main() {
-  /*test_parser_error_during_parse_let_statement();*/
-  /*test_parse_let_statement();*/
-  /*test_parse_integer_literal();*/
-  /*test_parse_return_statement();*/
-  /*test_parse_expressions();*/
-  /*test_parse_infix_expressions();*/
-  /*test_parse_values();*/
-  /*parse_prefix_expressions();*/
+  test_parser_error_during_parse_let_statement();
+  test_parse_let_statement();
+  test_parse_integer_literal();
+  test_parse_return_statement();
+  test_parse_expressions();
+  test_parse_infix_expressions();
+  test_parse_values();
+  parse_prefix_expressions();
   test_parse_if_statement();
   printf("\n");
   return 0;
