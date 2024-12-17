@@ -26,10 +26,10 @@ You need cmake version 3.28.3 at minimum.
     - Previously, I advanced tokens inside lower-level parse functions like parse_identifier_expr. This caused unexpected behavior because advancing tokens too early disrupted the parsing flow at higher levels, making it difficult to maintain the proper order and context of token processing.
         - Token advancement should be done at logical boundaries in the parsing flow, typically at the statement or expression level, and only when the parser is certain the current token matches the expected pattern. Lower level functions shouldn't manipulate the parser state, because like this the overview is harder to maintain. when do we advance in which function and under which condition. this lead to to tight coupling -> take screenshot of git fix.
     - write down my allocation bug error. Parse function allocate memory inside the function but If_Exprs still had to be allocated
-- fixed bug but test is still failing -> probably error in test logic
 - implement @jan todo tasks
 - start renaming methods and struct names. Use Pascal_Case and snake_case. I find this easier to read 
 - call free() also in tests!
+- Chimp aborts when it encounters a parsing error? shouldn't we keep parsing (so infinite loop until you end the program), at least as long you're in repl mode, and report the errors. Probably I am wrong but give some thought.
 - use Valgrind to look for memory leaks
 - clean up code after parser chapter before continuing to the interpreter part and see that all allocated objects are properly freed! See if there is a library tool that helps detecting unfreed memory.
 - Read [tigerbeetle](https://github.com/tigerbeetle/tigerbeetle/blob/main/docs/TIGER_STYLE.md) -> Assert more in your code!
