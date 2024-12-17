@@ -387,6 +387,10 @@ void test_parse_if_statement() {
   assert(if_e->condition->as.infix->right->as.value->as.number ==
          values[0].as.number);
 
+  assert(strcmp(if_e->condition->as.infix->left->as.identifier->value->as
+                    .string->pointer,
+                identifiers[0]) == 0);
+
   printf("Parse if statement - PASSED! \n");
 }
 
