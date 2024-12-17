@@ -23,7 +23,7 @@ void print_identifier_name(Identifier *identifier) {
     print_string(identifier->value->as.string);
     break;
   case VAL_BOOL:
-    //@Jan TODO:implement
+    fprintf(stderr, "Boolean can't be an identifier!");
     break;
   }
 }
@@ -42,7 +42,11 @@ void print_value(Value *val) {
     print_string(val->as.string);
     break;
   case VAL_BOOL:
-    //@Jan TODO:implement
+    if (val->as.boolean == true) {
+      printf("true");
+    } else {
+      printf("false");
+    }
     break;
   }
 }
@@ -59,6 +63,33 @@ void print_infix_expression(Infix_Expression *ex) {
   printf(" %s ", ex->op);
   print_expression(ex->right);
   printf(")");
+}
+
+void print_if_expression(If_Expression *if_expression) {
+  printf("if (");
+  switch (if_expression->condition->type) {
+  case IDENTIFIER_EXPR:
+    // @Jan print error because normally we won't hit this path
+    print_identifier_name(if_expression->condition->as.identifier);
+    break;
+  case NUMBER_EXPR:
+    print_number(if_expression->condition->as.value->as.number);
+    break;
+  case PREFIX_EXPR:
+    print_prefix_expression(if_expression->condition->as.prefix);
+    break;
+  case INFIX_EXPR:
+    print_infix_expression(if_expression->condition->as.infix);
+    break;
+  case IF_EXPR:
+    fprintf(stderr,
+            "We shouldn't hit this branch inside the if_expression printer!\n");
+    break;
+  case BOOLEAN_EXPR:
+    print_value(if_expression->condition->as.value);
+    break;
+  }
+  printf(") {");
 }
 
 void print_expression(Expr *ex) {
@@ -82,9 +113,11 @@ void print_expression(Expr *ex) {
   case INFIX_EXPR: {
     print_infix_expression(ex->as.infix);
   } break;
-    //@Jan TODO implement
-  case BOOLEAN_EXPR:
   case IF_EXPR:
+    print_if_expression(ex->as.if_expression);
+    break;
+  case BOOLEAN_EXPR:
+    print_value(ex->as.value);
     break;
   }
 }
