@@ -317,6 +317,14 @@ Expr *parse_if_expression(Parser *p) {
   }
 
   expr->as.if_expression->consequence = parse_block_statement(p);
+  if (expect_peek_token(p, TOKEN_ELSE)) {
+    advance(p);
+    if (!expect_peek_token(p, TOKEN_LBRACE)) {
+      return NULL;
+    }
+
+    expr->as.if_expression->alternative = parse_block_statement(p);
+  }
 
   return expr;
 }

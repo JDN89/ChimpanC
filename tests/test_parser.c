@@ -360,9 +360,10 @@ void test_parse_infix_expressions() {
 void test_parse_if_statement() {
 
   char source[] = " if(x==5)\n"
-                  "{let t = 10; \n}";
+                  "{let t = 10; \n}"
+                  "else {y}";
 
-  const char *identifiers[] = {"x", "t"};
+  const char *identifiers[] = {"x", "t", "y"};
   const Value values[] = {
       NUMBER(5),
       NUMBER(10),
