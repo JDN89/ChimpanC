@@ -391,6 +391,9 @@ void test_parse_if_statement() {
   assert(strcmp(if_e->condition->as.infix->left->as.identifier->value->as
                     .string->pointer,
                 identifiers[0]) == 0);
+  assert(strcmp(if_e->consequence->statements->as.letStmt->name->value->as
+                    .string->pointer,
+                identifiers[1]) == 0);
 
   printf("Parse if statement - PASSED! \n");
 }
