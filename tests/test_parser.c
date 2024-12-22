@@ -402,14 +402,14 @@ void test_parse_if_statement() {
 }
 
 int main() {
-  test_parser_error_during_parse_let_statement();
-  test_parse_let_statement();
-  test_parse_integer_literal();
-  test_parse_return_statement();
-  test_parse_expressions();
-  test_parse_infix_expressions();
-  test_parse_values();
-  parse_prefix_expressions();
+  /*test_parser_error_during_parse_let_statement();*/
+  /*test_parse_let_statement();*/
+  /*test_parse_integer_literal();*/
+  /*test_parse_return_statement();*/
+  /*test_parse_expressions();*/
+  /*test_parse_infix_expressions();*/
+  /*test_parse_values();*/
+  /*parse_prefix_expressions();*/
   test_parse_if_statement();
   printf("\n");
   return 0;

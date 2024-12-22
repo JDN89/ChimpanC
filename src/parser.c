@@ -94,13 +94,16 @@ void free_parser_errors(Parser *p) {
   }
 }
 
-bool is_cur_token(Parser *p, TokenType ttype) {
+bool check_and_consume_ct(Parser *p, TokenType ttype) {
   if (p->ct.type == ttype) {
     advance(p);
     return true;
   } else
     return false;
 }
+
+bool ct_is(Parser *p, TokenType ttype) { return p->ct.type == ttype; }
+bool pt_is(Parser *p, TokenType ttype) { return p->pt.type == ttype; }
 
 bool expect_peek_token(Parser *p, TokenType ttype) {
   if (p->pt.type == ttype) {
@@ -317,15 +320,13 @@ Expr *parse_if_expression(Parser *p) {
   }
 
   expr->as.if_expression->consequence = parse_block_statement(p);
-  if (expect_peek_token(p, TOKEN_ELSE)) {
+  if (pt_is(p, TOKEN_ELSE)) {
     advance(p);
     if (!expect_peek_token(p, TOKEN_LBRACE)) {
       return NULL;
     }
-
     expr->as.if_expression->alternative = parse_block_statement(p);
   }
-
   return expr;
 }
 
@@ -391,13 +392,21 @@ Block_Statement *parse_block_statement(Parser *p) {
   }
   create_block_statement(block);
 
+  // :NOTE consume { token
   advance(p);
-  while (!is_cur_token(p, TOKEN_RBRACE) && is_cur_token(p, TOKEN_EOF)) {
+  while (!ct_is(p, TOKEN_RBRACE) && !ct_is(p, TOKEN_EOF)) {
     Stmt *statement = parse_statement(p);
     if (statement != NULL) {
       write_block_statement(block, statement);
     }
-    advance(p);
+
+    // this is where I divert from MONKEY_lang. I only advance when I don't
+    // encounter a }
+    if (ct_is(p, TOKEN_RBRACE)) {
+      break;
+    } else {
+      advance(p);
+    }
   }
 
   return block;
