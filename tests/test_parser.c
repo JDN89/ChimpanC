@@ -3,6 +3,7 @@
 #include "test_helper_functions.h"
 #include "write_output_to_buffer.h"
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -391,25 +392,44 @@ void test_parse_if_statement() {
   assert(strcmp(if_e->condition->as.infix->left->as.identifier->value->as
                     .string->pointer,
                 identifiers[0]) == 0);
-  printf(" consequence -- %s \n",
-         if_e->consequence->statements[if_e->consequence->count]
-             .as.letStmt->name->value->as.string->pointer);
-  assert(strcmp(if_e->consequence->statements[if_e->consequence->count]
+
+  size_t count = if_e->consequence->count;
+  assert(count == 1);
+
+  assert(if_e->consequence->statements[count - 1].type == LET_STATEMENT);
+
+  assert(strcmp(if_e->consequence->statements[count - 1]
                     .as.letStmt->name->value->as.string->pointer,
                 identifiers[1]) == 0);
+
+  assert(if_e->consequence->statements[count - 1]
+             .as.letStmt->expr->as.value->as.number == values[1].as.number);
+
+  assert(if_e->alternative->statements[count - 1].type == EXPR_STATEMENT);
+
+  assert(if_e->alternative->statements[count - 1].as.exprStmt->expr->type ==
+         IDENTIFIER_EXPR);
+
+  assert(if_e->alternative->statements[count - 1]
+             .as.exprStmt->expr->as.identifier->value->type == VAL_STRING);
+
+  assert(
+      strcmp(if_e->alternative->statements[count - 1]
+                 .as.exprStmt->expr->as.identifier->value->as.string->pointer,
+             identifiers[2]) == 0);
 
   printf("Parse if statement - PASSED! \n");
 }
 
 int main() {
-  /*test_parser_error_during_parse_let_statement();*/
-  /*test_parse_let_statement();*/
-  /*test_parse_integer_literal();*/
-  /*test_parse_return_statement();*/
-  /*test_parse_expressions();*/
-  /*test_parse_infix_expressions();*/
-  /*test_parse_values();*/
-  /*parse_prefix_expressions();*/
+  test_parser_error_during_parse_let_statement();
+  test_parse_let_statement();
+  test_parse_integer_literal();
+  test_parse_return_statement();
+  test_parse_expressions();
+  test_parse_infix_expressions();
+  test_parse_values();
+  parse_prefix_expressions();
   test_parse_if_statement();
   printf("\n");
   return 0;
