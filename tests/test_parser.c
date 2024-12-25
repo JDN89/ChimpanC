@@ -2,7 +2,9 @@
 #include "../src/parser.h"
 #include "ast.h"
 #include "test_helper_functions.h"
+#include "value.h"
 #include "write_output_to_buffer.h"
+#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -423,11 +425,12 @@ void test_parse_function_literal_expression(void) {
 
   char source[] = " fn(x, y) { x + y; } \n";
 
-  const char *identifiers[] = {"x", "y"};
-  const Value values[] = {
-      NUMBER(5),
-      NUMBER(10),
-  };
+  Value *identifiers[] = {create_string_value(1, "x"),
+                          create_string_value(1, "y")};
+  /*const Value values[] = {*/
+  /*    NUMBER(5),*/
+  /*    NUMBER(10),*/
+  /*};*/
 
   Lexer l = init_lexer(source);
   Parser parser = new_parser(&l);
@@ -445,7 +448,11 @@ void test_parse_function_literal_expression(void) {
   assert(current->as.exprStmt->expr->type == FUNCTION_LITERAL_EXPR);
 
   Function_Literal_Expr *fn = current->as.exprStmt->expr->as.fn;
-  fn->parameters->count = 2;
+  // BUG @Jan : for some reason we have count but the second parameter does't
+  // get parsed or assigned correctly?
+  for (size_t i = 0; i < fn->parameters->count; i++)
+    assert(test_value(fn->parameters->identifiers->value[i], *identifiers[i]) ==
+           true);
 }
 
 int main(void) {
