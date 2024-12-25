@@ -14,6 +14,9 @@ cmake_minimum_required(VERSION 3.28.3)
 # Project name and settings
 project(Chimp LANGUAGES C)
 
+# Enable export of compile_commands.json
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Set the C standard to C2x
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)

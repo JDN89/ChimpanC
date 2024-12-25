@@ -88,6 +88,9 @@ void print_if_expression(If_Expression *if_expression) {
   case BOOLEAN_EXPR:
     print_value(if_expression->condition->as.value);
     break;
+  case FUNCTION_LITERAL_EXPR:
+    //@Jan implement
+    break;
   }
   printf(") {");
 }
@@ -118,6 +121,9 @@ void print_expression(Expr *ex) {
     break;
   case BOOLEAN_EXPR:
     print_value(ex->as.value);
+    break;
+  case FUNCTION_LITERAL_EXPR:
+    //@Jan implement
     break;
   }
 }

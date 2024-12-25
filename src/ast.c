@@ -8,10 +8,10 @@
 void freeExpr(Expr *expr);
 
 // TODO: turn into dynamic array and see if this goes Vrooom
-Program createProgram() {
-  Program program = {0};
-  return program;
-}
+/*Program createProgram() {*/
+/*  Program program = {0};*/
+/*  return program;*/
+/*}*/
 
 // TODO: turn into dynamic array and see if this goes Vrooom
 void push_statement(Program *program, Stmt *stmt) {
@@ -81,6 +81,9 @@ void freeExpr(Expr *expr) {
       break;
     case IF_EXPR:
       free_if_expression(expr->as.if_expression);
+      break;
+    case FUNCTION_LITERAL_EXPR:
+      // @Jan implement
       break;
     }
 
@@ -181,6 +184,53 @@ void free_block_statement(Block_Statement *block) {
   block->count = 0;
   block->capacity = 0;
   free(block->statements);
+  block->statements = NULL;
+}
+
+void create_function_parameters(Parameters *params) {
+  params->capacity = 0;
+  params->count = 0;
+  params->identifiers = NULL;
+}
+
+void write_to_function_parameters(Parameters *params, Identifier *param) {
+  if (!params || !param) {
+    fprintf(stderr, "Invalid input for write_to_parameters_list.\n");
+    return;
+  }
+  if (params->capacity == params->count) {
+    size_t new_capacity = params->capacity == 0 ? 8 : params->capacity * 2;
+    Identifier *new_identifiers =
+        realloc(params->identifiers, new_capacity * sizeof(Identifier));
+
+    if (!new_identifiers) {
+      fprintf(stderr,
+              "Memory allocation failed in write_to_parameters_list.\n");
+      return; // Return early if realloc fails
+    }
+
+    params->identifiers = new_identifiers;
+    params->capacity = new_capacity;
+  }
+  params->identifiers[params->count] = *param;
+  params->count++;
+}
+
+void free_params(Parameters *params) {
+  // loop over all the identifiers and free them
+  for (size_t i = 0; i < params->count; i++) {
+    freeIdentifier(&params->identifiers[i]);
+  }
+  params->count = 0;
+  params->capacity = 0;
+  free(params->identifiers);
+  // set the pointer to NULL to avoid dangling pointers
+  params->identifiers = NULL;
+}
+
+Program createProgram(void) {
+  Program program = {0};
+  return program;
 }
 
 void freeProgram(Program *prog) {

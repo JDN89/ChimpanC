@@ -146,6 +146,9 @@ void print_expression(Buffer *buffer, Expr *ex) {
   case IF_EXPR:
     //@Jan TODO
     break;
+  case FUNCTION_LITERAL_EXPR:
+    //@Jan TODO
+    break;
   }
 }
 

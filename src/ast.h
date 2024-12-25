@@ -3,6 +3,7 @@
 
 #include "lexer.h"
 #include "value.h"
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -52,6 +53,12 @@ typedef struct {
   Block_Statement *consequence;
   Block_Statement *alternative;
 } If_Expression;
+
+typedef struct {
+  size_t count;
+  size_t capacity;
+  Identifier *identifiers;
+} Parameters;
 
 typedef struct {
   Identifier *parameters; // TODO create dynamic array or make the previous one
@@ -115,12 +122,16 @@ typedef struct {
 } Program;
 
 Let_Statement *createLetStmt(Token token);
-Program createProgram();
+Program createProgram(void);
+
 void push_statement(Program *program, Stmt *stmt);
 void freeProgram(Program *prog);
 void freeIdentifier(Identifier *identifier);
 void create_block_statement(Block_Statement *block_statement);
 void write_block_statement(Block_Statement *block, Stmt *statement);
 void free_block_statement(Block_Statement *block);
+void create_function_parameters(Parameters *params);
+void write_to_function_parameters(Parameters *params, Identifier *param);
+void free_params(Parameters *params);
 
 #endif
