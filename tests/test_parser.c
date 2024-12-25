@@ -45,7 +45,7 @@ void print_erros(Parser *parser, const char *test_name) {
   }
 }
 
-void test_parser_error_during_parse_let_statement() {
+void test_parser_error_during_parse_let_statement(void) {
   // GIVEN:
   char source[] = "let x & 5;\n";
 
@@ -62,14 +62,13 @@ void test_parser_error_during_parse_let_statement() {
 // TEST parse let statement
 //----------------------------------------------------
 
-void test_parse_let_statement() {
+void test_parse_let_statement(void) {
 
   char source[] = " let x = 5;\n"
                   " let y = 10;\n"
                   "let foobar = 838383; \n"
                   "let yolo = true \n";
 
-  const char *identifiers[] = {"x", "y", "foobar", "yolo"};
   const Value values[] = {NUMBER(5), NUMBER(10), NUMBER(838383), BOOLEAN(true)};
 
   Lexer l = init_lexer(source);
@@ -99,7 +98,7 @@ void test_parse_let_statement() {
 //----------------------------------------------------
 // TEST parse numbers
 //----------------------------------------------------
-void test_parse_integer_literal() {
+void test_parse_integer_literal(void) {
 
   char source[] = " 4; \n"
                   " 55; \n"
@@ -109,7 +108,7 @@ void test_parse_integer_literal() {
   Parser parser = new_parser(&l);
   Program program = parse_program(&parser);
 
-  int64_t expected[] = {4, 55, 345345354345};
+  double expected[] = {4, 55, 345345354345};
 
   Stmt *current = program.head;
   int i = 0;
@@ -133,7 +132,7 @@ void test_parse_integer_literal() {
 //----------------------------------------------------
 // TEST parse return statements
 //----------------------------------------------------
-void test_parse_return_statement() {
+void test_parse_return_statement(void) {
 
   char source[] = " return yolo  ; \n"
                   " return    55; \n"
@@ -162,7 +161,7 @@ void test_parse_return_statement() {
 //----------------------------------------------------
 // TEST parse values
 //----------------------------------------------------
-void test_parse_values() {
+void test_parse_values(void) {
   char source[] = "34 ; \n"
                   "true ;\n";
 
@@ -192,7 +191,7 @@ void test_parse_values() {
 //----------------------------------------------------
 // TEST parse expressionStatements
 //----------------------------------------------------
-void test_parse_expressions() {
+void test_parse_expressions(void) {
   char source[] = " let a = 5;\n"
                   " yolo; \n"
                   " return 10;\n"
@@ -253,7 +252,7 @@ void test_parse_expressions() {
   printf("Test parse expression statements - PASSED! \n");
 }
 
-void parse_prefix_expressions() {
+void parse_prefix_expressions(void) {
 
 #define PREFIX_TEST_CASE_COUNT 4
 
@@ -295,7 +294,7 @@ void parse_prefix_expressions() {
 }
 
 // TODO: remove duplicate code
-void test_parse_infix_expressions() {
+void test_parse_infix_expressions(void) {
 #define INFIX_TEST_CASE_COUNT 20
   typedef struct {
     char *input;
@@ -358,7 +357,7 @@ void test_parse_infix_expressions() {
   printf("parse infix statements - PASSED!\n");
 }
 
-void test_parse_if_statement() {
+void test_parse_if_statement(void) {
 
   char source[] = " if(x==5)\n"
                   "{let t = 10; \n}"
@@ -375,7 +374,6 @@ void test_parse_if_statement() {
   Program program = parse_program(&parser);
 
   Stmt *current = program.head;
-  int i = 0;
 
   if (check_errors(&parser, "Test parse if statements")) {
     print_erros(&parser, "parse if statement");
@@ -420,7 +418,7 @@ void test_parse_if_statement() {
 
   printf("Parse if statement - PASSED! \n");
 }
-void test_parse_function_literal_expression() {
+void test_parse_function_literal_expression(void) {
 
   char source[] = " fn(x, y) { x + y; } \n";
 
@@ -435,7 +433,7 @@ void test_parse_function_literal_expression() {
   Program program = parse_program(&parser);
 }
 
-int main() {
+int main(void) {
   test_parser_error_during_parse_let_statement();
   test_parse_let_statement();
   test_parse_integer_literal();

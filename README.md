@@ -21,13 +21,7 @@ You need cmake version 3.28.3 at minimum.
 
 ## TODO
 
-- fix bug parse block statement: 
-```
-(gdb) print p->ct.literal
-$3 = 0x7fffffffe2bb "let t = 10; \n}else {y}" 
-```
-after calling parse block statement the let statments is not consumed at all? what gives? -> for tonight
-
+- Fix dangling pointers -> set pointers to NULL after freeing them
 - write down what you learned from fixing the bugs from yesterday
     - Advance tokens as much as possible in higher level functions. avoid manipulating the parser state in lower level functions as much as possible!
     - Previously, I advanced tokens inside lower-level parse functions like parse_identifier_expr. This caused unexpected behavior because advancing tokens too early disrupted the parsing flow at higher levels, making it difficult to maintain the proper order and context of token processing.
