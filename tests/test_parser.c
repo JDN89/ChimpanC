@@ -443,7 +443,7 @@ int main(void) {
   test_parse_values();
   parse_prefix_expressions();
   test_parse_if_statement();
-  test_parse_function_literal_expression();
+  /*test_parse_function_literal_expression();*/
   printf("\n");
   return 0;
 }

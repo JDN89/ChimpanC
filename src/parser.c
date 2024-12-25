@@ -136,8 +136,6 @@ Identifier *parse_identifier(Parser *p) {
 
   identifier->value = value;
 
-  advance(p);
-
   return identifier;
 }
 
@@ -343,8 +341,11 @@ Parameters *parse_function_parameters(Parser *p) {
     return params;
   }
   advance(p);
+
+  // parse first parameter;
   Identifier *param = parse_identifier(p);
   write_to_function_parameters(params, param);
+
   while (pt_is(p, TOKEN_COMMA)) {
     advance(p);
     advance(p);
@@ -486,6 +487,8 @@ Let_Statement *parse_let_statement(Parser *p) {
   }
 
   letStmt->name = parse_identifier(p);
+  // consume the identifier
+  advance(p);
 
   if (!expect_current_token(p, TOKEN_ASSIGN)) {
     // TODO: consume until ;  so we can continue parsing and reporting erros.
