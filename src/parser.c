@@ -368,6 +368,10 @@ Expr *parse_function_literal_expression(Parser *p) {
   Expr *expr = malloc(sizeof(Expr));
   HANDLE_ALLOC_FAILURE(
       expr, "failed allocation memory for function_literal_expression");
+
+  expr->as.fn = malloc(sizeof(Function_Literal_Expr));
+  HANDLE_ALLOC_FAILURE(expr->as.fn,
+                       "Failed allocationg memory for Function_Literal_Expr");
   expr->type = FUNCTION_LITERAL_EXPR;
 
   if (!expect_peek_token(p, TOKEN_LPAREN)) {
@@ -381,7 +385,7 @@ Expr *parse_function_literal_expression(Parser *p) {
     expr->as.fn->parameters = params;
   }
 
-  if (!expect_peek_token(p, TOKEN_RBRACE)) {
+  if (!expect_peek_token(p, TOKEN_LBRACE)) {
     free(params);
     return NULL;
   }

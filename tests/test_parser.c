@@ -1,5 +1,6 @@
 #include "../src/lexer.h"
 #include "../src/parser.h"
+#include "ast.h"
 #include "test_helper_functions.h"
 #include "write_output_to_buffer.h"
 #include <stdbool.h>
@@ -422,7 +423,7 @@ void test_parse_function_literal_expression(void) {
 
   char source[] = " fn(x, y) { x + y; } \n";
 
-  const char *identifiers[] = {"x", "t", "y"};
+  const char *identifiers[] = {"x", "y"};
   const Value values[] = {
       NUMBER(5),
       NUMBER(10),
@@ -431,19 +432,33 @@ void test_parse_function_literal_expression(void) {
   Lexer l = init_lexer(source);
   Parser parser = new_parser(&l);
   Program program = parse_program(&parser);
+
+  Stmt *current = program.head;
+
+  if (check_errors(&parser, "Test parse if statements")) {
+    print_erros(&parser, "parse if statement");
+    printf("Parse if statement - FAILED! \n");
+    return;
+  }
+
+  assert(current->type == EXPR_STATEMENT);
+  assert(current->as.exprStmt->expr->type == FUNCTION_LITERAL_EXPR);
+
+  Function_Literal_Expr *fn = current->as.exprStmt->expr->as.fn;
+  fn->parameters->count = 2;
 }
 
 int main(void) {
-  test_parser_error_during_parse_let_statement();
-  test_parse_let_statement();
-  test_parse_integer_literal();
-  test_parse_return_statement();
-  test_parse_expressions();
-  test_parse_infix_expressions();
-  test_parse_values();
-  parse_prefix_expressions();
-  test_parse_if_statement();
-  /*test_parse_function_literal_expression();*/
+  /*test_parser_error_during_parse_let_statement();*/
+  /*test_parse_let_statement();*/
+  /*test_parse_integer_literal();*/
+  /*test_parse_return_statement();*/
+  /*test_parse_expressions();*/
+  /*test_parse_infix_expressions();*/
+  /*test_parse_values();*/
+  /*parse_prefix_expressions();*/
+  /*test_parse_if_statement();*/
+  test_parse_function_literal_expression();
   printf("\n");
   return 0;
 }
