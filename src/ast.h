@@ -61,10 +61,8 @@ typedef struct {
 } Parameters;
 
 typedef struct {
-  Identifier *parameters; // TODO create dynamic array or make the previous one
-                          // more general;
+  Parameters *parameters;
   Block_Statement *body;
-
 } Function_Literal_Expr;
 
 typedef struct Expr {

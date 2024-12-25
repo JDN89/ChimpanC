@@ -94,6 +94,12 @@ void free_parser_errors(Parser *p) {
   }
 }
 
+// check ttype but don't consume the token;
+bool ct_is(Parser *p, TokenType ttype) { return p->ct.type == ttype; }
+bool pt_is(Parser *p, TokenType ttype) { return p->pt.type == ttype; }
+
+// Check and consume the token
+// TODO @Jan CLEANUP!!
 bool check_and_consume_ct(Parser *p, TokenType ttype) {
   if (p->ct.type == ttype) {
     advance(p);
@@ -101,9 +107,6 @@ bool check_and_consume_ct(Parser *p, TokenType ttype) {
   } else
     return false;
 }
-
-bool ct_is(Parser *p, TokenType ttype) { return p->ct.type == ttype; }
-bool pt_is(Parser *p, TokenType ttype) { return p->pt.type == ttype; }
 
 bool expect_peek_token(Parser *p, TokenType ttype) {
   if (p->pt.type == ttype) {
@@ -330,6 +333,62 @@ Expr *parse_if_expression(Parser *p) {
   return expr;
 }
 
+Parameters *parse_function_parameters(Parser *p) {
+
+  Parameters *params = malloc(sizeof(Parameters));
+  HANDLE_ALLOC_FAILURE(params, "Failed allocating for Parameters");
+  create_function_parameters(params);
+  if (pt_is(p, TOKEN_RPAREN)) {
+    advance(p);
+    return params;
+  }
+  advance(p);
+  Identifier *param = parse_identifier(p);
+  write_to_function_parameters(params, param);
+  while (pt_is(p, TOKEN_COMMA)) {
+    advance(p);
+    advance(p);
+    param = parse_identifier(p);
+    if (!param) {
+      free(param);
+      free_params(params);
+      return NULL;
+    }
+    write_to_function_parameters(params, param);
+  }
+  if (!expect_peek_token(p, TOKEN_RPAREN)) {
+    free(params); // Clean up allocated memory.
+    return NULL;
+  }
+  return params;
+}
+
+Expr *parse_function_literal_expression(Parser *p) {
+  Expr *expr = malloc(sizeof(Expr));
+  HANDLE_ALLOC_FAILURE(
+      expr, "failed allocation memory for function_literal_expression");
+  expr->type = FUNCTION_LITERAL_EXPR;
+
+  if (!expect_peek_token(p, TOKEN_LPAREN)) {
+    free(expr);
+    return NULL;
+  }
+
+  Parameters *params = malloc(sizeof(Parameters));
+  params = parse_function_parameters(p);
+  if (params != NULL) {
+    expr->as.fn->parameters = params;
+  }
+
+  if (!expect_peek_token(p, TOKEN_RBRACE)) {
+    free(params);
+    return NULL;
+  }
+  expr->as.fn->body = parse_block_statement(p);
+
+  return expr;
+}
+
 Expr *parse_exp(Parser *p, Precedece prec) {
 
   ParseFn prefixRule = *get_prefix_rule(p->ct.type);
@@ -352,14 +411,16 @@ Expr *parse_exp(Parser *p, Precedece prec) {
   return leftExpr;
 }
 
-Prefix_Rule pr[] = {[TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
-                    [TOKEN_INT] = {parse_number, LOWEST},
-                    [TOKEN_BANG] = {parse_prefix_exp, LOWEST},
-                    [TOKEN_MINUS] = {parse_prefix_exp, LOWEST},
-                    [TOKEN_TRUE] = {parse_boolean, LOWEST},
-                    [TOKEN_FALSE] = {parse_boolean, LOWEST},
-                    [TOKEN_LPAREN] = {parse_grouped_expression, LOWEST},
-                    [TOKEN_IF] = {parse_if_expression, LOWEST}};
+Prefix_Rule pr[] = {
+    [TOKEN_IDENTIFIER] = {parse_identifier_expr, LOWEST},
+    [TOKEN_INT] = {parse_number, LOWEST},
+    [TOKEN_BANG] = {parse_prefix_exp, LOWEST},
+    [TOKEN_MINUS] = {parse_prefix_exp, LOWEST},
+    [TOKEN_TRUE] = {parse_boolean, LOWEST},
+    [TOKEN_FALSE] = {parse_boolean, LOWEST},
+    [TOKEN_LPAREN] = {parse_grouped_expression, LOWEST},
+    [TOKEN_IF] = {parse_if_expression, LOWEST},
+    [TOKEN_FUNCTION] = {parse_function_literal_expression, LOWEST}};
 
 static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
 

@@ -188,9 +188,11 @@ void free_block_statement(Block_Statement *block) {
 }
 
 void create_function_parameters(Parameters *params) {
-  params->capacity = 0;
+  // set immediatly the capacity to 8 for efficiency so we don't immediatly have
+  // to reallocate
+  params->capacity = 8;
   params->count = 0;
-  params->identifiers = NULL;
+  params->identifiers = malloc(params->capacity * sizeof(Identifier));
 }
 
 void write_to_function_parameters(Parameters *params, Identifier *param) {
@@ -223,9 +225,11 @@ void free_params(Parameters *params) {
   }
   params->count = 0;
   params->capacity = 0;
+  // free the array
   free(params->identifiers);
   // set the pointer to NULL to avoid dangling pointers
   params->identifiers = NULL;
+  free(params);
 }
 
 Program createProgram(void) {
