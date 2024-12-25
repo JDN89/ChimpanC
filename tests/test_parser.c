@@ -420,6 +420,20 @@ void test_parse_if_statement() {
 
   printf("Parse if statement - PASSED! \n");
 }
+void test_parse_function_literal_expression() {
+
+  char source[] = " fn(x, y) { x + y; } \n";
+
+  const char *identifiers[] = {"x", "t", "y"};
+  const Value values[] = {
+      NUMBER(5),
+      NUMBER(10),
+  };
+
+  Lexer l = init_lexer(source);
+  Parser parser = new_parser(&l);
+  Program program = parse_program(&parser);
+}
 
 int main() {
   test_parser_error_during_parse_let_statement();
@@ -431,6 +445,7 @@ int main() {
   test_parse_values();
   parse_prefix_expressions();
   test_parse_if_statement();
+  test_parse_function_literal_expression();
   printf("\n");
   return 0;
 }

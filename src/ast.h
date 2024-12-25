@@ -27,7 +27,8 @@ typedef enum {
   BOOLEAN_EXPR,
   PREFIX_EXPR,
   INFIX_EXPR,
-  IF_EXPR
+  IF_EXPR,
+  FUNCTION_LITERAL_EXPR,
 } Expression_Type;
 
 typedef struct {
@@ -52,6 +53,13 @@ typedef struct {
   Block_Statement *alternative;
 } If_Expression;
 
+typedef struct {
+  Identifier *parameters; // TODO create dynamic array or make the previous one
+                          // more general;
+  Block_Statement *body;
+
+} Function_Literal_Expr;
+
 typedef struct Expr {
   Expression_Type type;
   union {
@@ -60,6 +68,7 @@ typedef struct Expr {
     Prefix_Expression *prefix;
     Infix_Expression *infix;
     If_Expression *if_expression;
+    Function_Literal_Expr *fn;
   } as;
 } Expr;
 
