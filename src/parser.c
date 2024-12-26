@@ -333,10 +333,10 @@ Expr *parse_if_expression(Parser *p) {
 
 Parameters *parse_function_parameters(Parser *p) {
 
+  // NOTE: you can initialize to  {0,0,NULL} and then then set
+  // params.identiferis with malloc. But in this casse you can't use *params
   Parameters *params = malloc(sizeof(Parameters));
   HANDLE_ALLOC_FAILURE(params, "Failed allocating for Parameters");
-  memset(params, 0,
-         sizeof(Parameters)); // Zero out memory to avoid garbage values.
   create_function_parameters(params);
   if (pt_is(p, TOKEN_RPAREN)) {
     advance(p);

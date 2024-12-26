@@ -433,10 +433,7 @@ void test_parse_function_literal_expression(void) {
       create_string_value(1, "g"), create_string_value(1, "h"),
 
   };
-  /*const Value values[] = {*/
-  /*    NUMBER(5),*/
-  /*    NUMBER(10),*/
-  /*};*/
+  Value *values[] = {create_string_value(1, "x"), create_string_value(1, "y")};
 
   Lexer l = init_lexer(source);
   Parser parser = new_parser(&l);
@@ -459,6 +456,17 @@ void test_parse_function_literal_expression(void) {
   for (size_t i = 0; i < fn->parameters->count; i++)
     assert(test_value(*fn->parameters->identifiers[i].value, *identifiers[i]) ==
            true);
+
+  assert(
+      test_value(*fn->body->statements[0]
+                      .as.exprStmt->expr->as.infix->left->as.identifier->value,
+                 *values[0]) == true);
+
+  assert(
+      test_value(*fn->body->statements[0]
+                      .as.exprStmt->expr->as.infix->right->as.identifier->value,
+                 *values[1]) == true);
+
   printf("Test Parse function expression PASSED!");
 }
 
