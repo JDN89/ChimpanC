@@ -335,6 +335,8 @@ Parameters *parse_function_parameters(Parser *p) {
 
   Parameters *params = malloc(sizeof(Parameters));
   HANDLE_ALLOC_FAILURE(params, "Failed allocating for Parameters");
+  memset(params, 0,
+         sizeof(Parameters)); // Zero out memory to avoid garbage values.
   create_function_parameters(params);
   if (pt_is(p, TOKEN_RPAREN)) {
     advance(p);
@@ -379,8 +381,7 @@ Expr *parse_function_literal_expression(Parser *p) {
     return NULL;
   }
 
-  Parameters *params = malloc(sizeof(Parameters));
-  params = parse_function_parameters(p);
+  Parameters *params = parse_function_parameters(p);
   if (params != NULL) {
     expr->as.fn->parameters = params;
   }

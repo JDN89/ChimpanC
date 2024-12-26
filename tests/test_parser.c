@@ -423,10 +423,16 @@ void test_parse_if_statement(void) {
 }
 void test_parse_function_literal_expression(void) {
 
-  char source[] = " fn(x, y) { x + y; } \n";
+  char source[] = " fn(x, y,a,b,c,d,e,f,g,h) { x + y; } \n";
 
-  Value *identifiers[] = {create_string_value(1, "x"),
-                          create_string_value(1, "y")};
+  Value *identifiers[] = {
+      create_string_value(1, "x"), create_string_value(1, "y"),
+      create_string_value(1, "a"), create_string_value(1, "b"),
+      create_string_value(1, "c"), create_string_value(1, "d"),
+      create_string_value(1, "e"), create_string_value(1, "f"),
+      create_string_value(1, "g"), create_string_value(1, "h"),
+
+  };
   /*const Value values[] = {*/
   /*    NUMBER(5),*/
   /*    NUMBER(10),*/
@@ -451,20 +457,21 @@ void test_parse_function_literal_expression(void) {
   // BUG @Jan : for some reason we have count but the second parameter does't
   // get parsed or assigned correctly?
   for (size_t i = 0; i < fn->parameters->count; i++)
-    assert(test_value(fn->parameters->identifiers->value[i], *identifiers[i]) ==
+    assert(test_value(*fn->parameters->identifiers[i].value, *identifiers[i]) ==
            true);
+  printf("Test Parse function expression PASSED!");
 }
 
 int main(void) {
-  /*test_parser_error_during_parse_let_statement();*/
-  /*test_parse_let_statement();*/
-  /*test_parse_integer_literal();*/
-  /*test_parse_return_statement();*/
-  /*test_parse_expressions();*/
-  /*test_parse_infix_expressions();*/
-  /*test_parse_values();*/
-  /*parse_prefix_expressions();*/
-  /*test_parse_if_statement();*/
+  test_parser_error_during_parse_let_statement();
+  test_parse_let_statement();
+  test_parse_integer_literal();
+  test_parse_return_statement();
+  test_parse_expressions();
+  test_parse_infix_expressions();
+  test_parse_values();
+  parse_prefix_expressions();
+  test_parse_if_statement();
   test_parse_function_literal_expression();
   printf("\n");
   return 0;

@@ -190,9 +190,9 @@ void free_block_statement(Block_Statement *block) {
 void create_function_parameters(Parameters *params) {
   // set immediatly the capacity to 8 for efficiency so we don't immediatly have
   // to reallocate
-  params->capacity = 8;
+  params->capacity = 0;
   params->count = 0;
-  params->identifiers = malloc(params->capacity * sizeof(Identifier));
+  params->identifiers = NULL;
 }
 
 void write_to_function_parameters(Parameters *params, Identifier *param) {
@@ -214,6 +214,7 @@ void write_to_function_parameters(Parameters *params, Identifier *param) {
     params->identifiers = new_identifiers;
     params->capacity = new_capacity;
   }
+  assert(params->identifiers != NULL);
   params->identifiers[params->count] = *param;
   params->count++;
 }
