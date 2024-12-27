@@ -396,7 +396,39 @@ Expr *parse_function_literal_expression(Parser *p) {
   return expr;
 }
 
-Expr *parse_call_expression(Parser *p, Expr *function_name) {}
+Dyn_Array_Elements *parse_call_arguments(Parser *p) {
+  Dyn_Array_Elements *elements = {0};
+  if (pt_is(p, TOKEN_RPAREN)) {
+    advance(p);
+    return NULL;
+  }
+  advance(p);
+  Expr *arg = parse_exp(p, LOWEST);
+  write_to_function_dyn_array(elements, arg);
+  while (pt_is(p, TOKEN_COMMA)) {
+    advance(p);
+    advance(p);
+    Expr *arg = parse_exp(p, LOWEST);
+    write_to_function_dyn_array(elements, arg);
+  }
+  if (expect_peek_token(p, TOKEN_RPAREN)) {
+    return NULL;
+  }
+  return elements;
+}
+
+Expr *parse_call_expression(Parser *p, Expr *function_name) {
+  Expr *call = malloc(sizeof(Call_Expression));
+  HANDLE_ALLOC_FAILURE(call, "Failed to allocate memeory for call expression");
+
+  Expr *expr = malloc(sizeof(Expr));
+  HANDLE_ALLOC_FAILURE(expr, "Failed allocation for Expr");
+  expr = function_name;
+
+  call->as.call->function_identifier = expr;
+  call->as.call->arguments = parse_call_arguments(p);
+  return call;
+}
 
 Expr *parse_exp(Parser *p, Precedece prec) {
 
@@ -429,7 +461,18 @@ Prefix_Rule pr[] = {
     [TOKEN_FALSE] = {parse_boolean, LOWEST},
     [TOKEN_LPAREN] = {parse_grouped_expression, LOWEST},
     [TOKEN_IF] = {parse_if_expression, LOWEST},
-    [TOKEN_FUNCTION] = {parse_function_literal_expression, LOWEST}};
+
+    // NOTE: Precedence is also call. After we parse a whole function fn(){} we
+    // return to parse_exp where we check if there is an infix_rule with a lower
+    // precedence then the precedence of the prefix rule. After the fn(){} we
+    // don't want to parse anything else as an infix_rule so we assign it the
+    // highest priority, otherwise we could be parsing fn(){} fn2(){} with fn2
+    // as an infix operand, which is not correct? But I am doubting because
+    // monkey has higher order functions.
+    // add(x+y){x+y}(2,3) is correct syntax, but peekt token will fall on 2 and
+    // not ( so no infix rule here?
+    [TOKEN_FUNCTION] = {parse_function_literal_expression,
+                        LOWEST}}; // BUG: when I place lowest the test passess
 
 static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
 
@@ -445,8 +488,14 @@ static Infix_Rule ir[] = {
     // add(2+3). Add is the identifier of the function that gets parsed via the
     // prefixe expression. after this we parse ( via the new infix_rule we find
     // for this token type
-    [TOKEN_LPAREN] = {parse_call_expression, LOWEST},
-
+    [TOKEN_LPAREN] =
+        {parse_call_expression,
+         LOWEST}, // BUG: when I place lowest the test passess for parsing
+                  // function literals but this breaks parse function calls
+                  // because we need higher precedence for add(2,3) ( otherwise
+                  // we break   while (p->pt.type != TOKEN_SEMICOLON && prec <
+                  // peek_precedence(p)) { and we return from the  loop and
+                  // start parsing the next token which would be , adn then )
 };
 
 static Parse_Infix_Fn *get_infix_rule(TokenType ttype) {

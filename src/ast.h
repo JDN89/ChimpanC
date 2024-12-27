@@ -67,7 +67,7 @@ typedef struct {
 } Function_Literal_Expr;
 
 typedef struct {
-  Expr *funciton_identifier;
+  Expr *function_identifier;
   Dyn_Array_Elements *arguments; // stored and dyn array
 } Call_Expression;
 
