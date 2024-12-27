@@ -470,6 +470,8 @@ Block_Statement *parse_block_statement(Parser *p) {
     // this is where I divert from MONKEY_lang. I only advance when I don't
     // encounter a }
     if (ct_is(p, TOKEN_RBRACE)) {
+      // consume }, so after this you can consume spaces or empty lines
+      advance(p);
       break;
     } else {
       advance(p);

@@ -8,10 +8,10 @@
 #include <assert.h>
 #include <stdio.h>
 
-static void repl();
+static void repl(void);
 
 // TODO: create repl h and c file
-static void repl() {
+static void repl(void) {
   char line[1024];
 
   // Infinite loop for reading and processing input

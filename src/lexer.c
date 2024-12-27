@@ -69,6 +69,7 @@ Lexer init_lexer(char *source) {
 
 static bool isAtEnd(Lexer *lexer) { return *lexer->current == '\0'; }
 
+// TODO @Jan see if pointer based advancing is faster
 static char advance(Lexer *lexer) {
   lexer->current++;
   return lexer->current[-1];
