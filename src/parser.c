@@ -490,12 +490,12 @@ static Infix_Rule ir[] = {
     // for this token type
     [TOKEN_LPAREN] =
         {parse_call_expression,
-         LOWEST}, // BUG: when I place lowest the test passess for parsing
-                  // function literals but this breaks parse function calls
-                  // because we need higher precedence for add(2,3) ( otherwise
-                  // we break   while (p->pt.type != TOKEN_SEMICOLON && prec <
-                  // peek_precedence(p)) { and we return from the  loop and
-                  // start parsing the next token which would be , adn then )
+         CALL}, // BUG: when I place lowest the test passess for parsing
+                // function literals but this breaks parse function calls
+                // because we need higher precedence for add(2,3) ( otherwise
+                // we break   while (p->pt.type != TOKEN_SEMICOLON && prec <
+                // peek_precedence(p)) { and we return from the  loop and
+                // start parsing the next token which would be , adn then )
 };
 
 static Parse_Infix_Fn *get_infix_rule(TokenType ttype) {

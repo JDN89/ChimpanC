@@ -423,9 +423,9 @@ void test_parse_if_statement(void) {
 }
 void test_parse_function_literal_expression(void) {
 
-  char source[] = " fn(x, y,a,b,c,d,e,f,g,h) { x + y; } \n"
+  char source[] = " fn(x, y,a,b,c,d,e,f,g,h) { x + y}; \n"
                   // TODO @Jan why did this break!!
-                  "fn(){}";
+                  "fn(){};";
 
   Value *identifiers[] = {
       create_string_value(1, "x"), create_string_value(1, "y"),
