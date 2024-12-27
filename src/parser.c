@@ -396,6 +396,8 @@ Expr *parse_function_literal_expression(Parser *p) {
   return expr;
 }
 
+Expr *parse_call_expression(Parser *p, Expr *function_name) {}
+
 Expr *parse_exp(Parser *p, Precedece prec) {
 
   ParseFn prefixRule = *get_prefix_rule(p->ct.type);
@@ -431,14 +433,21 @@ Prefix_Rule pr[] = {
 
 static ParseFn *get_prefix_rule(TokenType ttype) { return &pr[ttype].prefix; }
 
-static Infix_Rule ir[] = {[TOKEN_EQ] = {parse_infix_expression, EQUALS},
-                          [TOKEN_NOT_EQ] = {parse_infix_expression, EQUALS},
-                          [TOKEN_LT] = {parse_infix_expression, LESSGREATER},
-                          [TOKEN_GT] = {parse_infix_expression, LESSGREATER},
-                          [TOKEN_PLUS] = {parse_infix_expression, SUM},
-                          [TOKEN_MINUS] = {parse_infix_expression, SUM},
-                          [TOKEN_SLASH] = {parse_infix_expression, PRODUCT},
-                          [TOKEN_ASTERISK] = {parse_infix_expression, PRODUCT}};
+static Infix_Rule ir[] = {
+    [TOKEN_EQ] = {parse_infix_expression, EQUALS},
+    [TOKEN_NOT_EQ] = {parse_infix_expression, EQUALS},
+    [TOKEN_LT] = {parse_infix_expression, LESSGREATER},
+    [TOKEN_GT] = {parse_infix_expression, LESSGREATER},
+    [TOKEN_PLUS] = {parse_infix_expression, SUM},
+    [TOKEN_MINUS] = {parse_infix_expression, SUM},
+    [TOKEN_SLASH] = {parse_infix_expression, PRODUCT},
+    [TOKEN_ASTERISK] = {parse_infix_expression, PRODUCT},
+    // add(2+3). Add is the identifier of the function that gets parsed via the
+    // prefixe expression. after this we parse ( via the new infix_rule we find
+    // for this token type
+    [TOKEN_LPAREN] = {parse_call_expression, LOWEST},
+
+};
 
 static Parse_Infix_Fn *get_infix_rule(TokenType ttype) {
   return &ir[ttype].infix;

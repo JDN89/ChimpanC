@@ -476,7 +476,11 @@ void test_parse_function_literal_expression(void) {
   assert(current->as.exprStmt->expr->as.fn->parameters->elements == NULL);
   assert(current->as.exprStmt->expr->as.fn->body->statements == NULL);
 
-  printf("Test Parse function expression PASSED!");
+  printf("Test Parse function expression PASSED!\n");
+}
+void test_parser_function_call(void) {
+  char source[] = "add(1, 2 * 3, 4 + 5);";
+  printf("Parse function call PASSED");
 }
 
 int main(void) {
@@ -490,6 +494,7 @@ int main(void) {
   parse_prefix_expressions();
   test_parse_if_statement();
   test_parse_function_literal_expression();
+  test_parser_function_call();
   printf("\n");
   return 0;
 }
