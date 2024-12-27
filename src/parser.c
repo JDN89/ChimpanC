@@ -303,7 +303,6 @@ Expr *parse_if_expression(Parser *p) {
 
   Expr *condition = parse_exp(p, LOWEST);
   if (!condition) { // Check for parsing failure
-    free(expr);     // Clean up before returning
     return NULL;
   }
 
@@ -391,6 +390,8 @@ Expr *parse_function_literal_expression(Parser *p) {
     return NULL;
   }
   expr->as.fn->body = parse_block_statement(p);
+  // consume }
+  advance(p);
 
   return expr;
 }
@@ -466,17 +467,16 @@ Block_Statement *parse_block_statement(Parser *p) {
     if (statement != NULL) {
       write_block_statement(block, statement);
     }
-
-    // this is where I divert from MONKEY_lang. I only advance when I don't
-    // encounter a }
-    if (ct_is(p, TOKEN_RBRACE)) {
-      // consume }, so after this you can consume spaces or empty lines
-      advance(p);
-      break;
-    } else {
+    if (!ct_is(p, TOKEN_RBRACE)) {
+      // NOTE: advance only when the token is not }, otherwise never triger the
+      // while loop condition
       advance(p);
     }
   }
+  // NOTE: don't consume the final } here because in parse_if_expression we
+  // check } else. If we consume the right brache here we break the if
+  // parse_if_expression logic because pt will never be ELSE.
+  // consume the final } in parse_function_literal_expression
 
   return block;
 }
