@@ -85,6 +85,9 @@ void freeExpr(Expr *expr) {
     case FUNCTION_LITERAL_EXPR:
       // @Jan implement
       break;
+    case CALL_EXPRESSION:
+      // @Jan implement
+      break;
     }
 
     free(expr);
@@ -187,14 +190,14 @@ void free_block_statement(Block_Statement *block) {
   block->statements = NULL;
 }
 
-void create_dyn_array(Parameters *params) {
+void create_dyn_array(Dyn_Array_Elements *params) {
   // set immediatly the capacity to 8 for efficiency so we don't immediatly have
   // to reallocate
-  *params = (Parameters){0};
+  *params = (Dyn_Array_Elements){0};
 }
 
 // use generic void pointers to make the dynamic array more general
-void write_to_function_dyn_array(Parameters *params, void *param) {
+void write_to_function_dyn_array(Dyn_Array_Elements *params, void *param) {
   if (!params || !param) {
     fprintf(stderr, "Invalid input for write_to_parameters_list.\n");
     return;
@@ -218,7 +221,7 @@ void write_to_function_dyn_array(Parameters *params, void *param) {
   params->count++;
 }
 
-void free_dyn_array(Parameters *params) {
+void free_dyn_array(Dyn_Array_Elements *params) {
   // loop over all the identifiers and free them
   for (size_t i = 0; i < params->count; i++) {
     freeIdentifier(params->elements[i]);

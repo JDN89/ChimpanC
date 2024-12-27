@@ -330,12 +330,12 @@ Expr *parse_if_expression(Parser *p) {
   return expr;
 }
 
-Parameters *parse_function_parameters(Parser *p) {
+Dyn_Array_Elements *parse_function_parameters(Parser *p) {
 
   // NOTE: you can initialize to  {0,0,NULL} and then then set
   // params.identiferis with malloc. But in this casse you can't use *params
-  Parameters *params = malloc(sizeof(Parameters));
-  HANDLE_ALLOC_FAILURE(params, "Failed allocating for Parameters");
+  Dyn_Array_Elements *params = malloc(sizeof(Dyn_Array_Elements));
+  HANDLE_ALLOC_FAILURE(params, "Failed allocating for Dyn_Array_Elements gc");
   create_dyn_array(params);
   if (pt_is(p, TOKEN_RPAREN)) {
     advance(p);
@@ -380,7 +380,7 @@ Expr *parse_function_literal_expression(Parser *p) {
     return NULL;
   }
 
-  Parameters *params = parse_function_parameters(p);
+  Dyn_Array_Elements *params = parse_function_parameters(p);
   if (params != NULL) {
     expr->as.fn->parameters = params;
   }

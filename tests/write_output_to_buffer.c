@@ -149,6 +149,9 @@ void print_expression(Buffer *buffer, Expr *ex) {
   case FUNCTION_LITERAL_EXPR:
     //@Jan TODO
     break;
+  case CALL_EXPRESSION:
+    //@Jan TODO
+    break;
   }
 }
 

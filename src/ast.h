@@ -59,16 +59,16 @@ typedef struct {
   size_t count;
   size_t capacity;
   void **elements; // holds generic pointer
-} Parameters;
+} Dyn_Array_Elements;
 
 typedef struct {
-  Parameters *parameters;
+  Dyn_Array_Elements *parameters; // stored in dyn array
   Block_Statement *body;
 } Function_Literal_Expr;
 
 typedef struct {
   Expr *funciton_identifier;
-  Expr *arguments;
+  Dyn_Array_Elements *arguments; // stored and dyn array
 } Call_Expression;
 
 typedef struct Expr {
@@ -135,8 +135,8 @@ void freeIdentifier(Identifier *identifier);
 void create_block_statement(Block_Statement *block_statement);
 void write_block_statement(Block_Statement *block, Stmt *statement);
 void free_block_statement(Block_Statement *block);
-void create_dyn_array(Parameters *params);
-void write_to_function_dyn_array(Parameters *params, void *element);
-void free_dyn_array(Parameters *params);
+void create_dyn_array(Dyn_Array_Elements *params);
+void write_to_function_dyn_array(Dyn_Array_Elements *params, void *element);
+void free_dyn_array(Dyn_Array_Elements *params);
 
 #endif

@@ -10,7 +10,7 @@
 //============
 // TESTS
 
-void bang_test() {
+void bang_test(void) {
   char source[] = "if(x==5)\0";
 
   Lexer lexer = init_lexer(source);
@@ -31,7 +31,7 @@ void bang_test() {
   printf("Bang my bug - PASSED \n");
 }
 
-void test_monkey_source() {
+void test_monkey_source(void) {
   char source[] = "let five = 5;\n"
                   "let ten = 10;\n"
                   "let add = fn(x, y) {\n"
