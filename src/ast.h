@@ -30,6 +30,7 @@ typedef enum {
   INFIX_EXPR,
   IF_EXPR,
   FUNCTION_LITERAL_EXPR,
+  CALL_EXPRESSION,
 } Expression_Type;
 
 typedef struct {
@@ -57,13 +58,18 @@ typedef struct {
 typedef struct {
   size_t count;
   size_t capacity;
-  Identifier *identifiers;
+  void **elements; // holds generic pointer
 } Parameters;
 
 typedef struct {
   Parameters *parameters;
   Block_Statement *body;
 } Function_Literal_Expr;
+
+typedef struct {
+  Expr *funciton_identifier;
+  Expr *arguments;
+} Call_Expression;
 
 typedef struct Expr {
   Expression_Type type;
@@ -74,6 +80,7 @@ typedef struct Expr {
     Infix_Expression *infix;
     If_Expression *if_expression;
     Function_Literal_Expr *fn;
+    Call_Expression *call;
   } as;
 } Expr;
 
@@ -128,8 +135,8 @@ void freeIdentifier(Identifier *identifier);
 void create_block_statement(Block_Statement *block_statement);
 void write_block_statement(Block_Statement *block, Stmt *statement);
 void free_block_statement(Block_Statement *block);
-void create_function_parameters(Parameters *params);
-void write_to_function_parameters(Parameters *params, Identifier *param);
-void free_params(Parameters *params);
+void create_dyn_array(Parameters *params);
+void write_to_function_dyn_array(Parameters *params, void *element);
+void free_dyn_array(Parameters *params);
 
 #endif

@@ -187,49 +187,48 @@ void free_block_statement(Block_Statement *block) {
   block->statements = NULL;
 }
 
-void create_function_parameters(Parameters *params) {
+void create_dyn_array(Parameters *params) {
   // set immediatly the capacity to 8 for efficiency so we don't immediatly have
   // to reallocate
-  params->capacity = 0;
-  params->count = 0;
-  params->identifiers = NULL;
+  *params = (Parameters){0};
 }
 
-void write_to_function_parameters(Parameters *params, Identifier *param) {
+// use generic void pointers to make the dynamic array more general
+void write_to_function_dyn_array(Parameters *params, void *param) {
   if (!params || !param) {
     fprintf(stderr, "Invalid input for write_to_parameters_list.\n");
     return;
   }
   if (params->capacity == params->count) {
     size_t new_capacity = params->capacity == 0 ? 8 : params->capacity * 2;
-    Identifier *new_identifiers =
-        realloc(params->identifiers, new_capacity * sizeof(Identifier));
+    void **new_elements =
+        realloc(params->elements, new_capacity * sizeof(void *));
 
-    if (!new_identifiers) {
+    if (!new_elements) {
       fprintf(stderr,
               "Memory allocation failed in write_to_parameters_list.\n");
       return; // Return early if realloc fails
     }
 
-    params->identifiers = new_identifiers;
+    params->elements = new_elements;
     params->capacity = new_capacity;
   }
-  assert(params->identifiers != NULL);
-  params->identifiers[params->count] = *param;
+  assert(params->elements != NULL);
+  params->elements[params->count] = param;
   params->count++;
 }
 
-void free_params(Parameters *params) {
+void free_dyn_array(Parameters *params) {
   // loop over all the identifiers and free them
   for (size_t i = 0; i < params->count; i++) {
-    freeIdentifier(&params->identifiers[i]);
+    freeIdentifier(params->elements[i]);
   }
   params->count = 0;
   params->capacity = 0;
   // free the array
-  free(params->identifiers);
+  free(params->elements);
   // set the pointer to NULL to avoid dangling pointers
-  params->identifiers = NULL;
+  params->elements = NULL;
   free(params);
 }
 

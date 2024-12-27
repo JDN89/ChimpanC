@@ -336,7 +336,7 @@ Parameters *parse_function_parameters(Parser *p) {
   // params.identiferis with malloc. But in this casse you can't use *params
   Parameters *params = malloc(sizeof(Parameters));
   HANDLE_ALLOC_FAILURE(params, "Failed allocating for Parameters");
-  create_function_parameters(params);
+  create_dyn_array(params);
   if (pt_is(p, TOKEN_RPAREN)) {
     advance(p);
     return params;
@@ -345,7 +345,7 @@ Parameters *parse_function_parameters(Parser *p) {
 
   // parse first parameter;
   Identifier *param = parse_identifier(p);
-  write_to_function_parameters(params, param);
+  write_to_function_dyn_array(params, param);
 
   while (pt_is(p, TOKEN_COMMA)) {
     advance(p);
@@ -353,10 +353,10 @@ Parameters *parse_function_parameters(Parser *p) {
     param = parse_identifier(p);
     if (!param) {
       free(param);
-      free_params(params);
+      free_dyn_array(params);
       return NULL;
     }
-    write_to_function_parameters(params, param);
+    write_to_function_dyn_array(params, param);
   }
   if (!expect_peek_token(p, TOKEN_RPAREN)) {
     free(params); // Clean up allocated memory.

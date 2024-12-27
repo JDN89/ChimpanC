@@ -452,11 +452,12 @@ void test_parse_function_literal_expression(void) {
   assert(current->as.exprStmt->expr->type == FUNCTION_LITERAL_EXPR);
 
   Function_Literal_Expr *fn = current->as.exprStmt->expr->as.fn;
-  // BUG @Jan : for some reason we have count but the second parameter does't
-  // get parsed or assigned correctly?
-  for (size_t i = 0; i < fn->parameters->count; i++)
-    assert(test_value(*fn->parameters->identifiers[i].value, *identifiers[i]) ==
-           true);
+
+  for (size_t i = 0; i < fn->parameters->count; i++) {
+    // Cast each element back to Identifier *
+    Identifier *current_identifier = (Identifier *)fn->parameters->elements[i];
+    assert(test_value(*current_identifier->value, *identifiers[i]) == true);
+  }
 
   assert(
       test_value(*fn->body->statements[0]
@@ -472,7 +473,7 @@ void test_parse_function_literal_expression(void) {
   current = program.head->next;
   assert(current->type == EXPR_STATEMENT);
   assert(current->as.exprStmt->expr->type == FUNCTION_LITERAL_EXPR);
-  assert(current->as.exprStmt->expr->as.fn->parameters->identifiers == NULL);
+  assert(current->as.exprStmt->expr->as.fn->parameters->elements == NULL);
   assert(current->as.exprStmt->expr->as.fn->body->statements == NULL);
 
   printf("Test Parse function expression PASSED!");
