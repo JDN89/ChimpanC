@@ -418,14 +418,11 @@ Dyn_Array_Elements *parse_call_arguments(Parser *p) {
 }
 
 Expr *parse_call_expression(Parser *p, Expr *function_name) {
-  Expr *call = malloc(sizeof(Call_Expression));
+  Expr *call = malloc(sizeof(Expr));
   HANDLE_ALLOC_FAILURE(call, "Failed to allocate memeory for call expression");
 
-  Expr *expr = malloc(sizeof(Expr));
-  HANDLE_ALLOC_FAILURE(expr, "Failed allocation for Expr");
-  expr = function_name;
-
-  call->as.call->function_identifier = expr;
+  call->as.call = malloc(sizeof(Call_Expression));
+  call->as.call->function_identifier = function_name;
   call->as.call->arguments = parse_call_arguments(p);
   return call;
 }
