@@ -444,7 +444,17 @@ void test_parser_function_call(void) {
   assert(test_value(*call->function_identifier->as.identifier->value,
                     *create_string_value(3, "add")) == true);
 
-  /*assert(current->type = EXPR_STATEMENT);*/
+  assert(call->arguments->count = 3);
+  Expr *first_arg = (Expr *)call->arguments->elements[0];
+  assert(first_arg->as.value->as.number == 1);
+  Expr *seconde_arg = (Expr *)call->arguments->elements[1];
+  assert(seconde_arg->type == INFIX_EXPR);
+  assert(seconde_arg->as.infix->left->as.value->as.number = 2);
+  assert(seconde_arg->as.infix->right->as.value->as.number = 3);
+  Expr *third_arg = (Expr *)call->arguments->elements[2];
+  assert(third_arg->type == INFIX_EXPR);
+  assert(third_arg->as.infix->left->as.value->as.number = 4);
+  assert(third_arg->as.infix->right->as.value->as.number = 5);
 }
 
 int main(void) {
