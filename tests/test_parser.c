@@ -438,19 +438,22 @@ void test_parser_function_call(void) {
 
   assert(current->as.exprStmt->expr->type == CALL_EXPRESSION);
   Call_Expression *call = current->as.exprStmt->expr->as.call;
-  printf("yolo");
   assert(call != NULL);
   assert(call->function_identifier->type == IDENTIFIER_EXPR);
   assert(test_value(*call->function_identifier->as.identifier->value,
                     *create_string_value(3, "add")) == true);
 
   assert(call->arguments->count = 3);
+  // NOTE: Seeing that  in the dynamic array we use void, C it's variation of
+  // generics
+  //  as i understand it, we Need to cast the void back to the correct type
+  //  which is the Expr struct in this case
   Expr *first_arg = (Expr *)call->arguments->elements[0];
   assert(first_arg->as.value->as.number == 1);
-  Expr *seconde_arg = (Expr *)call->arguments->elements[1];
-  assert(seconde_arg->type == INFIX_EXPR);
-  assert(seconde_arg->as.infix->left->as.value->as.number = 2);
-  assert(seconde_arg->as.infix->right->as.value->as.number = 3);
+  Expr *second_arg = (Expr *)call->arguments->elements[1];
+  assert(second_arg->type == INFIX_EXPR);
+  assert(second_arg->as.infix->left->as.value->as.number = 2);
+  assert(second_arg->as.infix->right->as.value->as.number = 3);
   Expr *third_arg = (Expr *)call->arguments->elements[2];
   assert(third_arg->type == INFIX_EXPR);
   assert(third_arg->as.infix->left->as.value->as.number = 4);
@@ -458,16 +461,16 @@ void test_parser_function_call(void) {
 }
 
 int main(void) {
-  /*test_parser_error_during_parse_let_statement();*/
-  /*test_parse_let_statement();*/
-  /*test_parse_integer_literal();*/
-  /*test_parse_return_statement();*/
-  /*test_parse_expressions();*/
-  /*test_parse_infix_expressions();*/
-  /*test_parse_values();*/
-  /*parse_prefix_expressions();*/
-  /*test_parse_if_statement();*/
-  /*test_parse_function_literal_expression();*/
+  test_parser_error_during_parse_let_statement();
+  test_parse_let_statement();
+  test_parse_integer_literal();
+  test_parse_return_statement();
+  test_parse_expressions();
+  test_parse_infix_expressions();
+  test_parse_values();
+  parse_prefix_expressions();
+  test_parse_if_statement();
+  test_parse_function_literal_expression();
   test_parser_function_call();
   printf("\n");
   return 0;

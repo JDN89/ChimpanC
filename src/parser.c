@@ -408,6 +408,8 @@ Dyn_Array_Elements *parse_call_arguments(Parser *p) {
   }
   advance(p);
   Expr *arg = parse_exp(p, LOWEST);
+
+  // All the elements of the dynamic_array are Expr
   write_to_function_dyn_array(dynamic_array, arg);
   while (pt_is(p, TOKEN_COMMA)) {
     advance(p);
