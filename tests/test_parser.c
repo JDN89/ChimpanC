@@ -434,6 +434,16 @@ void test_parser_function_call(void) {
 
   Stmt *current = program.head;
 
+  assert(current->type == EXPR_STATEMENT);
+
+  assert(current->as.exprStmt->expr->type == CALL_EXPRESSION);
+  Call_Expression *call = current->as.exprStmt->expr->as.call;
+  printf("yolo");
+  assert(call != NULL);
+  assert(call->function_identifier->type == IDENTIFIER_EXPR);
+  assert(test_value(*call->function_identifier->as.identifier->value,
+                    *create_string_value(3, "add")) == true);
+
   /*assert(current->type = EXPR_STATEMENT);*/
 }
 

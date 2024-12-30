@@ -397,34 +397,40 @@ Expr *parse_function_literal_expression(Parser *p) {
 }
 
 Dyn_Array_Elements *parse_call_arguments(Parser *p) {
-  Dyn_Array_Elements *elements = {0};
+  Dyn_Array_Elements *dynamic_array = malloc(sizeof(Dyn_Array_Elements));
+  HANDLE_ALLOC_FAILURE(dynamic_array,
+                       "Failed allocating for Dyn_Array_Elements gc");
+  create_dyn_array(dynamic_array);
+
   if (pt_is(p, TOKEN_RPAREN)) {
     advance(p);
     return NULL;
   }
   advance(p);
   Expr *arg = parse_exp(p, LOWEST);
-  write_to_function_dyn_array(elements, arg);
+  write_to_function_dyn_array(dynamic_array, arg);
   while (pt_is(p, TOKEN_COMMA)) {
     advance(p);
     advance(p);
     Expr *arg = parse_exp(p, LOWEST);
-    write_to_function_dyn_array(elements, arg);
+    write_to_function_dyn_array(dynamic_array, arg);
   }
-  if (expect_peek_token(p, TOKEN_RPAREN)) {
+  if (!expect_peek_token(p, TOKEN_RPAREN)) {
+    // TODO: should't we report a parser error if we don't encounter }??
     return NULL;
   }
-  return elements;
+  return dynamic_array;
 }
 
 Expr *parse_call_expression(Parser *p, Expr *function_name) {
-  Expr *call = malloc(sizeof(Expr));
-  HANDLE_ALLOC_FAILURE(call, "Failed to allocate memeory for call expression");
+  Expr *expr = malloc(sizeof(Expr));
+  HANDLE_ALLOC_FAILURE(expr, "Failed to allocate memeory for call expression");
+  expr->type = CALL_EXPRESSION;
 
-  call->as.call = malloc(sizeof(Call_Expression));
-  call->as.call->function_identifier = function_name;
-  call->as.call->arguments = parse_call_arguments(p);
-  return call;
+  expr->as.call = malloc(sizeof(Call_Expression));
+  expr->as.call->function_identifier = function_name;
+  expr->as.call->arguments = parse_call_arguments(p);
+  return expr;
 }
 
 Expr *parse_exp(Parser *p, Precedece prec) {
