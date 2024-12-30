@@ -48,6 +48,17 @@ void print_erros(Parser *parser, const char *test_name) {
   }
 }
 
+Program init_test(char *source, char *error) {
+
+  Lexer l = init_lexer(source);
+  Parser parser = new_parser(&l);
+  Program program = parse_program(&parser);
+
+  assert(!check_errors(&parser, error));
+
+  return program;
+}
+
 void test_parser_error_during_parse_let_statement(void) {
   // GIVEN:
   char source[] = "let x & 5;\n";
@@ -74,17 +85,9 @@ void test_parse_let_statement(void) {
 
   const Value values[] = {NUMBER(5), NUMBER(10), NUMBER(838383), BOOLEAN(true)};
 
-  Lexer l = init_lexer(source);
-  Parser parser = new_parser(&l);
-  Program program = parse_program(&parser);
-
+  Program program = init_test(source, "Test parse Let statements");
   Stmt *current = program.head;
   int i = 0;
-
-  if (check_errors(&parser, "Test parse Let statements")) {
-    printf("Parse let statement - FAILED! \n");
-    return;
-  }
 
   while (current != NULL) {
     assert(current->type == LET_STATEMENT);
@@ -107,19 +110,12 @@ void test_parse_integer_literal(void) {
                   " 55; \n"
                   "345345354345";
 
-  Lexer l = init_lexer(source);
-  Parser parser = new_parser(&l);
-  Program program = parse_program(&parser);
-
   double expected[] = {4, 55, 345345354345};
+
+  Program program = init_test(source, "Test parse Integer Literal");
 
   Stmt *current = program.head;
   int i = 0;
-
-  if (check_errors(&parser, "Test parse integers")) {
-    printf("Parse numbers - FAILED! \n");
-    return;
-  }
 
   while (current != NULL) {
     assert(current->type == EXPR_STATEMENT);
@@ -141,16 +137,9 @@ void test_parse_return_statement(void) {
                   " return    55; \n"
                   "return  345345354345; \n";
 
-  Lexer l = init_lexer(source);
-  Parser parser = new_parser(&l);
-  Program program = parse_program(&parser);
+  Program program = init_test(source, "Test parse return statements");
 
   Stmt *current = program.head;
-
-  if (check_errors(&parser, "Test parse return statements")) {
-    printf("Parse return statement - FAILED! \n");
-    return;
-  }
 
   while (current != NULL) {
     assert(current->type == RETURN_STATEMENT);
@@ -170,17 +159,10 @@ void test_parse_values(void) {
 
   Value values[] = {NUMBER(34), BOOLEAN(true)};
 
-  Lexer l = init_lexer(source);
-  Parser parser = new_parser(&l);
-  Program program = parse_program(&parser);
-
+  Program program = init_test(source, "Test parse expression statements");
   Stmt *current = program.head;
   int values_index = 0;
 
-  if (check_errors(&parser, "Test parse expression statements")) {
-    printf("Parse expression statement - FAILED! \n");
-    return;
-  }
   while (current != NULL) {
 
     assert(current->type == EXPR_STATEMENT);
@@ -206,19 +188,12 @@ void test_parse_expressions(void) {
   const char *identifiers[] = {"yolo"};
   Value values[] = {NUMBER(10), NUMBER(34), BOOLEAN(true), BOOLEAN(false)};
 
-  Lexer l = init_lexer(source);
-  Parser parser = new_parser(&l);
-  Program program = parse_program(&parser);
+  Program program = init_test(source, "Test parse expression statements");
 
   Stmt *current = program.head;
   int letIndex = 0;
   int identifierIndex = 0;
   int values_index = 0;
-
-  if (check_errors(&parser, "Test parse expression statements")) {
-    printf("Parse expression statement - FAILED! \n");
-    return;
-  }
 
   while (current != NULL) {
     if (current->type == LET_STATEMENT) {
@@ -272,15 +247,8 @@ void parse_prefix_expressions(void) {
 
   for (uint8_t i = 0; i < PREFIX_TEST_CASE_COUNT; i++) {
 
-    Lexer l = init_lexer(test[i].input);
-    Parser parser = new_parser(&l);
-    Program program = parse_program(&parser);
-
-    if (parser.errorCount > 0) {
-      for (int j = 0; j < parser.errorCount; j++) {
-        printf("Error %d: %s\n", j + 1, parser.errors[j]);
-      }
-    }
+    Program program =
+        init_test(test[i].input, "Error in parse_prefix_expressions");
 
     Stmt *current = program.head;
     while (current != NULL) {
@@ -332,15 +300,8 @@ void test_parse_infix_expressions(void) {
     /*printf("Input   : %s\n", test[i].input);*/
     /*printf("Expected: %s\n", test[i].output);*/
 
-    Lexer l = init_lexer(test[i].input);
-    Parser parser = new_parser(&l);
-    Program program = parse_program(&parser);
-
-    if (parser.errorCount > 0) {
-      for (int j = 0; j < parser.errorCount; j++) {
-        printf("Error %d: %s\n", j + 1, parser.errors[j]);
-      }
-    }
+    Program program =
+        init_test(test[i].input, "Error in parse_infix_expressions");
 
     Buffer buffer;
     init_buffer(&buffer);
@@ -372,17 +333,9 @@ void test_parse_if_statement(void) {
       NUMBER(10),
   };
 
-  Lexer l = init_lexer(source);
-  Parser parser = new_parser(&l);
-  Program program = parse_program(&parser);
+  Program program = init_test(source, "Error in parse_infix_expressions");
 
   Stmt *current = program.head;
-
-  if (check_errors(&parser, "Test parse if statements")) {
-    print_erros(&parser, "parse if statement");
-    printf("Parse if statement - FAILED! \n");
-    return;
-  }
 
   assert(current->type == EXPR_STATEMENT);
   assert(current->as.exprStmt->expr->type == IF_EXPR);
@@ -437,17 +390,10 @@ void test_parse_function_literal_expression(void) {
   };
   Value *values[] = {create_string_value(1, "x"), create_string_value(1, "y")};
 
-  Lexer l = init_lexer(source);
-  Parser parser = new_parser(&l);
-  Program program = parse_program(&parser);
+  Program program =
+      init_test(source, "Error in parse_function_literal_expression");
 
   Stmt *current = program.head;
-
-  if (check_errors(&parser, "Test parse if statements")) {
-    print_erros(&parser, "parse if statement");
-    printf("Parse if statement - FAILED! \n");
-    return;
-  }
 
   assert(current->type == EXPR_STATEMENT);
   assert(current->as.exprStmt->expr->type == FUNCTION_LITERAL_EXPR);
@@ -482,18 +428,25 @@ void test_parse_function_literal_expression(void) {
 void test_parser_function_call(void) {
   char source[] = "add(1, 2 * 3, 4 + 5);";
   printf("Parse function call PASSED");
+
+  Program program =
+      init_test(source, "Error in parse_function_call_expression");
+
+  Stmt *current = program.head;
+
+  /*assert(current->type = EXPR_STATEMENT);*/
 }
 
 int main(void) {
-  /*test_parser_error_during_parse_let_statement();*/
-  /*test_parse_let_statement();*/
-  /*test_parse_integer_literal();*/
-  /*test_parse_return_statement();*/
-  /*test_parse_expressions();*/
-  /*test_parse_infix_expressions();*/
-  /*test_parse_values();*/
-  /*parse_prefix_expressions();*/
-  /*test_parse_if_statement();*/
+  test_parser_error_during_parse_let_statement();
+  test_parse_let_statement();
+  test_parse_integer_literal();
+  test_parse_return_statement();
+  test_parse_expressions();
+  test_parse_infix_expressions();
+  test_parse_values();
+  parse_prefix_expressions();
+  test_parse_if_statement();
   test_parse_function_literal_expression();
   /*test_parser_function_call();*/
   printf("\n");
