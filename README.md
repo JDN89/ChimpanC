@@ -33,6 +33,7 @@ func add(x: int, y: int): int {
     return x + y;
 }
 ```
+In the meantime I'm finishing the final Clox chapters of the book __crafting interpreters__ and I'm following the lessons of the cours __performance aware programming__ by casey Muratori, which will come in handy for optimizing and lowering to Assembly.
 
 ## TODO
 
