@@ -540,7 +540,8 @@ Block_Statement *parse_block_statement(Parser *p) {
   // check } else. If we consume the right brache here we break the if
   // parse_if_expression logic because pt will never be ELSE.
   // consume the final } in parse_function_literal_expression
-  // check commit 27/12/2024 for explenation changes -> maybe add hash?
+  // check commit 27/12/2024 for explenation changes -> maybe add commit hash
+  // for future reference?
 
   return block;
 }

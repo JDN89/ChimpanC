@@ -19,6 +19,21 @@ You need cmake version 3.28.3 at minimum.
 [Crafting Interpreters - Robert Nystrom](https://craftinginterpreters.com/) \
 [Writing an Interpreter in Go](https://interpreterbook.com/)
 
+## On hold
+Now that I have an AST I want to add tpyes and typechecking to the monkey language.
+After that I want to lower it to Assembly so that I write a simple program in Monkeylang and run it on a raspberry pi.
+Maybe I'll add an IR step, if I still have interest in the project and figure out what the benefits of IR are and how to do it.
+
+code example: 
+
+``` 
+let a: int = 5;
+let b: bool = true;
+func add(x: int, y: int): int {
+    return x + y;
+}
+```
+
 ## TODO
 
 - Fix dangling pointers -> set pointers to NULL after freeing them
@@ -38,6 +53,12 @@ You need cmake version 3.28.3 at minimum.
     - [LibAFL](https://github.com/AFLplusplus/LibAFL)
     - [OSSFuzz](https://github.com/google/oss-fuzz)
 - implement sanitizer tests! [google Sanitizers](https://github.com/google/sanitizers?tab=readme-ov-file)
+
+### extend logic
+- Add builtin functions like len -> get length of string or array
+- add arrays
+- add a hastable
+- add a struct?
 
 ### Refactoring ideas
 - simplify code and improve memeory usage:
