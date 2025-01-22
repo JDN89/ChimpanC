@@ -37,7 +37,8 @@ In the meantime I'm finishing the final Clox chapters of the book __crafting int
 
 ## TODO
 
-- Make branch and convert ChimpanC to unity build Plus use arenas: [example](https://www.youtube.com/watch?v=9UIIMBqq1D4&t=711s)
+- Make branch and convert ChimpanC to __unity build__ 
+- make branch -> Look into and use arenas: [example](https://www.youtube.com/watch?v=9UIIMBqq1D4&t=711s)
 - Fix dangling pointers -> set pointers to NULL after freeing them
 - write down what you learned from fixing the bugs from yesterday
     - Advance tokens as much as possible in higher level functions. avoid manipulating the parser state in lower level functions as much as possible!
