@@ -37,6 +37,8 @@ In the meantime I'm finishing the final Clox chapters of the book __crafting int
 
 ## TODO
 
+- Can I implement multihreading? Tokenize and parse groups of codes, and compile (not sure) chunks of code that logically belong together. I am not sure that everything has to be done sequentially on one thread. find out.
+
 - Make branch and convert ChimpanC to __unity build__ 
 - make branch -> Look into and use arenas: [example](https://www.youtube.com/watch?v=9UIIMBqq1D4&t=711s)
 - Fix dangling pointers -> set pointers to NULL after freeing them
